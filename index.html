@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reporte Diario del Comandero Digital — Registro A&B | Grupo Martinón</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh;padding:20px;color:#1e293b;}
+    .wrap{max-width:720px;margin:0 auto;}
+    .card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:28px;margin-bottom:16px;}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .page-header h1{font-size:18px;font-weight:700;}
+    .hotel-pill{background:#eff6ff;color:#1d4ed8;border-radius:99px;padding:4px 12px;font-size:13px;font-weight:600;}
+    .admin-pill{background:#fef3c7;color:#92400e;border-radius:99px;padding:4px 12px;font-size:13px;font-weight:600;}
+    label{display:block;font-size:13px;font-weight:600;color:#475569;margin-top:14px;margin-bottom:4px;}
+    input[type="text"],input[type="number"],input[type="date"],select,textarea{width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;background:#fff;transition:border-color .15s;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+    input.field-error,select.field-error,textarea.field-error{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
+    select:disabled{background:#f8fafc;color:#94a3b8;}
+    textarea{min-height:70px;resize:vertical;}
+    .field-msg{font-size:11px;color:#ef4444;margin-top:3px;display:none;}
+    .field-msg.show{display:block;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid #e2e8f0;background:#fff;color:#475569;transition:all .15s;}
+    .btn:hover{background:#f1f5f9;}
+    .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
+    .btn-primary:hover{background:#1e40af;}
+    .btn-primary:disabled{background:#93c5fd;border-color:#93c5fd;cursor:not-allowed;}
+    .btn-danger{border-color:#fecaca;color:#dc2626;}
+    .btn-danger:hover{background:#fef2f2;}
+    .btn-amber{background:#d97706;color:#fff;border-color:#d97706;}
+    .btn-amber:hover{background:#b45309;}
+    .btn-pdf{background:#dc2626;color:#fff;border-color:#dc2626;}
+    .btn-pdf:hover{background:#b91c1c;}
+    .btn-sm{padding:5px 12px;font-size:12px;}
+    .badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;}
+    .badge-ok{background:#dcfce7;color:#166534;}
+    .badge-parcial{background:#fef9c3;color:#854d0e;}
+    .badge-fallo{background:#fee2e2;color:#991b1b;}
+    .alert{padding:11px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-top:14px;display:none;}
+    .alert-success{background:#dcfce7;color:#166534;}
+    .alert-error{background:#fee2e2;color:#991b1b;}
+    .alert-loading{background:#eff6ff;color:#1d4ed8;}
+    #screen-login{min-height:80vh;display:flex;align-items:center;justify-content:center;}
+    .login-card{max-width:400px;width:100%;}
+    .login-logo{text-align:center;margin-bottom:24px;}
+    .login-logo .logo-circle{width:60px;height:60px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px;}
+    .login-logo h2{font-size:20px;font-weight:700;}
+    .login-logo p{font-size:13px;color:#64748b;margin-top:4px;}
+    #hotelCode{text-transform:uppercase;font-size:16px;font-weight:600;text-align:center;letter-spacing:.1em;}
+    .tabs{display:flex;gap:2px;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:20px;}
+    .tab{flex:1;padding:7px;text-align:center;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;color:#64748b;transition:all .15s;}
+    .tab.active{background:#fff;color:#1d4ed8;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+    .dash-tabs{display:flex;border-bottom:1.5px solid #e2e8f0;margin-bottom:16px;flex-wrap:wrap;}
+    .dash-tab{padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:#64748b;font-weight:600;margin-bottom:-1.5px;white-space:nowrap;}
+    .dash-tab.active{color:#1d4ed8;border-bottom-color:#1d4ed8;}
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+    .kpi-card{background:#f8fafc;border-radius:10px;padding:14px 12px;text-align:center;}
+    .kpi-label{font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+    .kpi-value{font-size:22px;font-weight:700;margin-top:4px;color:#1e293b;}
+    .kpi-value.green{color:#16a34a;}
+    .kpi-value.red{color:#dc2626;}
+    .kpi-value.amber{color:#d97706;}
+    .hbar{display:flex;flex-direction:column;gap:9px;}
+    .hbar-row{display:flex;align-items:center;gap:8px;}
+    .hbar-label{width:150px;font-size:12px;color:#475569;text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .hbar-track{flex:1;background:#f1f5f9;border-radius:99px;height:20px;overflow:hidden;}
+    .hbar-fill{height:100%;border-radius:99px;display:flex;align-items:center;padding-left:8px;font-size:11px;color:#fff;font-weight:700;min-width:32px;transition:width .5s;}
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .log-item{background:#f8fafc;border-radius:9px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #e2e8f0;}
+    .log-item.ok{border-left-color:#22c55e;}
+    .log-item.parcial{border-left-color:#f59e0b;}
+    .log-item.fallo{border-left-color:#ef4444;}
+    .table-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:12px;min-width:540px;}
+    th{background:#f8fafc;padding:8px 10px;text-align:left;font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-bottom:1.5px solid #e2e8f0;}
+    td{padding:9px 10px;border-bottom:1px solid #f1f5f9;color:#334155;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#f8fafc;}
+    #incidencia-wrap{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px;margin-top:14px;}
+    .pax-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0;}
+    .btn-cerrado{width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#475569;text-align:center;transition:all .15s;margin-top:0;}
+    .btn-cerrado:hover{background:#f1f5f9;}
+    .btn-cerrado.active-cerrado{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
+    .pax-label-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .section-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+    .admin-section{background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:18px;margin-bottom:16px;}
+    .filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;}
+    .filter-bar label{margin:0;font-size:12px;font-weight:700;color:#475569;white-space:nowrap;}
+    .filter-bar select,.filter-bar input[type="date"]{width:auto;flex:1;min-width:120px;font-size:12px;padding:6px 9px;}
+    .export-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;justify-content:flex-end;}
+    .hotel-summary-card{border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:10px;}
+    .hotel-summary-card h3{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+    /* ── PDF PRINT ── */
+    @media print{
+      html,body{background:#fff;padding:0;margin:0;font-size:11pt;height:auto;}
+      .wrap{max-width:100%;padding:0;margin:0;}
+      #screen-login,#screen-app .page-header .btn-danger,
+      #screen-admin .page-header .btn-danger,
+      .tabs,.filter-bar,.export-bar,.dash-tabs,
+      .no-print{display:none!important;}
+      /* Ocultar la sección que NO se está exportando para que no deje espacio en blanco */
+      #screen-app[style*="display: none"],#screen-app[style*="display:none"]{display:none!important;}
+      #screen-admin[style*="display: none"],#screen-admin[style*="display:none"]{display:none!important;}
+      .card{box-shadow:none;border:1px solid #ddd;border-radius:6px;padding:16px;margin-bottom:12px;break-inside:avoid;}
+      .card:last-child{margin-bottom:0;}
+      .kpi-grid{grid-template-columns:repeat(4,1fr);}
+      .charts-grid{grid-template-columns:1fr 1fr;}
+      @page{size:letter portrait;margin:1.2cm 1.2cm 1cm 1.2cm;}
+      .print-header{display:flex!important;justify-content:space-between;align-items:center;border-bottom:2px solid #1d4ed8;padding-bottom:10px;margin-bottom:16px;break-after:avoid;}
+      .print-footer{display:block!important;text-align:center;font-size:9pt;color:#94a3b8;margin-top:12px;border-top:1px solid #e2e8f0;padding-top:8px;break-before:avoid;page-break-inside:avoid;}
+      table{font-size:9pt;}
+      th,td{padding:5px 7px;}
+      /* Evitar que el último elemento deje una página en blanco al final */
+      body *:last-child{break-after:avoid-page;}
+    }
+    .print-header{display:none;}
+    .print-footer{display:none;}
+    @media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr;}.charts-grid{grid-template-columns:1fr;}.hbar-label{width:90px;font-size:11px;}.filter-bar{flex-direction:column;}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- PRINT HEADER (solo visible en PDF) -->
+<div class="print-header" id="print-header">
+  <div>
+    <div style="font-size:16pt;font-weight:700;color:#1d4ed8;">🍽️ Reporte Diario del Comandero Digital</div>
+    <div style="font-size:10pt;color:#64748b;" id="print-subtitle">Reporte de operaciones · Grupo Martinón</div>
+  </div>
+  <div style="text-align:right;font-size:9pt;color:#64748b;">
+    <div id="print-date"></div>
+    <div id="print-period"></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="screen-login">
+  <div class="card login-card">
+    <div class="login-logo">
+      <div style="text-align:center;margin-bottom:16px;">
+        <img src="data:image/png;base64,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"
+             style="max-width:180px;max-height:80px;object-fit:contain;" alt="Grupo Martinón">
+      </div>
+      <h2>Reporte Diario del Comandero Digital</h2>
+      <p>Registro diario A&amp;B · Grupo Martinón</p>
+    </div>
+    <label for="hotelCode">Código de acceso</label>
+    <input type="text" id="hotelCode" placeholder="Ingresa tu código" maxlength="12"/>
+    <div id="loginError" class="alert alert-error">Código incorrecto. Verifica con tu supervisor.</div>
+    <button class="btn btn-primary" style="width:100%;margin-top:16px;justify-content:center;font-size:15px;" onclick="doLogin()">Entrar →</button>
+    <p style="text-align:center;font-size:12px;color:#94a3b8;margin-top:16px;">Si no tienes código, contacta a tu jefe de A&amp;B.</p>
+    <p style="text-align:center;font-size:11px;color:#cbd5e1;margin-top:12px;letter-spacing:.03em;">V.8 · Act. 02-Jul-2026</p>
+  </div>
+</div>
+
+<!-- APP HOTEL -->
+<div id="screen-app" style="display:none;">
+  <div class="page-header">
+    <div>
+      <h1>Reporte Diario del Comandero Digital</h1>
+      <div style="margin-top:4px;"><span class="hotel-pill" id="hotel-pill"></span></div>
+    </div>
+    <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
+  </div>
+  <div class="tabs no-print" style="margin-bottom:20px;">
+    <div class="tab active" id="nav-form" onclick="showSection('form')">📋 Registrar</div>
+    <div class="tab" id="nav-dash" onclick="showSection('dash')">📊 Mi Dashboard</div>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div id="section-form">
+    <div class="card">
+      <div class="section-title">Nuevo registro</div>
+
+      <label for="f-fecha">Fecha <span style="color:#ef4444;">*</span></label>
+      <input type="date" id="f-fecha" onchange="loadServicios()"/>
+      <div class="field-msg" id="err-fecha">⚠ Solo puedes registrar hoy o ayer.</div>
+
+      <label for="f-restaurante">Restaurante <span style="color:#ef4444;">*</span></label>
+      <select id="f-restaurante" onchange="loadServicios()">
+        <option value="">— Seleccionar restaurante —</option>
+      </select>
+      <div class="field-msg" id="err-restaurante">⚠ Selecciona un restaurante.</div>
+
+      <div id="servicio-wrap">
+        <label for="f-servicio">Servicio <span style="color:#ef4444;">*</span></label>
+        <select id="f-servicio" disabled>
+          <option value="">— Seleccionar servicio —</option>
+        </select>
+        <div class="field-msg" id="err-servicio">⚠ Selecciona un servicio.</div>
+      </div>
+
+      <div class="pax-label-row">
+        <label for="f-pax" style="margin-top:14px;">Cantidad de pax / comensales <span style="color:#ef4444;" id="pax-req">*</span></label>
+        <label style="margin-top:14px;">Estado del restaurante / servicio</label>
+      </div>
+      <div class="pax-row">
+        <div>
+          <input type="number" id="f-pax" min="0" max="600" placeholder="0"/>
+          <div class="field-msg" id="err-pax">⚠ Ingresa un número válido entre 1 y 600 comensales.</div>
+        </div>
+        <div>
+          <button type="button" class="btn-cerrado" id="btn-cerrado" onclick="toggleCerrado()">🔴 Marcar como cerrado</button>
+          <div style="font-size:11px;color:#64748b;margin-top:4px;text-align:center;" id="cerrado-hint">Pulsa si no hubo servicio</div>
+        </div>
+      </div>
+
+      <label for="f-comandero">¿Se utilizó el comandero durante este servicio? <span style="color:#ef4444;">*</span></label>
+      <select id="f-comandero" onchange="toggleIncidencia()">
+        <option value="Si">✅ Sí — funcionó correctamente</option>
+        <option value="Parcial">⚠️ Parcial — con interrupciones</option>
+        <option value="No">❌ No — hubo un problema</option>
+      </select>
+
+      <div id="incidencia-wrap" style="display:none;">
+        <label for="f-incidencia">Tipo de incidencia <span style="color:#ef4444;">*</span></label>
+        <select id="f-incidencia" onchange="toggleDetalle()">
+          <option value="">— Seleccionar tipo —</option>
+          <option>Fallo del sistema</option>
+          <option>Fallo de internet / WiFi</option>
+          <option>Sin papel la impresora</option>
+          <option>Impresora no imprime</option>
+          <option>Handy no disponible</option>
+          <option>Otros</option>
+        </select>
+        <div class="field-msg" id="err-incidencia">⚠ Selecciona el tipo de incidencia.</div>
+
+        <div id="detalle-wrap" style="margin-top:10px;">
+          <label for="f-detalle">Detalle adicional <span id="detalle-req" style="color:#ef4444;display:none;">*</span></label>
+          <textarea id="f-detalle" placeholder="Describe brevemente lo que ocurrió..."></textarea>
+          <div class="field-msg" id="err-detalle">⚠ Cuando seleccionas "Otros" el detalle es obligatorio.</div>
+        </div>
+      </div>
+
+      <label for="f-responsable">Nombre y apellido del capitán que reporta <span style="color:#ef4444;">*</span></label>
+      <input type="text" id="f-responsable" placeholder="Nombre y apellido completo"/>
+      <div class="field-msg" id="err-responsable">⚠ El nombre y apellido es obligatorio.</div>
+
+      <div id="form-alert" class="alert"></div>
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button class="btn btn-primary" id="btn-submit" style="flex:1;justify-content:center;" onclick="submitForm()">Enviar registro</button>
+        <button class="btn no-print" onclick="clearForm()" title="Limpiar">↺</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Registros de hoy</div>
+      <div id="session-log"><p style="text-align:center;color:#94a3b8;font-size:13px;padding:12px 0;">Sin registros en esta sesión</p></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD HOTEL -->
+  <div id="section-dash" style="display:none;">
+    <div class="card">
+      <div class="filter-bar no-print">
+        <label>📅 Período:</label>
+        <select id="h-filter-period" onchange="onHotelPeriodChange()">
+          <option value="all">Todo el historial</option>
+          <option value="today">Hoy</option>
+          <option value="yesterday">Ayer</option>
+          <option value="week">Últimos 7 días</option>
+          <option value="month">Últimos 30 días</option>
+          <option value="range">Rango personalizado</option>
+        </select>
+        <div id="h-range-wrap" style="display:none;gap:6px;flex-wrap:wrap;">
+          <input type="date" id="h-date-from" onchange="renderActiveDashTab()"/>
+          <input type="date" id="h-date-to" onchange="renderActiveDashTab()"/>
+        </div>
+        <button class="btn btn-sm" onclick="renderActiveDashTab()">Aplicar</button>
+      </div>
+
+      <div class="export-bar no-print">
+        <button class="btn btn-sm" onclick="showSection('dash')" style="background:#f1f5f9;">🔄 Actualizar</button>
+        <button class="btn btn-sm btn-pdf" onclick="exportPDF('hotel')">📄 Exportar PDF</button>
+        <button class="btn btn-sm" onclick="exportCSV()">⬇ Exportar CSV</button>
+      </div>
+
+      <div id="dash-loading" style="display:none;align-items:center;justify-content:center;gap:10px;padding:20px;color:#1d4ed8;font-size:14px;font-weight:600;">
+        <div style="width:20px;height:20px;border:3px solid #bfdbfe;border-top-color:#1d4ed8;border-radius:50%;animation:spin .7s linear infinite;"></div>
+        Cargando datos del servidor...
+      </div>
+      <div class="dash-tabs no-print">
+        <div class="dash-tab active" onclick="setDashTab('resumen')">Resumen</div>
+        <div class="dash-tab" onclick="setDashTab('incidencias')">Incidencias</div>
+        <div class="dash-tab" onclick="setDashTab('restaurantes')">Restaurantes</div>
+        <div class="dash-tab" onclick="setDashTab('registros')">Registros</div>
+      </div>
+
+      <div id="dash-resumen">
+        <div class="kpi-grid" id="kpi-grid"></div>
+        <div class="charts-grid" style="margin-bottom:16px;">
+          <div class="card" style="padding:18px;"><div class="section-title">Uso del comandero</div><canvas id="chart-uso" height="200"></canvas></div>
+          <div class="card" style="padding:18px;"><div class="section-title">Tipos de fallo reportados</div><div class="hbar" id="hbar-tipos-resumen"></div></div>
+        </div>
+        <div class="card" style="padding:18px;"><div class="section-title">Pax por servicio</div><div class="hbar" id="hbar-pax-servicio"></div></div>
+      </div>
+      <div id="dash-incidencias" style="display:none;">
+        <div class="section-title">Frecuencia por tipo de incidencia</div>
+        <div class="hbar" id="hbar-tipos" style="margin-bottom:24px;"></div>
+        <div class="section-title">Restaurantes con más incidencias</div>
+        <div class="hbar" id="hbar-rest-incid"></div>
+      </div>
+      <div id="dash-restaurantes" style="display:none;">
+        <div class="section-title">Pax por restaurante</div>
+        <div class="hbar" id="hbar-pax-rest"></div>
+        <div style="margin-top:20px;"><div class="section-title">% uso correcto por restaurante</div><div class="hbar" id="hbar-uso-rest"></div></div>
+      </div>
+      <div id="dash-registros" style="display:none;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Fecha</th><th>Restaurante</th><th>Servicio</th><th>Pax</th><th>Comandero</th><th>Incidencia</th><th>Responsable</th></tr></thead>
+            <tbody id="tabla-registros"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP ADMIN -->
+<div id="screen-admin" style="display:none;">
+  <div class="page-header">
+    <div>
+      <h1>Reporte Diario del Comandero Digital</h1>
+      <div style="margin-top:4px;"><span class="admin-pill">👑 Panel Administrador</span></div>
+    </div>
+    <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
+  </div>
+
+  <div class="admin-section no-print">
+    <div class="section-title">Filtros de visualización</div>
+    <div class="filter-bar" style="margin-bottom:10px;">
+      <label>🏨 Hotel:</label>
+      <select id="adm-filter-hotel" onchange="renderAdmin()">
+        <option value="">Todos los hoteles</option>
+        <option value="SERPC">Secrets Royal Beach</option>
+        <option value="DRRPC">Dreams Royal Beach</option>
+        <option value="DROPC">Dreams Onyx</option>
+        <option value="BREPC">Breathless</option>
+        <option value="DRFPC">Dreams Flora</option>
+        <option value="DRJRC">Dreams Jade</option>
+        <option value="SEAUA">Secrets Baby Beach Aruba</option>
+      </select>
+      <select id="adm-filter-rest" onchange="renderAdmin()">
+        <option value="">Todos los restaurantes</option>
+      </select>
+      <select id="adm-filter-serv" onchange="renderAdmin()">
+        <option value="">Todos los servicios</option>
+        <option>Desayuno</option><option>Almuerzo</option><option>Cena</option>
+      </select>
+    </div>
+    <div class="filter-bar">
+      <label>📅 Período:</label>
+      <select id="adm-filter-period" onchange="onAdminPeriodChange()">
+        <option value="all">Todo el historial</option>
+        <option value="today">Hoy</option>
+        <option value="yesterday">Ayer</option>
+        <option value="week">Últimos 7 días</option>
+        <option value="month">Últimos 30 días</option>
+        <option value="range">Rango personalizado</option>
+      </select>
+      <div id="adm-range-wrap" style="display:none;gap:6px;flex-wrap:wrap;">
+        <input type="date" id="adm-date-from" onchange="renderAdmin()"/>
+        <input type="date" id="adm-date-to" onchange="renderAdmin()"/>
+      </div>
+      <button class="btn btn-sm" onclick="renderAdmin()">Aplicar</button>
+    </div>
+  </div>
+
+  <div class="export-bar no-print">
+    <button class="btn btn-sm" onclick="renderAdmin()" style="background:#f1f5f9;">🔄 Actualizar</button>
+    <button class="btn btn-sm btn-pdf" onclick="exportPDF('admin')">📄 Exportar PDF</button>
+    <button class="btn btn-sm btn-amber" onclick="exportCSVAdmin()">⬇ CSV completo</button>
+  </div>
+
+  <div id="adm-loading" style="display:none;align-items:center;justify-content:center;gap:10px;padding:20px;color:#92400e;font-size:14px;font-weight:600;">
+    <div style="width:20px;height:20px;border:3px solid #fde68a;border-top-color:#d97706;border-radius:50%;animation:spin .7s linear infinite;"></div>
+    Cargando datos del servidor...
+  </div>
+  <div class="tabs no-print" style="margin-bottom:20px;">
+    <div class="tab active" id="anav-resumen" onclick="setAdminTab('resumen')">📊 Resumen</div>
+    <div class="tab" id="anav-hoteles" onclick="setAdminTab('hoteles')">🏨 Por Hotel</div>
+    <div class="tab" id="anav-problemas" onclick="setAdminTab('problemas')">⚠️ Problemas</div>
+    <div class="tab" id="anav-registros" onclick="setAdminTab('registros')">📋 Registros</div>
+    <div class="tab" id="anav-config" onclick="setAdminTab('config')">⚙️ Config</div>
+  </div>
+
+  <!-- PANEL CONFIG -->
+  <div id="admin-config" style="display:none;">
+    <div class="card" style="padding:20px;margin-bottom:16px;">
+      <div class="section-title" style="margin-bottom:4px;">⚙️ Control de Hoteles</div>
+      <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Activa o desactiva cada hotel. Solo los hoteles activos aparecen en el formulario y en los reportes de cumplimiento.</p>
+      <div id="hotel-switches"></div>
+    </div>
+    <div class="card" style="padding:20px;">
+      <div class="section-title" style="margin-bottom:4px;">🔒 Cierres extendidos activos</div>
+      <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Restaurantes con cierre de más de un día programado. Para activar un cierre extendido desde el formulario usa el código <strong>6767</strong>.</p>
+      <div id="cierres-lista"></div>
+    </div>
+  </div>
+
+  <div id="admin-resumen">
+    <div class="kpi-grid" id="adm-kpi" style="grid-template-columns:repeat(4,1fr);"></div>
+    <div class="charts-grid" style="margin-bottom:16px;">
+      <div class="card" style="padding:18px;"><div class="section-title">Uso del comandero</div><canvas id="adm-chart-uso" height="200"></canvas></div>
+      <div class="card" style="padding:18px;"><div class="section-title">Tipos de fallo reportados</div><div class="hbar" id="adm-hbar-tipos-resumen"></div></div>
+    </div>
+    <div class="card" style="padding:18px;margin-bottom:16px;"><div class="section-title">Pax por servicio</div><div class="hbar" id="adm-hbar-pax-servicio"></div></div>
+    <div class="card" style="padding:18px;"><div class="section-title">Registros por hotel</div><div class="hbar" id="adm-hbar-hoteles"></div></div>
+  </div>
+  <div id="admin-hoteles" style="display:none;"><div id="adm-hotel-cards"></div></div>
+  <div id="admin-problemas" style="display:none;">
+    <div class="card" style="padding:18px;margin-bottom:14px;"><div class="section-title">Tipos de problema más frecuentes</div><div class="hbar" id="adm-hbar-tipos"></div></div>
+    <div class="card" style="padding:18px;margin-bottom:14px;"><div class="section-title">Hoteles con más incidencias</div><div class="hbar" id="adm-hbar-hotel-incid"></div></div>
+    <div class="card" style="padding:18px;"><div class="section-title">Restaurantes con más incidencias</div><div class="hbar" id="adm-hbar-rest-incid"></div></div>
+  </div>
+  <div id="admin-registros" style="display:none;">
+    <!-- Modal borrado -->
+    <div id="modal-borrar" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:14px;padding:28px;max-width:380px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.25);">
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;color:#dc2626;">⚠️ Confirmar eliminación</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:16px;">El registro dejará de aparecer en todos los dashboards. Ingresa el password de administrador.</div>
+        <input type="password" id="modal-password" placeholder="Password" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;margin-bottom:6px;"/>
+        <div id="modal-error" style="display:none;color:#dc2626;font-size:12px;font-weight:600;margin-bottom:6px;">❌ Password incorrecto. Inténtalo de nuevo.</div>
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button class="btn" style="flex:1;justify-content:center;" onclick="cerrarModal()">Cancelar</button>
+          <button class="btn" style="flex:1;justify-content:center;background:#dc2626;color:#fff;border-color:#dc2626;" onclick="confirmarBorrado()">Eliminar</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="padding:18px;">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Hotel</th><th>Restaurante</th><th>Servicio</th><th>Pax</th><th>Comandero</th><th>Incidencia</th><th>Responsable</th><th class="no-print" style="width:80px;">Acción</th></tr></thead>
+          <tbody id="adm-tabla"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="print-footer" id="print-footer">
+  Grupo Martinón · Reporte Diario del Comandero Digital · Documento generado el <span id="print-footer-date"></span>
+</div>
+
+</div><!-- /wrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw82iuEbZ-vcBNAn_cDzsBl6Wv3WMHx2XW4o22ENpCmpPU4iZttWvmLcgq7k0DIqPz0/exec';
+const ADMIN_CODE='1614';
+const HOTELS={
+  "SERPC3100":{name:"Secrets Royal Beach",code:"SERPC",restaurantes:{"Bluewater Grill":["Cena"],"Himitsu":["Cena"],"Bordeaux":["Cena"],"El Patio":["Cena"],"Oceana":["Desayuno","Almuerzo","Cena"]}},
+  "DRRPC2321":{name:"Dreams Royal Beach",code:"DRRPC",restaurantes:{"Seaside Grill":["Desayuno","Almuerzo","Cena"],"Fusion":["Cena"],"Mercure":["Cena"],"Tres Colores":["Cena"],"Portofino":["Desayuno","Almuerzo","Cena"]}},
+  "DROPC1815":{name:"Dreams Onyx",code:"DROPC",restaurantes:{"Cin Cin":["Cena"],"Capers":["Cena"],"Bluewater Grill":["Cena"],"Mercure":["Cena"],"Faire":["Cena"],"Spice":["Cena"],"Tamarindo":["Desayuno","Almuerzo","Cena"],"Room Service":["Desayuno","Almuerzo","Menú Nocturno"]}},
+  "BREPC2020":{name:"Breathless",code:"BREPC",restaurantes:{"Coquette":["Cena"],"Spumante":["Cena"],"Silk City":["Cena"],"Culinaria":["Cena"],"The Strip Grill":["Desayuno","Almuerzo","Cena"],"Sofrito":["Cena"],"Room Service":["Desayuno","Almuerzo","Menú Nocturno"]}},
+  "DRFPC1512":{name:"Dreams Flora",code:"DRFPC",restaurantes:{"Seaside Grill":["Desayuno","Almuerzo","Cena"],"Portofino":["Cena"],"Bordeaux":["Cena"],"Himitsu":["Cena"],"El Patio":["Cena"]}},
+  "DRJRC2122":{name:"Dreams Jade",code:"DRJRC",restaurantes:{"Mercure":["Desayuno","Cena"],"Capers":["Cena"],"Castaway":["Almuerzo"],"Tamarindo":["Cena"],"Cin Cin":["Cena"],"Spice":["Cena"]}},
+  "SEAUA1500":{name:"Secrets Baby Beach Aruba",code:"SEAUA",restaurantes:{"Oceana":["Desayuno","Almuerzo","Cena"],"Portofino":["Cena"],"Himitsu":["Cena"],"Tierra":["Cena"]}}
+};
+
+let currentHotel=null,isAdmin=false,records=[],allRecords=[];
+let chartUso=null,chartPax=null,admChartUso=null,admChartServ=null;
+let activeDashTab='resumen',activeAdminTab='resumen';
+let eliminados=new Set();
+let pendingBorrarId=null;
+const BORRAR_PWD='2026';
+const CODIGO_CIERRE_EXTENDIDO='6767';
+
+// ── Hoteles habilitados/deshabilitados (solo admin puede cambiar) ──
+// Se guarda en localStorage para persistir entre sesiones
+function getHotelesHabilitados(){
+  try{
+    const saved=localStorage.getItem('hoteles_habilitados');
+    if(saved) return JSON.parse(saved);
+  }catch(e){}
+  // Por defecto: activos los 4 con comandero instalado
+  return {SERPC:true,DRRPC:true,BREPC:true,DROPC:true,DRFPC:false,DRJRC:false,SEAUA:false};
+}
+
+function setHotelHabilitado(code,val){
+  const h=getHotelesHabilitados();
+  h[code]=val;
+  localStorage.setItem('hoteles_habilitados',JSON.stringify(h));
+}
+
+function hotelEstaHabilitado(code){
+  return getHotelesHabilitados()[code]===true;
+}
+
+// ── Restaurantes con cierre extendido (guardado en localStorage) ──
+function getCierresExtendidos(){
+  try{
+    const saved=localStorage.getItem('cierres_extendidos');
+    if(saved) return JSON.parse(saved);
+  }catch(e){}
+  return {};
+}
+
+function saveCierresExtendidos(obj){
+  localStorage.setItem('cierres_extendidos',JSON.stringify(obj));
+}
+
+function restauranteEstaCerrado(hotelCode, restaurante){
+  const cierres=getCierresExtendidos();
+  const key=hotelCode+'_'+restaurante;
+  if(!cierres[key]) return false;
+  const hoy=today();
+  return cierres[key].hasta>=hoy;
+}
+
+function getCierreFecha(hotelCode, restaurante){
+  const cierres=getCierresExtendidos();
+  const key=hotelCode+'_'+restaurante;
+  return cierres[key]||null;
+}
+
+function solicitarBorrado(id){
+  pendingBorrarId=id;
+  document.getElementById('modal-password').value='';
+  document.getElementById('modal-error').style.display='none';
+  document.getElementById('modal-borrar').style.display='flex';
+  setTimeout(()=>document.getElementById('modal-password').focus(),100);
+}
+function cerrarModal(){
+  document.getElementById('modal-borrar').style.display='none';
+  pendingBorrarId=null;
+}
+function confirmarBorrado(){
+  const pwd=document.getElementById('modal-password').value;
+  if(pwd!==BORRAR_PWD){
+    document.getElementById('modal-error').style.display='block';
+    return;
+  }
+  if(pendingBorrarId){
+    eliminados.add(pendingBorrarId);
+    // También eliminar de records locales si aplica
+    records=records.filter(r=>r.id!==pendingBorrarId);
+    allRecords=allRecords.filter(r=>r.id!==pendingBorrarId);
+  }
+  cerrarModal();
+  // Re-renderizar todas las vistas
+  if(isAdmin) renderAdmin();
+  else renderActiveDashTab();
+}
+
+// ── FECHA UTILS ──
+function today(){return new Date().toISOString().split('T')[0];}
+function normalizarFecha(fecha){
+  if(!fecha) return '';
+  const s = String(fecha).trim();
+  // Ya está en formato YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
+  // Formato largo tipo "Fri Jun 26 2026 00:00:00 GMT-0400..."
+  // o cualquier formato que JavaScript pueda parsear
+  try{
+    const d = new Date(s);
+    if(!isNaN(d.getTime())){
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return y+'-'+m+'-'+day;
+    }
+  }catch(e){}
+  return s;
+}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0];}
+function yesterday(){return daysAgo(1);}
+function getHotelDateRange(){
+  const p=document.getElementById('h-filter-period').value;
+  if(p==='all')return{from:null,to:null};
+  if(p==='today')return{from:today(),to:today()};
+  if(p==='yesterday')return{from:yesterday(),to:yesterday()};
+  if(p==='week')return{from:daysAgo(7),to:today()};
+  if(p==='month')return{from:daysAgo(30),to:today()};
+  return{from:document.getElementById('h-date-from').value||null,to:document.getElementById('h-date-to').value||null};
+}
+function getAdminDateRange(){
+  const p=document.getElementById('adm-filter-period').value;
+  if(p==='all')return{from:null,to:null};
+  if(p==='today')return{from:today(),to:today()};
+  if(p==='yesterday')return{from:yesterday(),to:yesterday()};
+  if(p==='week')return{from:daysAgo(7),to:today()};
+  if(p==='month')return{from:daysAgo(30),to:today()};
+  return{from:document.getElementById('adm-date-from').value||null,to:document.getElementById('adm-date-to').value||null};
+}
+function filterByDate(recs,range){
+  return recs.filter(r=>{
+    if(range.from&&r.fecha<range.from)return false;
+    if(range.to&&r.fecha>range.to)return false;
+    return true;
+  });
+}
+function onHotelPeriodChange(){
+  const p=document.getElementById('h-filter-period').value;
+  document.getElementById('h-range-wrap').style.display=p==='range'?'flex':'none';
+  renderActiveDashTab();
+}
+function onAdminPeriodChange(){
+  const p=document.getElementById('adm-filter-period').value;
+  document.getElementById('adm-range-wrap').style.display=p==='range'?'flex':'none';
+  renderAdmin();
+}
+function getFilteredHotelRecords(){return filterByDate(records,getHotelDateRange()).filter(r=>!eliminados.has(r.id));}
+
+// ── PDF EXPORT ──
+function exportPDF(mode){
+  const d=new Date().toLocaleDateString('es-DO',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('print-date').textContent='Fecha: '+d;
+  const range=mode==='hotel'?getHotelDateRange():getAdminDateRange();
+  let periodTxt='Todo el historial';
+  if(range.from&&range.to) periodTxt='Del '+range.from+' al '+range.to;
+  else if(range.from) periodTxt='Desde '+range.from;
+  document.getElementById('print-period').textContent='Período: '+periodTxt;
+  if(mode==='hotel'){
+    document.getElementById('print-subtitle').textContent=(currentHotel?currentHotel.name+' ('+currentHotel.code+')':'')+' · Reporte de operaciones';
+  } else {
+    const hf=document.getElementById('adm-filter-hotel').value;
+    document.getElementById('print-subtitle').textContent=(hf?hf:'Todos los hoteles')+' · Reporte consolidado';
+  }
+  document.getElementById('print-footer-date').textContent=d;
+  window.print();
+}
+
+// ── LOGIN ──
+async function doLogin(){
+  const raw=document.getElementById('hotelCode').value.trim().toUpperCase();
+  document.getElementById('loginError').style.display='none';
+  if(raw===ADMIN_CODE){
+    isAdmin=true;
+    document.getElementById('screen-login').style.display='none';
+    document.getElementById('screen-admin').style.display='block';
+    await loadAllRecords();renderAdmin();return;
+  }
+  const hotel=HOTELS[raw];
+  if(!hotel){document.getElementById('loginError').style.display='block';return;}
+  isAdmin=false;currentHotel=hotel;currentHotel._key=raw;
+  loadRecords();
+  document.getElementById('screen-login').style.display='none';
+  document.getElementById('screen-app').style.display='block';
+  document.getElementById('hotel-pill').textContent=hotel.name+' ('+hotel.code+')';
+  document.getElementById('f-fecha').value=today();
+  populateRestaurantes();renderSessionLog();verificarPendientesHotel();
+  // Restringir fecha: solo hoy o ayer
+  const inputFecha = document.getElementById('f-fecha');
+  inputFecha.min = yesterday();
+  inputFecha.max = today();
+  inputFecha.value = today();
+}
+function doLogout(){
+  currentHotel=null;isAdmin=false;records=[];allRecords=[];
+  isCerrado=false;
+  document.getElementById('screen-app').style.display='none';
+  document.getElementById('screen-admin').style.display='none';
+  document.getElementById('screen-login').style.display='flex';
+  document.getElementById('hotelCode').value='';
+  clearForm();
+  document.getElementById('form-alert').style.display='none';
+  document.getElementById('form-alert').dataset.horario='no';
+  showSection('form');
+}
+
+// ── ESTRUCTURA DE SERVICIOS ESPERADOS ──
+const ESTRUCTURA_ESPERADA = {"SERPC": {"Bluewater Grill": ["Cena"], "Himitsu": ["Cena"], "Bordeaux": ["Cena"], "El Patio": ["Cena"], "Oceana": ["Desayuno", "Almuerzo", "Cena"]}, "DRRPC": {"Seaside Grill": ["Desayuno", "Almuerzo", "Cena"], "Fusion": ["Cena"], "Mercure": ["Cena"], "Tres Colores": ["Cena"], "Portofino": ["Desayuno", "Almuerzo", "Cena"]}, "DROPC": {"Cin Cin": ["Cena"], "Capers": ["Cena"], "Bluewater Grill": ["Cena"], "Mercure": ["Cena"], "Faire": ["Cena"], "Spice": ["Cena"], "Tamarindo": ["Desayuno", "Almuerzo", "Cena"], "Room Service": ["Desayuno", "Almuerzo", "Menú Nocturno"]}, "BREPC": {"Coquette": ["Cena"], "Spumante": ["Cena"], "Silk City": ["Cena"], "Culinaria": ["Cena"], "The Strip Grill": ["Desayuno", "Almuerzo", "Cena"], "Sofrito": ["Cena"], "Room Service": ["Desayuno", "Almuerzo", "Menú Nocturno"]}, "DRFPC": {"Seaside Grill": ["Desayuno", "Almuerzo", "Cena"], "Portofino": ["Cena"], "Bordeaux": ["Cena"], "Himitsu": ["Cena"], "El Patio": ["Cena"]}, "DRJRC": {"Mercure": ["Desayuno", "Cena"], "Capers": ["Cena"], "Castaway": ["Almuerzo"], "Tamarindo": ["Cena"], "Cin Cin": ["Cena"], "Spice": ["Cena"]}, "SEAUA": {"Oceana": ["Desayuno", "Almuerzo", "Cena"], "Portofino": ["Cena"], "Himitsu": ["Cena"], "Tierra": ["Cena"]}};
+
+function calcularPendientes(hotelCode, recsAyer) {
+  const esperados = ESTRUCTURA_ESPERADA[hotelCode] || {};
+  const pendientes = [];
+  Object.entries(esperados).forEach(([rest, servicios]) => {
+    servicios.forEach(serv => {
+      const existe = recsAyer.some(r => r.restaurante === rest && r.servicio === serv);
+      if(!existe) pendientes.push({restaurante: rest, servicio: serv});
+    });
+  });
+  return pendientes;
+}
+
+async function verificarPendientesHotel() {
+  const ayer = yesterday();
+  // Cargar registros de ayer del hotel actual
+  try {
+    const url = APPS_SCRIPT_URL + '?hotel=' + currentHotel.code + '&from=' + ayer + '&to=' + ayer;
+    const res = await fetch(url);
+    const json = await res.json();
+    const recsAyer = (json.records||[]).map(r=>({...r, fecha: normalizarFecha(r.fecha)}));
+    const pendientes = calcularPendientes(currentHotel.code, recsAyer);
+    if(pendientes.length > 0) mostrarPopupPendientes(ayer, pendientes);
+  } catch(e) { console.warn('Error verificando pendientes:', e); }
+}
+
+function mostrarPopupPendientes(fecha, pendientes) {
+  document.getElementById('popup-fecha-ayer').textContent = fecha;
+  const lista = document.getElementById('popup-lista');
+  lista.innerHTML = pendientes.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;">
+      <span style="font-size:18px;">🔴</span>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#92400e;">${p.restaurante}</div>
+        <div style="font-size:12px;color:#b45309;">${p.servicio} — sin registrar</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('popup-pendientes').style.display = 'flex';
+}
+
+function cerrarPopupPendientes() {
+  document.getElementById('popup-pendientes').style.display = 'none';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('screen-login').style.display!=='none') doLogin();
+  if(e.key==='Escape') cerrarModal();
+});
+
+// ── PERSISTENCIA ──
+// ── CARGA DESDE GOOGLE SHEET ──
+async function loadRecords(){
+  showDashLoading(true);
+  try{
+    const url=APPS_SCRIPT_URL+'?hotel='+currentHotel.code;
+    const res=await fetch(url);
+    const json=await res.json();
+    records=(json.records||[]).map(r=>({
+      ...r,
+      fecha: normalizarFecha(r.fecha)
+    }));
+  }catch(e){
+    console.warn('Error cargando Sheet, usando localStorage:',e);
+    try{records=JSON.parse(localStorage.getItem('cmd_'+currentHotel._key)||'[]');}catch(e2){records=[];}
+  }
+  showDashLoading(false);
+}
+async function loadAllRecords(){
+  showDashLoading(true);
+  try{
+    const url=APPS_SCRIPT_URL;
+    const res=await fetch(url);
+    const json=await res.json();
+    allRecords=(json.records||[]).map(r=>({
+      ...r,
+      fecha: normalizarFecha(r.fecha)
+    }));
+  }catch(e){
+    console.warn('Error cargando Sheet, usando localStorage:',e);
+    allRecords=[];
+    Object.keys(HOTELS).forEach(k=>{try{allRecords=allRecords.concat(JSON.parse(localStorage.getItem('cmd_'+k)||'[]'));}catch(e2){};});
+  }
+  showDashLoading(false);
+}
+function showDashLoading(show){
+  const ids=['dash-loading','adm-loading'];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=show?'flex':'none';});
+}
+function saveRecords(){try{localStorage.setItem('cmd_'+currentHotel._key,JSON.stringify(records));}catch(e){}}
+
+// ── FORMULARIO ──
+function populateRestaurantes(){
+  const sel=document.getElementById('f-restaurante');
+  sel.innerHTML='<option value="">— Seleccionar restaurante —</option>';
+  Object.keys(currentHotel.restaurantes).forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o);});
+  document.getElementById('f-servicio').innerHTML='<option value="">— Seleccionar servicio —</option>';
+  document.getElementById('f-servicio').disabled=true;
+}
+function serviciosPermitidosHoy(){
+  // Retorna lista de servicios permitidos según la hora actual (hora RD) — restaurantes normales
+  const hora = new Date().getHours(); // hora local del dispositivo
+  if(hora >= 22) return ['Desayuno','Almuerzo','Cena'];  // 10PM - 11:59PM
+  if(hora >= 15) return ['Desayuno','Almuerzo'];          // 3PM - 9:59PM
+  if(hora >= 10) return ['Desayuno'];                     // 10AM - 2:59PM
+  return [];                                               // antes de 10AM
+}
+
+function serviciosPermitidosHoyRoomService(){
+  // Lógica de horario específica para Room Service (3 turnos: 7am-3pm, 3pm-11pm, 11pm-7am)
+  // Desayuno: 11:00 AM - 11:59 PM | Almuerzo: 11:00 PM - 11:59 PM | Menú Nocturno: nunca en fecha=hoy
+  const hora = new Date().getHours();
+  if(hora >= 23) return ['Desayuno','Almuerzo']; // 11PM - 11:59PM
+  if(hora >= 11) return ['Desayuno'];             // 11AM - 10:59PM
+  return [];                                       // antes de 11AM
+}
+
+function esRoomService(rest){
+  return rest === 'Room Service';
+}
+
+function filtrarServiciosPorHorario(servicios, fecha, rest){
+  const hoy = today();
+  const ayer = yesterday();
+  if(fecha === ayer) return servicios; // ayer: todos disponibles (igual para Room Service)
+  if(fecha !== hoy)  return servicios; // otra fecha: todos (validación de rango ya la maneja validateForm)
+
+  // Es hoy — filtrar por horario según el tipo de restaurante
+  const permitidos = esRoomService(rest) ? serviciosPermitidosHoyRoomService() : serviciosPermitidosHoy();
+
+  // Si el capitán activa "Cerrado", siempre se permite (lo maneja toggleCerrado)
+  // Aquí solo filtramos los servicios normales
+  return servicios.filter(s => permitidos.includes(s));
+}
+
+function loadServicios(){
+  clearFieldError('restaurante');
+  const rest  = document.getElementById('f-restaurante').value;
+  const fecha = document.getElementById('f-fecha').value;
+  const sel   = document.getElementById('f-servicio');
+
+  if(!rest){
+    sel.innerHTML='<option value="">— Seleccionar servicio —</option>';
+    sel.disabled=true;
+    document.getElementById('servicio-wrap').style.display='block';
+    return;
+  }
+
+  const todosServicios = currentHotel.restaurantes[rest];
+
+  // Si solo tiene un servicio (siempre Cena) — asignar automáticamente sin filtrar
+  if(todosServicios.length===1){
+    sel.innerHTML=`<option value="${todosServicios[0]}" selected>${todosServicios[0]}</option>`;
+    sel.disabled=true;
+    document.getElementById('servicio-wrap').style.display='none';
+    return;
+  }
+
+  // Filtrar por horario si la fecha es hoy
+  const serviciosFiltrados = filtrarServiciosPorHorario(todosServicios, fecha, rest);
+
+  if(serviciosFiltrados.length === 0){
+    // Ningún servicio disponible aún hoy
+    sel.innerHTML='<option value="">— Sin servicios disponibles aún —</option>';
+    sel.disabled=true;
+    document.getElementById('servicio-wrap').style.display='block';
+    // Mostrar aviso
+    setFieldError('servicio', true);
+    document.getElementById('err-servicio').textContent = esRoomService(rest)
+      ? '⚠ Aún no hay servicios disponibles para registrar hoy. El Desayuno de Room Service está disponible desde las 11:00 AM.'
+      : '⚠ Aún no hay servicios disponibles para registrar hoy. El desayuno está disponible desde las 10:00 AM.';
+    return;
+  }
+
+  sel.innerHTML='<option value="">— Seleccionar servicio —</option>';
+  serviciosFiltrados.forEach(s=>{
+    const o=document.createElement('option');
+    o.value=s;o.textContent=s;
+    sel.appendChild(o);
+  });
+  sel.disabled=false;
+  document.getElementById('servicio-wrap').style.display='block';
+
+  // Si solo queda un servicio disponible por horario, seleccionarlo automáticamente
+  if(serviciosFiltrados.length===1){
+    sel.value=serviciosFiltrados[0];
+  }
+}
+function getServicioValue(){
+  const rest=document.getElementById('f-restaurante').value;
+  if(!rest)return'';
+  const s=currentHotel.restaurantes[rest];
+  return s.length===1?s[0]:document.getElementById('f-servicio').value;
+}
+// ── CERRADO ──
+let isCerrado = false;
+function toggleCerrado(){
+  isCerrado = !isCerrado;
+  const btn  = document.getElementById('btn-cerrado');
+  const pax  = document.getElementById('f-pax');
+  const req  = document.getElementById('pax-req');
+  const hint = document.getElementById('cerrado-hint');
+  const cmdSel = document.getElementById('f-comandero');
+  if(isCerrado){
+    const rest = document.getElementById('f-restaurante').value;
+    const multi = rest && currentHotel && currentHotel.restaurantes[rest] && currentHotel.restaurantes[rest].length > 1;
+    btn.textContent = multi ? '🔵 Servicio Cerrado' : '🔵 Restaurante Cerrado';
+    if(multi && rest){
+      const selServ = document.getElementById('f-servicio');
+      const todosServ = currentHotel.restaurantes[rest];
+      selServ.innerHTML='<option value="">— Seleccionar servicio —</option>';
+      todosServ.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;selServ.appendChild(o);});
+      selServ.disabled=false;
+      document.getElementById('servicio-wrap').style.display='block';
+    }
+    btn.classList.add('active-cerrado');
+    pax.value = '0'; pax.disabled = true;
+    pax.style.background = '#f8fafc'; pax.style.color = '#94a3b8';
+    if(req) req.style.display = 'none';
+    if(hint) hint.textContent = multi ? 'Servicio no operó hoy' : 'Restaurante no operó hoy';
+    cmdSel.value = 'Si'; cmdSel.disabled = true;
+    cmdSel.style.background = '#f8fafc'; cmdSel.style.color = '#94a3b8';
+    document.getElementById('incidencia-wrap').style.display = 'none';
+    clearFieldError('pax');
+
+    // ── Preguntar si el cierre es extendido (más de un día) ──
+    setTimeout(()=>{
+      const codigo = prompt('¿El cierre es por más de un día?\n\nSi es así, ingresa el código de autorización y la fecha hasta la que estará cerrado.\n\nCódigo (o Cancel para cierre de un día):');
+      if(codigo===CODIGO_CIERRE_EXTENDIDO){
+        const hasta = prompt('¿Hasta qué fecha estará cerrado este restaurante?\nFormato: YYYY-MM-DD (ej: 2026-07-15)');
+        if(hasta && /^\d{4}-\d{2}-\d{2}$/.test(hasta) && hasta>=today()){
+          const cierres = getCierresExtendidos();
+          const key = currentHotel.code+'_'+rest;
+          cierres[key] = {hasta, restaurante:rest, hotel:currentHotel.code};
+          saveCierresExtendidos(cierres);
+          if(hint) hint.textContent = (multi?'Servicio':'Restaurante')+' cerrado hasta '+hasta;
+          showAlert('✅ Cierre extendido registrado hasta '+hasta,'success');
+        } else if(hasta){
+          showAlert('⚠ Fecha inválida. El cierre de un solo día continúa.','error');
+        }
+      }
+    },100);
+  } else {
+    btn.textContent = '🔴 Marcar como cerrado';
+    btn.classList.remove('active-cerrado');
+    pax.value = ''; pax.disabled = false;
+    pax.style.background = ''; pax.style.color = '';
+    cmdSel.disabled = false; cmdSel.style.background = ''; cmdSel.style.color = '';
+    if(req) req.style.display = 'inline';
+    if(hint) hint.textContent = 'Pulsa si no hubo servicio';
+  }
+}
+
+function toggleIncidencia(){
+  const v=document.getElementById('f-comandero').value;
+  document.getElementById('incidencia-wrap').style.display=v!=='Si'?'block':'none';
+  if(v==='Si'){clearFieldError('incidencia');clearFieldError('detalle');}
+}
+function toggleDetalle(){
+  clearFieldError('incidencia');
+  const v=document.getElementById('f-incidencia').value;
+  const req=document.getElementById('detalle-req');
+  req.style.display=v==='Otros'?'inline':'none';
+}
+
+// ── VALIDACIÓN ──
+function setFieldError(field,show){
+  const input=document.getElementById('f-'+field);
+  const msg=document.getElementById('err-'+field);
+  if(!input||!msg)return;
+  if(show){input.classList.add('field-error');msg.classList.add('show');}
+  else{input.classList.remove('field-error');msg.classList.remove('show');}
+}
+function clearFieldError(field){setFieldError(field,false);}
+
+function validateForm(){
+  let valid=true;
+  // Limpiar errores previos al inicio de cada validación
+  ['fecha','restaurante','servicio','pax','incidencia','detalle','responsable'].forEach(f=>clearFieldError(f));
+  document.getElementById('form-alert').style.display='none';
+  document.getElementById('form-alert').dataset.horario='no';
+  // Fecha — obligatoria y solo hoy o ayer
+  const fecha=document.getElementById('f-fecha').value;
+  if(!fecha){
+    setFieldError('fecha',true);
+    document.getElementById('err-fecha').textContent='⚠ La fecha es obligatoria.';
+    valid=false;
+  } else if(fecha < yesterday() || fecha > today()){
+    setFieldError('fecha',true);
+    document.getElementById('err-fecha').textContent='⚠ Solo puedes registrar el día de hoy o el día de ayer.';
+    valid=false;
+  } else {
+    clearFieldError('fecha');
+  }
+  // Restaurante
+  const rest=document.getElementById('f-restaurante').value;
+  if(!rest){setFieldError('restaurante',true);valid=false;}else clearFieldError('restaurante');
+  // Servicio — obligatorio + validación de horario
+  const serv=getServicioValue();
+  const servicioNeedsSelect=rest&&currentHotel.restaurantes[rest]&&currentHotel.restaurantes[rest].length>1;
+  if(servicioNeedsSelect&&!serv){
+    setFieldError('servicio',true);
+    valid=false;
+  } else if(serv && !isCerrado){
+    // Validar horario para TODOS los restaurantes (incluyendo los de servicio único)
+    const fechaVal=document.getElementById('f-fecha').value;
+    if(fechaVal===today()){
+      const esRS = esRoomService(rest);
+      const permitidos = esRS ? serviciosPermitidosHoyRoomService() : serviciosPermitidosHoy();
+      const todosServRest=currentHotel.restaurantes[rest]||[];
+      const noDisponibles=todosServRest.filter(s=>!permitidos.includes(s));
+      if(permitidos.length===0){
+        setFieldError('servicio',true);
+        document.getElementById('err-servicio').textContent = esRS
+          ? '⚠ Aún no hay servicios disponibles para registrar hoy. El Desayuno de Room Service estará disponible desde las 11:00 AM.'
+          : '⚠ Aún no hay servicios disponibles para registrar hoy. El Desayuno estará disponible desde las 10:00 AM.';
+        valid=false;
+      } else if(!permitidos.includes(serv)){
+        // Construir mensaje claro con todos los servicios no disponibles
+        const dispTxt = permitidos.length === 1 ? 'Solo está disponible: ' : 'Solo están disponibles: ';
+        const msgHorario = noDisponibles.length > 0
+          ? '⚠ A esta hora no puedes registrar: ' + noDisponibles.join(' ni ') + '. ' + dispTxt + permitidos.join(' y ') + '.'
+          : '⚠ Verifica el servicio a registrar.';
+        // Mostrar servicio-wrap para que err-servicio sea visible
+        document.getElementById('servicio-wrap').style.display='block';
+        setFieldError('servicio', true);
+        document.getElementById('err-servicio').textContent = msgHorario;
+        // También en form-alert — usar dataset para no sobreescribir
+        document.getElementById('form-alert').className='alert alert-error';
+        document.getElementById('form-alert').textContent = msgHorario;
+        document.getElementById('form-alert').style.display='block';
+        document.getElementById('form-alert').dataset.horario='si';
+        valid=false;
+      } else { clearFieldError('servicio'); }
+    } else { clearFieldError('servicio'); }
+  } else { clearFieldError('servicio'); }
+  // Pax — solo obligatorio si NO está cerrado
+  const pax=document.getElementById('f-pax').value;
+  if(!isCerrado&&(!pax||parseInt(pax)<1||parseInt(pax)>600)){setFieldError('pax',true);valid=false;}else clearFieldError('pax');
+  // Incidencia (si comandero != Si)
+  const cmd=document.getElementById('f-comandero').value;
+  if(cmd!=='Si'){
+    const incid=document.getElementById('f-incidencia').value;
+    if(!incid){setFieldError('incidencia',true);valid=false;}else clearFieldError('incidencia');
+    // Detalle obligatorio si "Otros"
+    const detalle=document.getElementById('f-detalle').value.trim();
+    if(incid==='Otros'&&!detalle){setFieldError('detalle',true);valid=false;}else clearFieldError('detalle');
+  }
+  // Responsable
+  const resp=document.getElementById('f-responsable').value.trim();
+  if(!resp){setFieldError('responsable',true);valid=false;}else clearFieldError('responsable');
+  return valid;
+}
+
+function clearForm(){
+  // Reset cerrado — si estaba activo, lo desactivamos
+  if(isCerrado){ toggleCerrado(); }
+  document.getElementById('f-restaurante').value='';
+  document.getElementById('f-servicio').innerHTML='<option value="">— Seleccionar servicio —</option>';
+  document.getElementById('f-servicio').disabled=true;
+  document.getElementById('servicio-wrap').style.display='block';
+  document.getElementById('f-pax').value='';
+  document.getElementById('f-comandero').value='Si';
+  document.getElementById('f-detalle').value='';
+  document.getElementById('f-responsable').value='';
+  document.getElementById('f-incidencia').value='';
+  document.getElementById('incidencia-wrap').style.display='none';
+  document.getElementById('detalle-req').style.display='none';
+  ['fecha','restaurante','servicio','pax','incidencia','detalle','responsable'].forEach(f=>clearFieldError(f));
+  hideAlert();
+}
+function showAlert(msg,type){const el=document.getElementById('form-alert');el.className='alert alert-'+type;el.textContent=msg;el.style.display='block';if(type==='success')setTimeout(hideAlert,4000);}
+function hideAlert(){document.getElementById('form-alert').style.display='none';}
+
+async function submitForm(){
+  if(!validateForm()){
+    if(document.getElementById('form-alert').dataset.horario !== 'si'){
+      showAlert('Por favor completa todos los campos obligatorios marcados en rojo.','error');
+    }
+    document.querySelector('.field-error')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const fecha=document.getElementById('f-fecha').value;
+  const rest=document.getElementById('f-restaurante').value;
+  const serv=getServicioValue();
+  const pax=document.getElementById('f-pax').value;
+  const resp=document.getElementById('f-responsable').value.trim();
+  const cmd=document.getElementById('f-comandero').value;
+  // Si está cerrado: pax=0, comandero=Si, incidencia=etiqueta de cerrado
+  let incid,detalle,finalCmd,finalPax;
+  if(isCerrado){
+    const rest2=document.getElementById('f-restaurante').value;
+    const multiServ=rest2&&currentHotel.restaurantes[rest2]&&currentHotel.restaurantes[rest2].length>1;
+    finalCmd    = 'Si';
+    finalPax    = 0;
+    incid       = multiServ?'Servicio Cerrado':'Restaurante Cerrado';
+    detalle     = '';
+  } else {
+    finalCmd    = cmd;
+    finalPax    = parseInt(pax);
+    incid       = cmd!=='Si'?document.getElementById('f-incidencia').value:'';
+    detalle     = cmd!=='Si'?document.getElementById('f-detalle').value.trim():'';
+  }
+  const rec={id:Date.now().toString(),fecha,hotel:currentHotel.name,hotelCode:currentHotel.code,restaurante:rest,servicio:serv,pax:finalPax,comandero:finalCmd,incidencia:incid,detalle,responsable:resp,timestamp:new Date().toISOString()};
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Enviando...';
+  showAlert('Enviando registro...','loading');
+  let enviado=false;
+  let esDuplicado=false;
+  let msgDuplicado='';
+  if(APPS_SCRIPT_URL&&!APPS_SCRIPT_URL.includes('PEGAR')){
+    try{
+      const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(rec)});
+      const json=await resp.json();
+      if(json.status==='duplicado'){
+        esDuplicado=true;
+        msgDuplicado=json.message||'Este servicio ya fue registrado anteriormente.';
+      } else if(json.status==='ok'){
+        enviado=true;
+      }
+    }catch(e){console.warn(e);}
+  }
+  btn.disabled=false;btn.textContent='Enviar registro';
+
+  if(esDuplicado){
+    showAlert('⚠ '+msgDuplicado,'error');
+    return;
+  }
+
+  records.push(rec);saveRecords();
+  showAlert(enviado?'✅ Registro enviado y guardado.':'💾 Guardado localmente.','success');
+  renderSessionLog();clearForm();document.getElementById('f-fecha').value=fecha;
+}
+
+// ── SESSION LOG ──
+function renderSessionLog(){
+  const hoy=today();
+  const recs=records.filter(r=>r.fecha===hoy).reverse().slice(0,6);
+  const c=document.getElementById('session-log');
+  if(!recs.length){c.innerHTML='<p style="text-align:center;color:#94a3b8;font-size:13px;padding:12px 0;">Sin registros hoy</p>';return;}
+  c.innerHTML=recs.map(r=>{
+    const cls=r.comandero==='Si'?'ok':r.comandero==='Parcial'?'parcial':'fallo';
+    const badge=r.comandero==='Si'?'badge-ok':r.comandero==='Parcial'?'badge-parcial':'badge-fallo';
+    const esCerrado=r.incidencia&&r.incidencia.includes('Cerrado');
+    const badgeFinal=esCerrado?'badge-parcial':badge;
+    const labelFinal=esCerrado?r.incidencia:(r.comandero==='Si'?'OK':r.comandero);
+    return `<div class="log-item ${cls}"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;font-weight:700;">${r.restaurante} · ${r.servicio}</span><span class="badge ${badgeFinal}">${labelFinal}</span></div><div style="font-size:12px;color:#64748b;margin-top:3px;">${esCerrado?'Cerrado':r.pax+' pax'} · ${r.responsable}</div>${r.incidencia&&!esCerrado?`<div style="font-size:11px;color:#ef4444;margin-top:2px;">⚠ ${r.incidencia}</div>`:''}</div>`;
+  }).join('');
+}
+
+// ── NAV HOTEL ──
+async function showSection(s){
+  document.getElementById('section-form').style.display=s==='form'?'block':'none';
+  document.getElementById('section-dash').style.display=s==='dash'?'block':'none';
+  document.getElementById('nav-form').className='tab'+(s==='form'?' active':'');
+  document.getElementById('nav-dash').className='tab'+(s==='dash'?' active':'');
+  if(s==='dash'){await loadRecords();renderActiveDashTab();}
+}
+function setDashTab(t){
+  activeDashTab=t;
+  ['resumen','incidencias','restaurantes','registros'].forEach(id=>{document.getElementById('dash-'+id).style.display=id===t?'block':'none';});
+  document.querySelectorAll('.dash-tab').forEach((el,i)=>{el.className='dash-tab'+(['resumen','incidencias','restaurantes','registros'][i]===t?' active':'');});
+  renderActiveDashTab();
+}
+function renderActiveDashTab(){
+  if(activeDashTab==='resumen')renderDashResumen();
+  else if(activeDashTab==='incidencias')renderDashIncidencias();
+  else if(activeDashTab==='restaurantes')renderDashRestaurantes();
+  else renderDashRegistros();
+}
+
+// ── DASHBOARD HOTEL ──
+function renderDashResumen(){
+  const recs=getFilteredHotelRecords();
+  const tot=recs.length,pax=recs.reduce((s,r)=>s+r.pax,0);
+  const ok=recs.filter(r=>r.comandero==='Si').length,fail=recs.filter(r=>(r.comandero==='Parcial'||r.comandero==='No')&&!r.incidencia.includes('Cerrado')).length;
+  const pct=tot?Math.round(ok/tot*100):0;
+  document.getElementById('kpi-grid').innerHTML=`<div class="kpi-card"><div class="kpi-label">Registros</div><div class="kpi-value">${tot}</div></div><div class="kpi-card"><div class="kpi-label">Total pax</div><div class="kpi-value">${pax.toLocaleString()}</div></div><div class="kpi-card"><div class="kpi-label">Uso correcto</div><div class="kpi-value ${pct>=80?'green':pct>=60?'amber':'red'}">${pct}%</div></div><div class="kpi-card"><div class="kpi-label">Incidencias</div><div class="kpi-value ${fail>0?'red':''}">${fail}</div></div>`;
+  const paxServ={},byTipoFallo={};
+  recs.forEach(r=>{
+    paxServ[r.servicio]=(paxServ[r.servicio]||0)+r.pax;
+    if(r.incidencia && !r.incidencia.includes('Cerrado')) byTipoFallo[r.incidencia]=(byTipoFallo[r.incidencia]||0)+1;
+  });
+  renderHBar('hbar-pax-servicio',paxServ,'#0ea5e9');
+  renderHBar('hbar-tipos-resumen',byTipoFallo,'#ef4444');
+  setTimeout(()=>{
+    if(chartUso)chartUso.destroy();
+    chartUso=new Chart(document.getElementById('chart-uso'),{type:'doughnut',data:{labels:['Correcto','Parcial','Fallo'],datasets:[{data:[ok,recs.filter(r=>r.comandero==='Parcial').length,recs.filter(r=>r.comandero==='No').length],backgroundColor:['#22c55e','#f59e0b','#ef4444'],borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},cutout:'60%'}});
+  },80);
+}
+function renderHBar(id,data,color){
+  const el=document.getElementById(id);
+  const sorted=Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  const max=sorted[0]?.[1]||1;
+  if(!sorted.length){el.innerHTML='<p style="color:#94a3b8;font-size:13px;text-align:center;padding:12px;">Sin datos</p>';return;}
+  el.innerHTML=sorted.map(([label,val])=>`<div class="hbar-row"><div class="hbar-label" title="${label}">${label}</div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(val/max*100)}%;background:${color};">${val}</div></div></div>`).join('');
+}
+function renderDashIncidencias(){
+  const recs=getFilteredHotelRecords();
+  const byTipo={},byRest={};
+  recs.filter(r=>r.incidencia&&!r.incidencia.includes('Cerrado')).forEach(r=>{byTipo[r.incidencia]=(byTipo[r.incidencia]||0)+1;byRest[r.restaurante]=(byRest[r.restaurante]||0)+1;});
+  renderHBar('hbar-tipos',byTipo,'#ef4444');renderHBar('hbar-rest-incid',byRest,'#f59e0b');
+}
+function renderDashRestaurantes(){
+  const recs=getFilteredHotelRecords();
+  const byPax={},byUso={};
+  recs.forEach(r=>{byPax[r.restaurante]=(byPax[r.restaurante]||0)+r.pax;if(!byUso[r.restaurante])byUso[r.restaurante]={ok:0,tot:0};byUso[r.restaurante].tot++;if(r.comandero==='Si'||(r.incidencia&&r.incidencia.includes('Cerrado')))byUso[r.restaurante].ok++;});
+  const usoP={};Object.entries(byUso).forEach(([k,v])=>{usoP[k]=Math.round(v.ok/v.tot*100);});
+  renderHBar('hbar-pax-rest',byPax,'#3b82f6');renderHBar('hbar-uso-rest',usoP,'#22c55e');
+}
+function renderDashRegistros(){
+  const recs=getFilteredHotelRecords();
+  const tbody=document.getElementById('tabla-registros');
+  if(!recs.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:20px;">Sin registros para este período</td></tr>';return;}
+  tbody.innerHTML=[...recs].reverse().map(r=>{const bc=r.comandero==='Si'?'badge-ok':r.comandero==='Parcial'?'badge-parcial':'badge-fallo';return`<tr><td>${r.fecha}</td><td>${r.restaurante}</td><td>${r.servicio}</td><td style="font-weight:700;">${r.pax}</td><td><span class="badge ${bc}">${r.comandero}</span></td><td style="font-size:11px;color:#ef4444;">${r.incidencia||'—'}</td><td>${r.responsable}</td></tr>`;}).join('');
+}
+function exportCSV(){
+  const recs=getFilteredHotelRecords();
+  const cols=['fecha','hotel','hotelCode','restaurante','servicio','pax','comandero','incidencia','detalle','responsable','timestamp'];
+  const rows=recs.map(r=>cols.map(c=>`"${(r[c]||'').toString().replace(/"/g,'""')}"`).join(','));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+[cols.join(','),...rows].join('\n')],{type:'text/csv;charset=utf-8;'}));
+  a.download=`Comandero_${currentHotel.code}_${today()}.csv`;a.click();
+}
+
+// ── ADMIN ──
+function getFilteredAdminRecords(){
+  const hotel=document.getElementById('adm-filter-hotel').value;
+  const rest=document.getElementById('adm-filter-rest').value;
+  const serv=document.getElementById('adm-filter-serv').value;
+  return filterByDate(allRecords,getAdminDateRange()).filter(r=>!eliminados.has(r.id)&&(!hotel||r.hotelCode===hotel)&&(!rest||r.restaurante===rest)&&(!serv||r.servicio===serv));
+}
+async function renderAdmin(){
+  await loadAllRecords();
+  const hotel=document.getElementById('adm-filter-hotel').value;
+  const restSel=document.getElementById('adm-filter-rest');
+  const curRest=restSel.value;
+  restSel.innerHTML='<option value="">Todos los restaurantes</option>';
+  const rests=new Set();
+  allRecords.filter(r=>!hotel||r.hotelCode===hotel).forEach(r=>rests.add(r.restaurante));
+  [...rests].sort().forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;if(r===curRest)o.selected=true;restSel.appendChild(o);});
+  if(activeAdminTab==='resumen')renderAdminResumen();
+  else if(activeAdminTab==='hoteles')renderAdminHoteles();
+  else if(activeAdminTab==='problemas')renderAdminProblemas();
+  else renderAdminRegistros();
+}
+function setAdminTab(t){
+  activeAdminTab=t;
+  ['resumen','hoteles','problemas','registros','config'].forEach(id=>{
+    const sec=document.getElementById('admin-'+id);
+    if(sec) sec.style.display=id===t?'block':'none';
+  });
+  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-config'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el) el.className='tab'+(['resumen','hoteles','problemas','registros','config'][i]===t?' active':'');
+  });
+  if(t==='config') renderAdminConfig();
+  else renderAdmin();
+}
+
+function renderAdminConfig(){
+  const habilitados=getHotelesHabilitados();
+  const hotelList=[
+    {code:'SERPC',nombre:'Secrets Royal Beach'},
+    {code:'DRRPC',nombre:'Dreams Royal Beach'},
+    {code:'BREPC',nombre:'Breathless'},
+    {code:'DROPC',nombre:'Dreams Onyx'},
+    {code:'DRFPC',nombre:'Dreams Flora',sinComandero:true},
+    {code:'DRJRC',nombre:'Dreams Jade',sinComandero:true},
+    {code:'SEAUA',nombre:'Secrets Baby Beach Aruba',sinComandero:true}
+  ];
+  const switchesDiv=document.getElementById('hotel-switches');
+  if(!switchesDiv) return;
+  switchesDiv.innerHTML=hotelList.map(h=>{
+    const enabled=habilitados[h.code]===true;
+    const badge=h.sinComandero?'<span style="font-size:10px;background:#fef9c3;color:#92400e;padding:1px 7px;border-radius:99px;margin-left:6px;">Sin comandero</span>':'';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9;"><div><div style="font-size:14px;font-weight:600;color:#1e293b;">'+h.nombre+' '+badge+'</div><div style="font-size:11px;color:#94a3b8;">'+h.code+'</div></div><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:12px;color:'+(enabled?'#16a34a':'#ef4444')+';font-weight:600;">'+(enabled?'Activo':'Inactivo')+'</span><div onclick="toggleHotel(\''+h.code+'\')" style="width:44px;height:24px;border-radius:99px;background:'+(enabled?'#16a34a':'#e2e8f0')+';position:relative;cursor:pointer;"><div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:'+(enabled?'22px':'2px')+';box-shadow:0 1px 3px rgba(0,0,0,.2);"></div></div></div></div>';
+  }).join('');
+
+  const cierres=getCierresExtendidos();
+  const cierresDiv=document.getElementById('cierres-lista');
+  if(!cierresDiv) return;
+  const activos=Object.entries(cierres).filter(([k,v])=>v.hasta>=today());
+  if(activos.length===0){
+    cierresDiv.innerHTML='<div style="text-align:center;padding:20px;color:#94a3b8;font-size:13px;">No hay cierres extendidos activos</div>';
+  } else {
+    cierresDiv.innerHTML=activos.map(([key,v])=>{
+      const parts=key.split('_'); const hCode=parts[0]; const rest=parts.slice(1).join('_');
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;margin-bottom:8px;"><div><div style="font-size:13px;font-weight:700;color:#991b1b;">'+rest+'</div><div style="font-size:11px;color:#64748b;">'+hCode+' &middot; Cierre hasta: <strong>'+v.hasta+'</strong></div></div><button onclick="cancelarCierre(\''+key+'\')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;">Cancelar</button></div>';
+    }).join('');
+  }
+}
+
+function toggleHotel(code){
+  const h=getHotelesHabilitados();
+  h[code]=!h[code];
+  localStorage.setItem('hoteles_habilitados',JSON.stringify(h));
+  renderAdminConfig();
+  showAlert((h[code]?'✅ '+code+' activado':'⛔ '+code+' desactivado'),'success');
+}
+
+function cancelarCierre(key){
+  const cierres=getCierresExtendidos();
+  delete cierres[key];
+  saveCierresExtendidos(cierres);
+  renderAdminConfig();
+  showAlert('Cierre extendido cancelado','success');
+}
+function renderAdminResumen(){
+  const recs=getFilteredAdminRecords();
+  const tot=recs.length,pax=recs.reduce((s,r)=>s+r.pax,0);
+  const ok=recs.filter(r=>r.comandero==='Si').length,fail=recs.filter(r=>(r.comandero==='Parcial'||r.comandero==='No')&&!r.incidencia.includes('Cerrado')).length;
+  const pct=tot?Math.round(ok/tot*100):0;
+  document.getElementById('adm-kpi').innerHTML=`<div class="kpi-card"><div class="kpi-label">Total registros</div><div class="kpi-value">${tot}</div></div><div class="kpi-card"><div class="kpi-label">Total pax</div><div class="kpi-value">${pax.toLocaleString()}</div></div><div class="kpi-card"><div class="kpi-label">Uso correcto</div><div class="kpi-value ${pct>=80?'green':pct>=60?'amber':'red'}">${pct}%</div></div><div class="kpi-card"><div class="kpi-label">Incidencias</div><div class="kpi-value ${fail>0?'red':''}">${fail}</div></div>`;
+  const byHotel={},paxServ={},byTipoFallo={};
+  recs.forEach(r=>{
+    byHotel[r.hotel]=(byHotel[r.hotel]||0)+1;
+    paxServ[r.servicio]=(paxServ[r.servicio]||0)+r.pax;
+    if(r.incidencia && !r.incidencia.includes('Cerrado')) byTipoFallo[r.incidencia]=(byTipoFallo[r.incidencia]||0)+1;
+  });
+  renderHBar('adm-hbar-hoteles',byHotel,'#6366f1');
+  renderHBar('adm-hbar-pax-servicio',paxServ,'#0ea5e9');
+  renderHBar('adm-hbar-tipos-resumen',byTipoFallo,'#ef4444');
+  setTimeout(()=>{
+    if(admChartUso)admChartUso.destroy();
+    admChartUso=new Chart(document.getElementById('adm-chart-uso'),{type:'doughnut',data:{labels:['Correcto','Parcial','Fallo'],datasets:[{data:[ok,recs.filter(r=>r.comandero==='Parcial').length,recs.filter(r=>r.comandero==='No').length],backgroundColor:['#22c55e','#f59e0b','#ef4444'],borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},cutout:'60%'}});
+  },80);
+}
+function renderAdminHoteles(){
+  const recs=getFilteredAdminRecords();
+  const container=document.getElementById('adm-hotel-cards');
+  const codes=[...new Set(recs.map(r=>r.hotelCode))].sort();
+  if(!codes.length){container.innerHTML='<div class="card"><p style="color:#94a3b8;text-align:center;padding:20px;">Sin datos para el período seleccionado</p></div>';return;}
+  container.innerHTML=codes.map(code=>{
+    const h=recs.filter(r=>r.hotelCode===code);
+    const name=h[0]?.hotel||code,tot=h.length,pax=h.reduce((s,r)=>s+r.pax,0);
+    const ok=h.filter(r=>r.comandero==='Si').length,fail=h.filter(r=>r.comandero!=='Si').length;
+    const pct=tot?Math.round(ok/tot*100):0;
+    const color=pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626';
+    const byRest={},byServ={};
+    h.forEach(r=>{byRest[r.restaurante]=(byRest[r.restaurante]||0)+r.pax;byServ[r.servicio]=(byServ[r.servicio]||0)+r.pax;});
+    const restRows=Object.entries(byRest).sort((a,b)=>b[1]-a[1]).map(([rest,p])=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f1f5f9;"><span>${rest}</span><span style="font-weight:700;">${p} pax</span></div>`).join('');
+    const servBadges=Object.entries(byServ).map(([s,p])=>`<span style="background:#eff6ff;color:#1d4ed8;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:700;">${s}: ${p}</span>`).join(' ');
+    return `<div class="hotel-summary-card"><h3>${name} <span style="font-size:13px;font-weight:600;color:${color};">${pct}% uso correcto</span></h3><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;"><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Registros</div><div class="kpi-value" style="font-size:18px;">${tot}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Pax</div><div class="kpi-value" style="font-size:18px;">${pax}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">OK</div><div class="kpi-value" style="font-size:18px;color:#16a34a;">${ok}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Fallos</div><div class="kpi-value" style="font-size:18px;color:#dc2626;">${fail}</div></div></div><div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;margin-bottom:6px;">Por restaurante</div>${restRows}<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">${servBadges}</div></div>`;
+  }).join('');
+}
+function renderAdminProblemas(){
+  const recs=getFilteredAdminRecords();
+  const byTipo={},byHotel={},byRest={};
+  recs.filter(r=>r.incidencia&&!r.incidencia.includes('Cerrado')).forEach(r=>{byTipo[r.incidencia]=(byTipo[r.incidencia]||0)+1;byHotel[r.hotel]=(byHotel[r.hotel]||0)+1;byRest[r.restaurante]=(byRest[r.restaurante]||0)+1;});
+  renderHBar('adm-hbar-tipos',byTipo,'#ef4444');
+  renderHBar('adm-hbar-hotel-incid',byHotel,'#f59e0b');
+  renderHBar('adm-hbar-rest-incid',byRest,'#f97316');
+}
+function renderAdminRegistros(){
+  const recs=getFilteredAdminRecords().filter(r=>!eliminados.has(r.id));
+  const tbody=document.getElementById('adm-tabla');
+  if(!recs.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:20px;">Sin registros para el período seleccionado</td></tr>';return;}
+  tbody.innerHTML=[...recs].reverse().map(r=>{
+    const bc=r.comandero==='Si'?'badge-ok':r.comandero==='Parcial'?'badge-parcial':'badge-fallo';
+    return`<tr><td>${r.fecha}</td><td style="font-weight:600;">${r.hotelCode}</td><td>${r.restaurante}</td><td>${r.servicio}</td><td style="font-weight:700;">${r.pax}</td><td><span class="badge ${bc}">${r.comandero}</span></td><td style="font-size:11px;color:#ef4444;">${r.incidencia||'—'}</td><td>${r.responsable}</td><td class="no-print"><button onclick="solicitarBorrado('${r.id}')" style="background:#fee2e2;color:#dc2626;border:1px solid #fecaca;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;cursor:pointer;">🗑 Eliminar</button></td></tr>`;
+  }).join('');
+}
+function exportCSVAdmin(){
+  const recs=getFilteredAdminRecords();
+  const cols=['fecha','hotel','hotelCode','restaurante','servicio','pax','comandero','incidencia','detalle','responsable','timestamp'];
+  const headers=['Fecha','Hotel','Código','Restaurante','Servicio','Pax','Comandero','Incidencia','Detalle','Responsable','Timestamp'];
+  const rows=recs.map(r=>cols.map(c=>`"${(r[c]||'').toString().replace(/"/g,'""')}"`).join(','));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+[headers.join(','),...rows].join('\n')],{type:'text/csv;charset=utf-8;'}));
+  a.download=`Comandero_ADMIN_${today()}.csv`;a.click();
+}
+</script>
+</body>
+</html>

@@ -916,26 +916,52 @@ function toggleCerrado(){
     setTimeout(()=>{
       const codigo = prompt('¿El cierre es por más de un día?\n\nSi es así, ingresa el código de autorización.\n\nCódigo (o Cancel para cierre de un día):');
       if(codigo===CODIGO_CIERRE_EXTENDIDO){
-        const hasta = prompt('¿Hasta qué fecha estará cerrado este restaurante?\nFormato: YYYY-MM-DD (ej: 2026-07-15)');
-        if(hasta && /^\d{4}-\d{2}-\d{2}$/.test(hasta) && hasta>=today()){
-          const key = currentHotel.code+'_'+rest;
-          // Guardar en localStorage como respaldo inmediato
-          const cierres = getCierresExtendidos();
-          cierres[key] = {hasta, restaurante:rest, hotel:currentHotel.code};
-          saveCierresExtendidos(cierres);
-          // Guardar en el Sheet via Apps Script
-          fetch(APPS_SCRIPT_URL,{
-            method:'POST',
-            headers:{'Content-Type':'text/plain;charset=utf-8'},
-            body: JSON.stringify({action:'cierre_extendido', key, hotelCode:currentHotel.code, restaurante:rest, hasta})
-          }).then(r=>r.json()).then(json=>{
-            if(json.status==='ok') console.log('Cierre guardado en Sheet');
-            else console.warn('Error guardando cierre en Sheet:', json.message);
-          }).catch(e=>console.warn('Error de red en cierre:', e));
-          if(hint) hint.textContent = (multi?'Servicio':'Restaurante')+' cerrado hasta '+hasta;
-          showAlert('✅ Cierre extendido registrado hasta '+hasta,'success');
+        const hasta = prompt('¿Hasta qué fecha estará cerrado este restaurante?\nFormato: YYYY-MM-DD (ej: 2026-07-26)');
+        if(hasta && /^\d{4}-\d{2}-\d{2}$/.test(hasta) && hasta>today()){
+          // Generar una fila por cada día desde mañana hasta la fecha indicada
+          const fechaInicio = new Date(today()+'T12:00:00');
+          const fechaFin    = new Date(hasta+'T12:00:00');
+          const dias = [];
+          const cursor = new Date(fechaInicio);
+          cursor.setDate(cursor.getDate()+1); // empezar desde mañana (hoy ya se registró)
+          while(cursor<=fechaFin){
+            dias.push(cursor.toISOString().split('T')[0]);
+            cursor.setDate(cursor.getDate()+1);
+          }
+          if(dias.length===0){
+            showAlert('⚠ La fecha debe ser posterior a hoy.','error');
+            return;
+          }
+          // Enviar una fila por cada día al Apps Script
+          let enviados=0;
+          const responsable = document.getElementById('f-responsable').value.trim() || 'Admin';
+          dias.forEach(fecha=>{
+            const rec={
+              id: Date.now().toString(36)+'-'+Math.random().toString(36).substr(2,6)+'-'+fecha,
+              fecha,
+              hotel: currentHotel.name,
+              hotelCode: currentHotel.code,
+              restaurante: rest,
+              servicio: document.getElementById('f-servicio').value || (multi?'Cena':'Cena'),
+              pax: 0,
+              comandero: 'Si',
+              incidencia: 'Restaurante Cerrado',
+              detalle: 'Cierre extendido hasta '+hasta,
+              responsable,
+              timestamp: new Date().toISOString()
+            };
+            fetch(APPS_SCRIPT_URL,{
+              method:'POST',
+              headers:{'Content-Type':'text/plain;charset=utf-8'},
+              body: JSON.stringify(rec)
+            }).then(r=>r.json()).then(json=>{
+              if(json.status==='ok'||json.status==='duplicado') enviados++;
+            }).catch(e=>console.warn('Error enviando fila cierre:', e));
+          });
+          if(hint) hint.textContent = (multi?'Servicio':'Restaurante')+' cerrado hasta '+hasta+' ('+dias.length+' días registrados)';
+          showAlert('✅ Cierre extendido registrado: '+dias.length+' días del 16 al '+hasta,'success');
         } else if(hasta){
-          showAlert('⚠ Fecha inválida. Ingresa una fecha futura en formato YYYY-MM-DD.','error');
+          showAlert('⚠ Fecha inválida o no es posterior a hoy. Formato: YYYY-MM-DD','error');
         }
       }
     },100);

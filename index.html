@@ -528,20 +528,33 @@ function cerrarModal(){
   document.getElementById('modal-borrar').style.display='none';
   pendingBorrarId=null;
 }
-function confirmarBorrado(){
+async function confirmarBorrado(){
   const pwd=document.getElementById('modal-password').value;
   if(pwd!==BORRAR_PWD){
     document.getElementById('modal-error').style.display='block';
     return;
   }
   if(pendingBorrarId){
+    // Eliminar del Sheet via Apps Script
+    try{
+      const resp = await fetch(APPS_SCRIPT_URL,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({action:'delete', id: pendingBorrarId})
+      });
+      const json = await resp.json();
+      if(json.status !== 'ok'){
+        console.warn('Error al eliminar del Sheet:', json.message);
+      }
+    }catch(e){
+      console.warn('Error de red al eliminar:', e);
+    }
+    // Eliminar de la memoria local también
     eliminados.add(pendingBorrarId);
-    // También eliminar de records locales si aplica
-    records=records.filter(r=>r.id!==pendingBorrarId);
-    allRecords=allRecords.filter(r=>r.id!==pendingBorrarId);
+    records    = records.filter(r=>r.id!==pendingBorrarId);
+    allRecords = allRecords.filter(r=>r.id!==pendingBorrarId);
   }
   cerrarModal();
-  // Re-renderizar todas las vistas
   if(isAdmin) renderAdmin();
   else renderActiveDashTab();
 }
@@ -746,6 +759,12 @@ async function loadAllRecords(){
       ...r,
       fecha: normalizarFecha(r.fecha)
     }));
+    // Cargar cierres extendidos del Sheet al localStorage
+    if(json.cierres && Object.keys(json.cierres).length>0){
+      const cierresActuales = getCierresExtendidos();
+      const merged = {...cierresActuales, ...json.cierres};
+      saveCierresExtendidos(merged);
+    }
   }catch(e){
     console.warn('Error cargando Sheet, usando localStorage:',e);
     allRecords=[];
@@ -895,18 +914,28 @@ function toggleCerrado(){
 
     // ── Preguntar si el cierre es extendido (más de un día) ──
     setTimeout(()=>{
-      const codigo = prompt('¿El cierre es por más de un día?\n\nSi es así, ingresa el código de autorización y la fecha hasta la que estará cerrado.\n\nCódigo (o Cancel para cierre de un día):');
+      const codigo = prompt('¿El cierre es por más de un día?\n\nSi es así, ingresa el código de autorización.\n\nCódigo (o Cancel para cierre de un día):');
       if(codigo===CODIGO_CIERRE_EXTENDIDO){
         const hasta = prompt('¿Hasta qué fecha estará cerrado este restaurante?\nFormato: YYYY-MM-DD (ej: 2026-07-15)');
         if(hasta && /^\d{4}-\d{2}-\d{2}$/.test(hasta) && hasta>=today()){
-          const cierres = getCierresExtendidos();
           const key = currentHotel.code+'_'+rest;
+          // Guardar en localStorage como respaldo inmediato
+          const cierres = getCierresExtendidos();
           cierres[key] = {hasta, restaurante:rest, hotel:currentHotel.code};
           saveCierresExtendidos(cierres);
+          // Guardar en el Sheet via Apps Script
+          fetch(APPS_SCRIPT_URL,{
+            method:'POST',
+            headers:{'Content-Type':'text/plain;charset=utf-8'},
+            body: JSON.stringify({action:'cierre_extendido', key, hotelCode:currentHotel.code, restaurante:rest, hasta})
+          }).then(r=>r.json()).then(json=>{
+            if(json.status==='ok') console.log('Cierre guardado en Sheet');
+            else console.warn('Error guardando cierre en Sheet:', json.message);
+          }).catch(e=>console.warn('Error de red en cierre:', e));
           if(hint) hint.textContent = (multi?'Servicio':'Restaurante')+' cerrado hasta '+hasta;
           showAlert('✅ Cierre extendido registrado hasta '+hasta,'success');
         } else if(hasta){
-          showAlert('⚠ Fecha inválida. El cierre de un solo día continúa.','error');
+          showAlert('⚠ Fecha inválida. Ingresa una fecha futura en formato YYYY-MM-DD.','error');
         }
       }
     },100);
@@ -1274,9 +1303,16 @@ function toggleHotel(code){
 }
 
 function cancelarCierre(key){
+  // Eliminar del localStorage
   const cierres=getCierresExtendidos();
   delete cierres[key];
   saveCierresExtendidos(cierres);
+  // Eliminar del Sheet
+  fetch(APPS_SCRIPT_URL,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({action:'cancelar_cierre', key})
+  }).catch(e=>console.warn('Error cancelando cierre:', e));
   renderAdminConfig();
   showAlert('Cierre extendido cancelado','success');
 }

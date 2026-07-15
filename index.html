@@ -890,6 +890,7 @@ function getServicioValue(){
 }
 // ── CERRADO ──
 let isCerrado = false;
+let procesandoCierreExtendido = false;
 function toggleCerrado(){
   isCerrado = !isCerrado;
   const btn  = document.getElementById('btn-cerrado');
@@ -941,12 +942,17 @@ function toggleCerrado(){
             showAlert('⚠ La fecha debe ser posterior a hoy.','error');
             return;
           }
+          procesandoCierreExtendido = true;
           const responsable=document.getElementById('f-responsable').value.trim()||'Admin';
           const servicio=document.getElementById('f-servicio').value||'Cena';
           // Enviar secuencialmente con delay para no saturar el servidor
           let idx=0;
           function enviarSiguiente(){
-            if(idx>=dias.length) return;
+            if(idx>=dias.length){
+              procesandoCierreExtendido = false;
+              showAlert('✅ Cierre extendido completado: '+dias.length+' días registrados hasta '+hasta,'success');
+              return;
+            }
             const fecha=dias[idx];
             idx++;
             const rec={
@@ -965,12 +971,12 @@ function toggleCerrado(){
             };
             fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(rec)})
               .then(r=>r.json())
-              .then(()=>setTimeout(enviarSiguiente,300))
-              .catch(()=>setTimeout(enviarSiguiente,300));
+              .then(()=>setTimeout(enviarSiguiente,400))
+              .catch(()=>setTimeout(enviarSiguiente,400));
           }
           enviarSiguiente();
           if(hint) hint.textContent=(multi?'Servicio':'Restaurante')+' cerrado hasta '+hasta+' ('+dias.length+' días)';
-          showAlert('✅ Registrando cierre extendido: '+dias.length+' días hasta '+hasta+'. Espera unos segundos.','success');
+          showAlert('⏳ Registrando cierre extendido: '+dias.length+' días hasta '+hasta+'. Espera unos segundos antes de enviar el registro de hoy.','loading');
         } else if(hasta){
           showAlert('⚠ Fecha inválida o no es posterior a hoy. Formato: YYYY-MM-DD','error');
         }
@@ -1109,6 +1115,10 @@ function showAlert(msg,type){const el=document.getElementById('form-alert');el.c
 function hideAlert(){document.getElementById('form-alert').style.display='none';}
 
 async function submitForm(){
+  if(procesandoCierreExtendido){
+    showAlert('⏳ Registrando cierre extendido, espera unos segundos...','loading');
+    return;
+  }
   if(!validateForm()){
     if(document.getElementById('form-alert').dataset.horario !== 'si'){
       showAlert('Por favor completa todos los campos obligatorios marcados en rojo.','error');

@@ -567,7 +567,11 @@ async function confirmarBorrado(){
 }
 
 // ── FECHA UTILS ──
-function today(){return new Date().toISOString().split('T')[0];}
+function today(){
+  // Siempre usar hora de República Dominicana (America/Santo_Domingo, UTC-4)
+  // independientemente del timezone del dispositivo del capitán
+  return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo_Domingo'}).format(new Date());
+}
 function normalizarFecha(fecha){
   if(!fecha) return '';
   const s = String(fecha).trim();

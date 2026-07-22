@@ -317,27 +317,49 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
 
 <!-- DASHBOARD A&B -->
 <div id="screen-dash">
+  <!-- HEADER -->
   <div class="dash-header">
-    <div><div class="hotel-name" id="dash-hotel-name"></div><div class="hotel-sub">Dashboard A&B — Demo</div></div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <select class="period-sel" id="dash-periodo">
-        <option>Hoy</option><option selected>Ayer</option><option>7 días</option><option>Rango</option>
-      </select>
-      <button class="btn-salir" onclick="doLogout()">Salir</button>
+    <div>
+      <div class="hotel-name" id="dash-hotel-name"></div>
+      <div class="hotel-sub" id="dash-hotel-sub">Dashboard A&B — Demo</div>
     </div>
+    <button class="btn-salir" onclick="doLogout()">Salir</button>
   </div>
 
-  <!-- KPIs INP -->
+  <!-- FILTRO PERÍODO -->
+  <div class="card" style="padding:12px 16px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:#64748b;font-weight:500">Período:</span>
+      <button class="tbtn ok" id="pbtn-hoy" onclick="setPeriodo('hoy')">Hoy</button>
+      <button class="tbtn" id="pbtn-ayer" onclick="setPeriodo('ayer')">Ayer</button>
+      <button class="tbtn" id="pbtn-rango" onclick="setPeriodo('rango')">Rango</button>
+    </div>
+    <div id="rango-inputs" style="display:none;margin-top:10px;display:none">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div><div class="flabel">Desde</div><input type="date" class="finput" id="rango-desde" style="width:140px"></div>
+        <div><div class="flabel">Hasta</div><input type="date" class="finput" id="rango-hasta" style="width:140px"></div>
+        <button class="tbtn ok" style="margin-top:16px" onclick="aplicarRango()">Aplicar</button>
+      </div>
+    </div>
+    <div id="periodo-label" style="font-size:11px;color:#64748b;margin-top:8px">📅 Mostrando: <strong>Ayer — 22/07/2026</strong> · Todos los hoteles activos</div>
+  </div>
+
+  <!-- KPIs CONSOLIDADOS -->
   <div class="card">
-    <div class="stitle">💰 Ventas INP del período</div>
+    <div class="stitle">Resumen consolidado — todos los hoteles</div>
     <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="kpi-box"><div class="kpi-lbl">Vinos</div><div class="kpi-val" style="color:#1d4ed8">$2,140</div><div class="kpi-sub">Ayer: $1,890</div></div>
-      <div class="kpi-box"><div class="kpi-lbl">Tomahawk</div><div class="kpi-val" style="color:#1d4ed8">$680</div><div class="kpi-sub">Ayer: $450</div></div>
-      <div class="kpi-box"><div class="kpi-lbl">Langosta</div><div class="kpi-val" style="color:#1d4ed8">$1,240</div><div class="kpi-sub">Ayer: $1,100</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">INP Vinos</div><div class="kpi-val" style="color:#1d4ed8;font-size:18px" id="kpi-vinos">$6,840</div><div class="kpi-sub" id="kpi-vinos-sub">Ayer: $5,920</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">INP Tomahawk</div><div class="kpi-val" style="color:#1d4ed8;font-size:18px" id="kpi-tomahawk">$2,720</div><div class="kpi-sub" id="kpi-tomahawk-sub">Ayer: $1,980</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">INP Langosta</div><div class="kpi-val" style="color:#1d4ed8;font-size:18px" id="kpi-langosta">$4,960</div><div class="kpi-sub" id="kpi-langosta-sub">Ayer: $4,400</div></div>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-top:0">
+      <div class="kpi-box"><div class="kpi-lbl">Faltantes A&B</div><div class="kpi-val" style="color:#dc2626;font-size:18px">9</div><div class="kpi-sub">4 hoteles</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">Incid. Mant.</div><div class="kpi-val" style="color:#d97706;font-size:18px">5</div><div class="kpi-sub">3 hoteles</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">Quejas</div><div class="kpi-val" style="color:#dc2626;font-size:18px">7</div><div class="kpi-sub">4 hoteles</div></div>
     </div>
   </div>
 
-  <!-- TABS DASHBOARD -->
+  <!-- TABS -->
   <div class="dash-tabs">
     <div class="dash-tab active" onclick="setDashTab('inp')">💰 INP</div>
     <div class="dash-tab" onclick="setDashTab('falt')">🍽️ Faltantes</div>
@@ -346,75 +368,202 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
     <div class="dash-tab" onclick="setDashTab('quejas')">😞 Quejas</div>
   </div>
 
-  <!-- TAB INP -->
-  <div id="dtab-inp" class="card">
-    <div class="stitle">Ventas INP por restaurante</div>
-    <table class="tbl">
-      <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
-      <tbody>
-        <tr><td>Oceana</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$890</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$1,240</td></tr>
-        <tr><td>Bordeaux</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$640</td><td style="color:#1d4ed8;font-weight:600">$680</td><td>—</td></tr>
-        <tr><td>Himitsu</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$610</td><td>—</td><td>—</td></tr>
-        <tr><td>Bluewater Grill</td><td>Cena</td><td>—</td><td>—</td><td>—</td></tr>
-        <tr style="font-weight:700;background:#f8fafc"><td colspan="2">Total</td><td style="color:#1d4ed8">$2,140</td><td style="color:#1d4ed8">$680</td><td style="color:#1d4ed8">$1,240</td></tr>
-      </tbody>
-    </table>
+  <!-- TAB INP — por hotel -->
+  <div id="dtab-inp">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="stitle" style="margin-bottom:0">Secrets Royal Beach (SERPC)</div>
+        <span class="chip chip-blue">$2,140</span>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+        <tbody>
+          <tr><td>Oceana</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$890</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$1,240</td></tr>
+          <tr><td>Bordeaux</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$640</td><td style="color:#1d4ed8;font-weight:600">$680</td><td>—</td></tr>
+          <tr><td>Himitsu</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$610</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="stitle" style="margin-bottom:0">Dreams Royal Beach (DRRPC)</div>
+        <span class="chip chip-blue">$1,980</span>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+        <tbody>
+          <tr><td>Seaside Grill</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$720</td><td style="color:#1d4ed8;font-weight:600">$1,040</td><td>—</td></tr>
+          <tr><td>Portofino</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$220</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="stitle" style="margin-bottom:0">Dreams Onyx (DROPC)</div>
+        <span class="chip chip-blue">$1,560</span>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+        <tbody>
+          <tr><td>Tamarindo</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$560</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$1,000</td></tr>
+          <tr><td>Faire</td><td>Cena</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="stitle" style="margin-bottom:0">Breathless (BREPC)</div>
+        <span class="chip chip-blue">$1,160</span>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+        <tbody>
+          <tr><td>The Strip Grill</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$480</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$680</td></tr>
+          <tr><td>Culinaria</td><td>Cena</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- TAB FALTANTES -->
-  <div id="dtab-falt" class="card" style="display:none">
-    <div class="stitle">Faltantes de A&B reportados</div>
-    <table class="tbl">
-      <thead><tr><th>Restaurante</th><th>Servicio</th><th>Tipo</th><th>Producto</th></tr></thead>
-      <tbody>
-        <tr><td>Oceana</td><td>Cena</td><td><span class="chip chip-red">Platillo</span></td><td>Langosta</td></tr>
-        <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip chip-purple">Vino</span></td><td>Malbec Reserva</td></tr>
-        <tr><td>Himitsu</td><td>Cena</td><td><span class="chip chip-yellow">Producto</span></td><td>Sake importado</td></tr>
-      </tbody>
-    </table>
-    <div style="margin-top:10px;font-size:11px;color:#64748b;text-align:right">3 faltantes reportados</div>
+  <div id="dtab-falt" style="display:none">
+    <div class="card">
+      <div class="stitle">Secrets Royal Beach (SERPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Tipo</th><th>Producto</th></tr></thead>
+        <tbody>
+          <tr><td>Oceana</td><td>Cena</td><td><span class="chip chip-red">Platillo</span></td><td>Langosta</td></tr>
+          <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip chip-purple">Vino</span></td><td>Malbec Reserva</td></tr>
+          <tr><td>Himitsu</td><td>Cena</td><td><span class="chip chip-yellow">Producto</span></td><td>Sake importado</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Dreams Onyx (DROPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Tipo</th><th>Producto</th></tr></thead>
+        <tbody>
+          <tr><td>Tamarindo</td><td>Almuerzo</td><td><span class="chip chip-red">Platillo</span></td><td>Camarones</td></tr>
+          <tr><td>Spice</td><td>Cena</td><td><span class="chip chip-yellow">Producto</span></td><td>Salsa teriyaki</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Breathless (BREPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Tipo</th><th>Producto</th></tr></thead>
+        <tbody>
+          <tr><td>Coquette</td><td>Cena</td><td><span class="chip chip-blue">Bebida</span></td><td>Gin Hendricks</td></tr>
+          <tr><td>The Strip Grill</td><td>Cena</td><td><span class="chip chip-purple">Vino</span></td><td>Rosé importado</td></tr>
+          <tr><td>Silk City</td><td>Cena</td><td><span class="chip chip-red">Platillo</span></td><td>Tuna Tataki</td></tr>
+          <tr><td>Culinaria</td><td>Cena</td><td><span class="chip chip-yellow">Producto</span></td><td>Aceite de trufa</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- TAB MANTENIMIENTO -->
-  <div id="dtab-mant" class="card" style="display:none">
-    <div class="stitle">Incidencias de mantenimiento</div>
-    <table class="tbl">
-      <thead><tr><th>Restaurante</th><th>Servicio</th><th>Incidencia</th><th>Detalle</th></tr></thead>
-      <tbody>
-        <tr><td>Oceana</td><td>Cena</td><td><span class="chip chip-yellow">A/C</span></td><td>Fallo aire acondicionado</td></tr>
-        <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip chip-yellow">Música</span></td><td>Fallo música ambiental</td></tr>
-      </tbody>
-    </table>
-    <div style="margin-top:10px;font-size:11px;color:#64748b;text-align:right">2 incidencias reportadas</div>
+  <div id="dtab-mant" style="display:none">
+    <div class="card">
+      <div class="stitle">Secrets Royal Beach (SERPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Incidencia</th><th>Detalle</th></tr></thead>
+        <tbody>
+          <tr><td>Oceana</td><td>Cena</td><td><span class="chip chip-yellow">A/C</span></td><td>Fallo aire acondicionado</td></tr>
+          <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip chip-yellow">Música</span></td><td>Fallo música ambiental</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Dreams Royal Beach (DRRPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Incidencia</th><th>Detalle</th></tr></thead>
+        <tbody>
+          <tr><td>Seaside Grill</td><td>Almuerzo</td><td><span class="chip chip-yellow">Puerta</span></td><td>Fallo puerta principal</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Breathless (BREPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Incidencia</th><th>Detalle</th></tr></thead>
+        <tbody>
+          <tr><td>Culinaria</td><td>Cena</td><td><span class="chip chip-yellow">Otro</span></td><td>Luces del salón sin funcionar</td></tr>
+          <tr><td>Silk City</td><td>Cena</td><td><span class="chip chip-yellow">A/C</span></td><td>Fallo aire acondicionado zona VIP</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- TAB INVENTARIO -->
-  <div id="dtab-inv" class="card" style="display:none">
-    <div class="stitle">Inventario de equipos por restaurante</div>
-    <table class="tbl">
-      <thead><tr><th>Restaurante</th><th style="text-align:center">CMD 1</th><th style="text-align:center">CMD 2</th><th style="text-align:center">CMD 3</th><th style="text-align:center">H.Tablet</th></tr></thead>
-      <tbody>
-        <tr><td>Oceana</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#dc2626;font-size:14px">✗</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td></tr>
-        <tr><td>Bluewater Grill</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td></tr>
-        <tr><td>Himitsu</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#dc2626;font-size:14px">✗</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td></tr>
-        <tr><td>Bordeaux</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#16a34a;font-size:14px">✓</td><td style="text-align:center;color:#dc2626;font-size:14px">✗</td></tr>
-      </tbody>
-    </table>
-    <div style="margin-top:10px;font-size:11px;color:#dc2626;font-weight:500">⚠ 3 equipos con fallo reportado</div>
+  <div id="dtab-inv" style="display:none">
+    <div class="card">
+      <div class="stitle">Secrets Royal Beach (SERPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th style="text-align:center">CMD 1</th><th style="text-align:center">CMD 2</th><th style="text-align:center">CMD 3</th><th style="text-align:center">H.Tablet</th></tr></thead>
+        <tbody>
+          <tr><td>Oceana</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td><td style="text-align:center;color:#16a34a">✓</td></tr>
+          <tr><td>Bluewater Grill</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td></tr>
+          <tr><td>Himitsu</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Dreams Onyx (DROPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th style="text-align:center">CMD 1</th><th style="text-align:center">CMD 2</th><th style="text-align:center">CMD 3</th><th style="text-align:center">H.Tablet</th></tr></thead>
+        <tbody>
+          <tr><td>Tamarindo</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td></tr>
+          <tr><td>Faire</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:11px;color:#dc2626;font-weight:500;margin-bottom:10px">
+      ⚠ 3 equipos con fallo en total — SERPC: 2 · DROPC: 1
+    </div>
   </div>
 
   <!-- TAB QUEJAS -->
-  <div id="dtab-quejas" class="card" style="display:none">
-    <div class="stitle">Quejas de huéspedes</div>
-    <table class="tbl">
-      <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
-      <tbody>
-        <tr><td>Himitsu</td><td>Cena</td><td style="font-weight:600">1204</td><td>Tiempo de espera muy largo</td></tr>
-        <tr><td>Oceana</td><td>Cena</td><td style="font-weight:600">834</td><td>Temperatura incorrecta del plato</td></tr>
-        <tr><td>Bordeaux</td><td>Cena</td><td style="font-weight:600">506</td><td>Música demasiado alta</td></tr>
-      </tbody>
-    </table>
-    <div style="margin-top:10px;font-size:11px;color:#dc2626;font-weight:500">3 quejas registradas</div>
+  <div id="dtab-quejas" style="display:none">
+    <div class="card">
+      <div class="stitle">Secrets Royal Beach (SERPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Himitsu</td><td>Cena</td><td style="font-weight:600">1204</td><td>Tiempo de espera muy largo</td></tr>
+          <tr><td>Oceana</td><td>Cena</td><td style="font-weight:600">834</td><td>Temperatura incorrecta del plato</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Dreams Royal Beach (DRRPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Portofino</td><td>Cena</td><td style="font-weight:600">412</td><td>Mesero poco atento</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Dreams Onyx (DROPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Tamarindo</td><td>Almuerzo</td><td style="font-weight:600">708</td><td>Error en la orden</td></tr>
+          <tr><td>Spice</td><td>Cena</td><td style="font-weight:600">523</td><td>Platillo llegó frío</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="stitle">Breathless (BREPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Coquette</td><td>Cena</td><td style="font-weight:600">901</td><td>Música muy alta</td></tr>
+          <tr><td>The Strip Grill</td><td>Cena</td><td style="font-weight:600">315</td><td>Tiempo de espera excesivo</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -553,7 +702,26 @@ function submitDemo(){
   showAlert('✅ Demo: formulario completo. En el sistema real esto se guardaría en el Sheet y aparecería en los reportes de las 8 AM.','success');
 }
 
-function setDashTab(tab){
+function setPeriodo(p){
+  ['hoy','ayer','rango'].forEach(id=>{
+    document.getElementById('pbtn-'+id).className='tbtn'+(id===p?' ok':'');
+  });
+  const ri=document.getElementById('rango-inputs');
+  ri.style.display=p==='rango'?'block':'none';
+  const lbl=document.getElementById('periodo-label');
+  const fmt=s=>s.split('-').reverse().join('/');
+  if(p==='hoy') lbl.innerHTML='📅 Mostrando: <strong>Hoy — '+fmt(today())+'</strong> · Todos los hoteles activos';
+  else if(p==='ayer') lbl.innerHTML='📅 Mostrando: <strong>Ayer — '+fmt(yesterday())+'</strong> · Todos los hoteles activos';
+  else lbl.innerHTML='📅 Selecciona el rango de fechas y presiona Aplicar';
+}
+
+function aplicarRango(){
+  const desde=document.getElementById('rango-desde').value;
+  const hasta=document.getElementById('rango-hasta').value;
+  if(!desde||!hasta){alert('Selecciona ambas fechas');return;}
+  const fmt=s=>s.split('-').reverse().join('/');
+  document.getElementById('periodo-label').innerHTML='📅 Mostrando: <strong>'+fmt(desde)+' — '+fmt(hasta)+'</strong> · Todos los hoteles activos';
+}
   ['inp','falt','mant','inv','quejas'].forEach(t=>{
     document.getElementById('dtab-'+t).style.display=t===tab?'block':'none';
   });

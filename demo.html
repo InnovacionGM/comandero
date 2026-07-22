@@ -587,18 +587,18 @@ function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo
 function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo_Domingo'}).format(d);}
 
 function doLogin(){
+  try{
   const raw=document.getElementById('loginCode').value.trim().toUpperCase();
   const h=HOTELS[raw];
   if(!h){document.getElementById('loginError').style.display='block';return;}
   document.getElementById('loginError').style.display='none';
   currentHotel=h;
   if(h.tipo==='ayb'){
-    // Dashboard A&B
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-dash').style.display='block';
     document.getElementById('dash-hotel-name').textContent=h.rol;
+    setPeriodo('ayer');
   } else {
-    // Formulario capitán
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-app').style.display='block';
     document.getElementById('hotel-name').textContent=h.name;
@@ -610,6 +610,9 @@ function doLogin(){
     const sel=document.getElementById('f-restaurante');
     sel.innerHTML='<option value="">— Seleccionar —</option>';
     Object.keys(h.restaurantes).forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o);});
+  }
+  }catch(err){
+    alert('Error en login: '+err.message);
   }
 }
 

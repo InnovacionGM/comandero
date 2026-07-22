@@ -725,6 +725,8 @@ function aplicarRango(){
   const fmt=s=>s.split('-').reverse().join('/');
   document.getElementById('periodo-label').innerHTML='📅 Mostrando: <strong>'+fmt(desde)+' — '+fmt(hasta)+'</strong> · Todos los hoteles activos';
 }
+
+function setDashTab(tab){
   ['inp','falt','mant','inv','quejas'].forEach(t=>{
     document.getElementById('dtab-'+t).style.display=t===tab?'block':'none';
   });

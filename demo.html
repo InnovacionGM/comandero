@@ -2,168 +2,174 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demo V.2 — Datos Adicionales · Comandero Digital</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Demo V.2 — Comandero Digital</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
-/* LOGIN */
-#screen-login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.login-card{background:#fff;border-radius:16px;padding:32px 28px;width:100%;max-width:360px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-.login-logo{text-align:center;margin-bottom:16px}
-.login-logo img{max-width:140px;max-height:60px;object-fit:contain}
-.login-title{text-align:center;font-size:15px;font-weight:700;color:#1e293b;margin-bottom:3px}
-.login-sub{text-align:center;font-size:12px;color:#64748b;margin-bottom:18px}
-.demo-badge{background:#fef9c3;color:#92400e;border-radius:99px;padding:3px 12px;font-size:11px;font-weight:600;display:inline-block;margin-bottom:14px}
-.flabel{font-size:12px;color:#64748b;margin-bottom:3px}
-.finput{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#1e293b;outline:none;transition:.15s;font-family:Arial}
-.finput:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
-.btn-primary{width:100%;padding:11px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px}
-.btn-primary:hover{background:#1e40af}
-.login-error{display:none;color:#dc2626;font-size:12px;text-align:center;margin-top:8px;padding:6px;background:#fef2f2;border-radius:6px}
-.login-version{text-align:center;font-size:11px;color:#cbd5e1;margin-top:14px}
-/* LAYOUT */
-#screen-app{display:none;max-width:540px;margin:0 auto;padding:14px}
-.page-header{background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.hotel-name{font-size:14px;font-weight:700;color:#1e293b}
-.hotel-sub{font-size:11px;color:#64748b}
-.btn-salir{padding:5px 12px;border-radius:7px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:12px;cursor:pointer}
-/* TABS PRINCIPALES */
-.main-tabs{display:flex;background:#fff;border-radius:10px;padding:4px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.main-tab{flex:1;text-align:center;padding:8px 4px;font-size:12px;border-radius:7px;cursor:pointer;color:#64748b;transition:.15s}
-.main-tab.active{background:#1d4ed8;color:#fff;font-weight:600}
-/* CARDS */
+.screen{display:none}
+#s-login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.lcard{background:#fff;border-radius:16px;padding:32px 28px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.llogo{text-align:center;margin-bottom:14px}
+.llogo img{max-width:130px;max-height:55px;object-fit:contain}
+.dbadge{background:#fef9c3;color:#92400e;border-radius:99px;padding:3px 12px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:12px}
+.ltitle{text-align:center;font-size:15px;font-weight:700;color:#1e293b;margin-bottom:3px}
+.lsub{text-align:center;font-size:12px;color:#64748b;margin-bottom:18px}
+.lbl{font-size:12px;color:#64748b;margin-bottom:3px}
+.inp{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#1e293b;outline:none;font-family:Arial}
+.inp:focus{border-color:#3b82f6}
+.btn-blue{width:100%;padding:11px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px;font-family:Arial}
+.btn-blue:hover{background:#1e40af}
+.lerr{display:none;color:#dc2626;font-size:12px;text-align:center;margin-top:8px;padding:6px;background:#fef2f2;border-radius:6px}
+.lver{text-align:center;font-size:11px;color:#cbd5e1;margin-top:14px}
+/* APP */
+#s-form,#s-dash{max-width:540px;margin:0 auto;padding:14px}
+.pheader{background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.hname{font-size:14px;font-weight:700;color:#1e293b}
+.hsub{font-size:11px;color:#64748b}
+.btn-out{padding:5px 12px;border-radius:7px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:12px;cursor:pointer;font-family:Arial}
 .card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .stitle{font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .mb10{margin-bottom:10px}
-/* FORMULARIO */
-.btn-cerrado{width:100%;padding:10px;border-radius:8px;border:1.5px solid #3b82f6;background:#eff6ff;color:#1d4ed8;font-size:13px;font-weight:600;cursor:pointer;margin-top:6px}
-.btn-cerrado.active{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
-#incidencia-wrap{display:none;background:#fff7ed;border-radius:8px;padding:10px;margin-bottom:10px;border:1px solid #fed7aa}
-#detalle-otros{display:none;margin-top:8px}
-/* COLAPSABLE */
-.coll-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:11px 14px;background:#f0f9ff;border-radius:9px;border:1px solid #bae6fd}
-.coll-hdr:hover{background:#e0f2fe}
-.coll-title{font-size:13px;font-weight:600;color:#0369a1}
-.badge-nuevo{background:#fef08a;color:#713f12;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700}
-.coll-body{display:none;padding-top:12px}
-.sblock{border-left:3px solid #e2e8f0;padding-left:12px;margin-bottom:14px}
-.sblock.inp{border-left-color:#3b82f6}
-.sblock.mant{border-left-color:#f59e0b}
-.sblock.falt{border-left-color:#ef4444}
-.sblock.inv{border-left-color:#8b5cf6}
-.sblock.quejas{border-left-color:#ec4899}
-.divider{border:none;border-top:1px solid #f1f5f9;margin:12px 0}
-/* MANTENIMIENTO - descripcion condicional */
-#mant-desc-wrap{display:none;margin-top:8px}
-/* INVENTARIO */
-.inv-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc;font-size:13px}
-.inv-row:last-child{border-bottom:none}
-.tbtn{padding:5px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;cursor:pointer;background:#f8fafc;color:#64748b}
-.tbtn.ok{background:#f0fdf4;color:#15803d;border-color:#86efac;font-weight:600}
-.tbtn.fail{background:#fef2f2;color:#dc2626;border-color:#fca5a5;font-weight:600}
-.fallo-tipo{display:none;margin-top:6px;padding:8px;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5}
-/* QUEJAS */
-.queja-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
-.qnum{width:80px;border:1px solid #e2e8f0;border-radius:6px;padding:7px 8px;font-size:12px;text-align:center;font-family:Arial}
-.qtxt{flex:1;border:1px solid #e2e8f0;border-radius:6px;padding:7px 8px;font-size:12px;font-family:Arial}
-.btn-add-queja{font-size:12px;color:#3b82f6;cursor:pointer;background:none;border:none;padding:2px 0;margin-bottom:6px}
-.btn-submit{width:100%;padding:12px;background:#1d4ed8;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px}
-.btn-submit:hover{background:#1e40af}
-/* ALERTS */
-.alert{display:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:10px;line-height:1.5}
+.alert{display:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:10px}
 .alert-success{background:#f0fdf4;color:#15803d;border:1px solid #86efac}
 .alert-error{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
-.demo-note{background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:10px 14px;font-size:11px;color:#713f12;margin-bottom:10px;line-height:1.5}
+.dnote{background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:10px 14px;font-size:11px;color:#713f12;margin-bottom:10px;line-height:1.5}
+.btn-cerr{width:100%;padding:10px;border-radius:8px;border:1.5px solid #3b82f6;background:#eff6ff;color:#1d4ed8;font-size:13px;font-weight:600;cursor:pointer;margin-top:6px;font-family:Arial}
+.btn-cerr.on{background:#1d4ed8;color:#fff}
+#incid-wrap{display:none;background:#fff7ed;border-radius:8px;padding:10px;margin-bottom:10px;border:1px solid #fed7aa}
+#det-otros{display:none;margin-top:8px}
+.chdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:11px 14px;background:#f0f9ff;border-radius:9px;border:1px solid #bae6fd;margin-bottom:0}
+.chdr:hover{background:#e0f2fe}
+.ctitle{font-size:13px;font-weight:600;color:#0369a1}
+.bnew{background:#fef08a;color:#713f12;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700}
+.cbody{display:none;padding-top:12px}
+.sblk{border-left:3px solid #e2e8f0;padding-left:12px;margin-bottom:14px}
+.sblk.inp{border-left-color:#3b82f6}
+.sblk.mant{border-left-color:#f59e0b}
+.sblk.falt{border-left-color:#ef4444}
+.sblk.inv{border-left-color:#8b5cf6}
+.sblk.qj{border-left-color:#ec4899}
+.divv{border:none;border-top:1px solid #f1f5f9;margin:12px 0}
+.inv-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc;font-size:13px}
+.inv-row:last-child{border-bottom:none}
+.tbtn{padding:5px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;cursor:pointer;background:#f8fafc;color:#64748b;font-family:Arial}
+.tbtn.ok{background:#f0fdf4;color:#15803d;border-color:#86efac;font-weight:600}
+.tbtn.fail{background:#fef2f2;color:#dc2626;border-color:#fca5a5;font-weight:600}
+.ftipo{display:none;margin-top:6px;padding:8px;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5}
+.qrow{display:flex;gap:6px;margin-bottom:6px}
+.qnum{width:80px;border:1px solid #e2e8f0;border-radius:6px;padding:7px 8px;font-size:12px;text-align:center;font-family:Arial}
+.qtxt{flex:1;border:1px solid #e2e8f0;border-radius:6px;padding:7px 8px;font-size:12px;font-family:Arial}
+.btn-sub{width:100%;padding:12px;background:#1d4ed8;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;font-family:Arial}
 /* DASHBOARD */
-#screen-dash{display:none;max-width:540px;margin:0 auto;padding:14px}
-.dash-header{background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
-.kpi-box{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);text-align:center}
-.kpi-lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em}
-.kpi-val{font-size:22px;font-weight:700;margin-top:3px}
-.kpi-sub{font-size:10px;color:#94a3b8;margin-top:2px}
-/* DASH TABS */
-.dash-tabs{display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px}
-.dash-tab{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;border:1px solid #e2e8f0;background:#fff;color:#64748b}
-.dash-tab.active{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.period-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.pbtn{padding:6px 14px;border-radius:20px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:12px;cursor:pointer;font-family:Arial}
+.pbtn.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8;font-weight:600}
+#rango-wrap{display:none;padding:10px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:8px}
+.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.kbox{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.klbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em}
+.kval{font-size:20px;font-weight:700;margin-top:3px}
+.ksub{font-size:10px;color:#94a3b8;margin-top:2px}
+.dtabs{display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px}
+.dtab{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-family:Arial}
+.dtab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.hotel-section{margin-bottom:6px}
+.hotel-tag{font-size:11px;font-weight:700;color:#1e293b;background:#f1f5f9;padding:4px 10px;border-radius:6px;margin-bottom:6px;display:inline-block}
 .tbl{width:100%;font-size:11px;border-collapse:collapse}
 .tbl th{text-align:left;padding:6px 8px;color:#64748b;border-bottom:1px solid #e2e8f0;font-weight:500}
-.tbl td{padding:6px 8px;border-bottom:0.5px solid #f8fafc;vertical-align:top}
+.tbl td{padding:6px 8px;border-bottom:0.5px solid #f8fafc;vertical-align:middle}
 .chip{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:500}
-.chip-red{background:#fef2f2;color:#dc2626}
-.chip-yellow{background:#fff7ed;color:#d97706}
-.chip-green{background:#f0fdf4;color:#15803d}
-.chip-blue{background:#eff6ff;color:#1d4ed8}
-.chip-purple{background:#f5f3ff;color:#7c3aed}
-.chip-pink{background:#fdf2f8;color:#db2777}
-.period-sel{border:1px solid #e2e8f0;border-radius:7px;padding:6px 10px;font-size:12px;color:#1e293b;outline:none;font-family:Arial}
-.empty-state{text-align:center;padding:24px;color:#94a3b8;font-size:13px}
+.cr{background:#fef2f2;color:#dc2626}
+.cy{background:#fff7ed;color:#d97706}
+.cb{background:#eff6ff;color:#1d4ed8}
+.cp{background:#f5f3ff;color:#7c3aed}
+.cpk{background:#fdf2f8;color:#db2777}
+.cg{background:#f0fdf4;color:#16a34a}
+/* EMAILS PREVIEW */
+#s-email{max-width:600px;margin:0 auto;padding:14px}
+.em-nav{display:flex;gap:4px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
+.em-btn{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-family:Arial}
+.em-btn.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.email-box{background:#f8fafc;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.em-meta{font-size:11px;color:#64748b;margin-bottom:12px;padding:8px 12px;background:#fff;border-radius:8px;border:1px solid #e2e8f0}
+.em-subj{font-weight:600;color:#1e293b;font-size:12px}
+.em-to{color:#64748b;font-size:11px;margin-top:3px}
+.em-hdr{border-radius:10px;padding:18px;color:#fff;margin-bottom:14px}
+.em-kpis{display:grid;gap:6px;margin-bottom:12px}
+.em-kbox{background:#fff;border:1.5px solid #e2e8f0;border-radius:7px;padding:10px;text-align:center}
+.em-klbl{font-size:9px;color:#64748b;text-transform:uppercase}
+.em-kval{font-size:18px;font-weight:700;margin-top:2px}
+.em-sec{background:#fff;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:10px}
+.em-sechdr{padding:9px 13px;font-size:11px;font-weight:700}
+.em-secbdy{padding:10px 13px}
+.em-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #f1f5f9;font-size:11px}
+.em-row:last-child{border-bottom:none}
+.em-hotel-lbl{font-size:10px;font-weight:700;color:#64748b;background:#f8fafc;padding:3px 8px;border-radius:4px;margin:6px 0 4px}
+/* MAIN NAV */
+.main-nav{display:flex;background:#fff;border-radius:12px;padding:4px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.main-tab{flex:1;text-align:center;padding:8px 4px;font-size:11px;border-radius:8px;cursor:pointer;color:#64748b}
+.main-tab.on{background:#1d4ed8;color:#fff;font-weight:600}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="screen-login">
-  <div class="login-card">
-    <div class="login-logo">
-      <img src="data:image/png;base64,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" alt="Grupo Martinón" onerror="this.style.display='none'">
-    </div>
-    <div style="text-align:center;margin-bottom:10px"><span class="demo-badge">🧪 DEMO V.2 — Datos Adicionales</span></div>
-    <div class="login-title">Reporte Diario del Comandero Digital</div>
-    <div class="login-sub">Ingresa tu código de acceso</div>
-    <div class="flabel" style="margin-top:14px">Código de acceso</div>
-    <input type="text" id="loginCode" class="finput" placeholder="Ej: SERPC3100 o EP7341" maxlength="12" onkeydown="if(event.key==='Enter')doLogin()">
-    <div class="login-error" id="loginError">Código incorrecto.</div>
-    <button class="btn-primary" onclick="doLogin()">Entrar →</button>
-    <div class="login-version">Demo V.2 · Jul 2026 · Los datos no se guardan</div>
+<div id="s-login">
+  <div class="lcard">
+    <div class="llogo"><img src="data:image/png;base64,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" alt="Grupo Martinón"></div>
+    <div style="text-align:center;margin-bottom:10px"><span class="dbadge">🧪 DEMO V.2 — Datos Adicionales</span></div>
+    <div class="ltitle">Reporte Diario del Comandero Digital</div>
+    <div class="lsub">Ingresa tu código de acceso</div>
+    <div class="lbl" style="margin-top:14px">Código de acceso</div>
+    <input type="text" id="loginCode" class="inp" placeholder="Ej: SERPC3100 o EP7341" maxlength="12" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="lerr" id="loginErr">Código incorrecto. Verifica con tu supervisor.</div>
+    <button class="btn-blue" onclick="doLogin()">Entrar →</button>
+    <div class="lver">Demo V.2 · Jul 2026 · Los datos no se guardan</div>
   </div>
 </div>
 
 <!-- FORMULARIO CAPITÁN -->
-<div id="screen-app">
-  <div class="page-header">
-    <div><div class="hotel-name" id="hotel-name"></div><div class="hotel-sub" id="hotel-sub"></div></div>
-    <button class="btn-salir" onclick="doLogout()">Salir</button>
+<div id="s-form" class="screen">
+  <div class="pheader">
+    <div><div class="hname" id="f-hname"></div><div class="hsub" id="f-hsub"></div></div>
+    <button class="btn-out" onclick="doLogout()">Salir</button>
   </div>
-  <div class="demo-note">🧪 <strong>Demo:</strong> Prueba los nuevos campos. Los datos <strong>no se guardan</strong> en el sistema real.</div>
-  <div id="form-alert" class="alert"></div>
+  <div class="dnote">🧪 <strong>Demo:</strong> Prueba los nuevos campos. Los datos <strong>no se guardan</strong>.</div>
+  <div id="f-alert" class="alert"></div>
 
+  <!-- FORMULARIO BASE -->
   <div class="card">
     <div class="stitle">Registro del servicio</div>
-    <div class="grid2">
-      <div><div class="flabel">Fecha</div>
-        <select class="finput" id="f-fecha">
-          <option id="opt-hoy"></option><option id="opt-ayer"></option>
-        </select>
+    <div class="g2">
+      <div><div class="lbl">Fecha</div>
+        <select class="inp" id="f-fecha"><option id="opt-hoy"></option><option id="opt-ayer"></option></select>
       </div>
-      <div><div class="flabel">Restaurante</div>
-        <select class="finput" id="f-restaurante" onchange="loadServicios()">
-          <option value="">— Seleccionar —</option>
-        </select>
+      <div><div class="lbl">Restaurante</div>
+        <select class="inp" id="f-rest" onchange="loadServs()"><option value="">— Seleccionar —</option></select>
       </div>
     </div>
-    <div class="grid2">
-      <div><div class="flabel">Servicio</div>
-        <select class="finput" id="f-servicio"><option value="">— Seleccionar —</option></select>
+    <div class="g2">
+      <div><div class="lbl">Servicio</div>
+        <select class="inp" id="f-serv"><option value="">— Seleccionar —</option></select>
       </div>
-      <div><div class="flabel">Pax totales</div>
-        <input class="finput" type="number" id="f-pax" placeholder="0" min="0">
+      <div><div class="lbl">Pax totales</div>
+        <input class="inp" type="number" id="f-pax" placeholder="0" min="0">
       </div>
     </div>
     <div class="mb10">
-      <div class="flabel">¿Se usó el comandero?</div>
-      <select class="finput" id="f-comandero" onchange="toggleIncidencia(this.value)">
+      <div class="lbl">¿Se usó el comandero?</div>
+      <select class="inp" id="f-cmd" onchange="toggleIncid(this.value)">
         <option value="Si">Sí — funcionó correctamente</option>
         <option value="Parcial">Parcial — hubo un fallo</option>
         <option value="No">No — no se usó</option>
       </select>
     </div>
-    <div id="incidencia-wrap">
+    <div id="incid-wrap">
       <div class="mb10">
-        <div class="flabel">Tipo de incidencia</div>
-        <select class="finput" id="f-incidencia" onchange="toggleDetalleOtros(this.value)">
+        <div class="lbl">Tipo de incidencia</div>
+        <select class="inp" id="f-incid" onchange="toggleOtros(this.value)">
           <option value="">— Seleccionar —</option>
           <option>Fallo de internet / WiFi</option>
           <option>Impresora no imprime</option>
@@ -172,44 +178,40 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
           <option value="Otros">Otros</option>
         </select>
       </div>
-      <div id="detalle-otros">
-        <div class="flabel">Describir el problema</div>
-        <input class="finput" id="f-detalle" placeholder="¿Qué pasó exactamente?">
+      <div id="det-otros"><div class="lbl">Describir el problema</div>
+        <input class="inp" id="f-det" placeholder="¿Qué pasó exactamente?">
       </div>
     </div>
     <div class="mb10" style="margin-top:10px">
-      <div class="flabel">Nombre del responsable</div>
-      <input class="finput" id="f-responsable" placeholder="Nombre y apellido">
+      <div class="lbl">Nombre del responsable</div>
+      <input class="inp" id="f-resp" placeholder="Nombre y apellido">
     </div>
-    <button class="btn-cerrado" id="btn-cerrado" onclick="toggleCerrado()">🔴 Marcar como cerrado</button>
+    <button class="btn-cerr" id="btn-cerr" onclick="toggleCerr()">🔴 Marcar como cerrado</button>
   </div>
 
   <!-- DATOS ADICIONALES -->
   <div class="card">
-    <div class="coll-hdr" onclick="toggleAdic()">
-      <span class="coll-title" id="adic-label">▶ Datos adicionales</span>
-      <span class="badge-nuevo">NUEVO</span>
+    <div class="chdr" onclick="toggleAdic()">
+      <span class="ctitle" id="adic-lbl">▶ Datos adicionales</span>
+      <span class="bnew">NUEVO</span>
     </div>
-    <div class="coll-body" id="adic-body">
+    <div class="cbody" id="adic-body">
 
-      <!-- INP -->
-      <div class="sblock inp">
+      <div class="sblk inp">
         <div class="stitle" style="color:#2563eb">💰 Ventas de INP (USD)</div>
-        <div class="grid2">
-          <div><div class="flabel">Vinos</div><input class="finput" id="inp-vinos" type="number" placeholder="0.00" min="0" step="0.01"></div>
-          <div><div class="flabel">Tomahawk</div><input class="finput" id="inp-tomahawk" type="number" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="g2">
+          <div><div class="lbl">Vinos</div><input class="inp" type="number" placeholder="0.00" min="0" step="0.01"></div>
+          <div><div class="lbl">Tomahawk</div><input class="inp" type="number" placeholder="0.00" min="0" step="0.01"></div>
         </div>
-        <div><div class="flabel">Langosta</div><input class="finput" id="inp-langosta" type="number" placeholder="0.00" min="0" step="0.01" style="max-width:48%"></div>
+        <div><div class="lbl">Langosta</div><input class="inp" type="number" placeholder="0.00" min="0" step="0.01" style="max-width:48%"></div>
       </div>
+      <div class="divv"></div>
 
-      <div class="divider"></div>
-
-      <!-- MANTENIMIENTO -->
-      <div class="sblock mant">
+      <div class="sblk mant">
         <div class="stitle" style="color:#d97706">🔧 Incidencias de mantenimiento</div>
-        <div>
-          <div class="flabel">Tipo de incidencia</div>
-          <select class="finput" id="mant-tipo" onchange="toggleMantDesc(this.value)">
+        <div class="mb10">
+          <div class="lbl">Tipo</div>
+          <select class="inp" id="mant-tipo" onchange="toggleMant(this.value)">
             <option value="">— Sin incidencias —</option>
             <option>Fallo aire acondicionado</option>
             <option>Fallo música ambiental</option>
@@ -217,20 +219,18 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
             <option value="Otro">Otro — describir</option>
           </select>
         </div>
-        <div id="mant-desc-wrap">
-          <div class="flabel" style="margin-top:8px">Describir el problema</div>
-          <input class="finput" id="mant-desc" placeholder="¿Qué pasó exactamente?">
+        <div id="mant-desc" style="display:none">
+          <div class="lbl">Describir</div>
+          <input class="inp" placeholder="¿Qué pasó exactamente?">
         </div>
       </div>
+      <div class="divv"></div>
 
-      <div class="divider"></div>
-
-      <!-- FALTANTES -->
-      <div class="sblock falt">
-        <div class="stitle" style="color:#dc2626">🍽️ Faltantes de alimentos y bebidas</div>
+      <div class="sblk falt">
+        <div class="stitle" style="color:#dc2626">🍽️ Faltantes de A&amp;B</div>
         <div class="mb10">
-          <div class="flabel">Tipo de faltante</div>
-          <select class="finput" id="falt-tipo">
+          <div class="lbl">Tipo de faltante</div>
+          <select class="inp">
             <option value="">— Sin faltantes —</option>
             <option>Se terminó el platillo</option>
             <option>Se terminó el producto</option>
@@ -238,500 +238,563 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
             <option>No había licor / bebida</option>
           </select>
         </div>
-        <div><div class="flabel">Especificar cuál</div>
-          <input class="finput" id="falt-desc" placeholder="Ej: Malbec Reserva, Langosta, Camarones...">
+        <div><div class="lbl">Especificar cuál</div>
+          <input class="inp" placeholder="Ej: Malbec Reserva, Langosta...">
         </div>
       </div>
+      <div class="divv"></div>
 
-      <div class="divider"></div>
-
-      <!-- INVENTARIO -->
-      <div class="sblock inv">
+      <div class="sblk inv">
         <div class="stitle" style="color:#7c3aed">📱 Inventario de equipos</div>
-        <div id="equipos-lista">
-          <div class="inv-row">
-            <span>Comandero 1</span>
-            <div style="display:flex;gap:5px">
-              <button class="tbtn ok" onclick="toggleEquipo(this,'e1','ok')">✓ OK</button>
-              <button class="tbtn" onclick="toggleEquipo(this,'e1','fail')">✗ Fallo</button>
-            </div>
-          </div>
-          <div class="fallo-tipo" id="fallo-e1">
-            <div class="flabel" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
-            <select class="finput" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
-          </div>
-          <div class="inv-row">
-            <span>Comandero 2</span>
-            <div style="display:flex;gap:5px">
-              <button class="tbtn ok" onclick="toggleEquipo(this,'e2','ok')">✓ OK</button>
-              <button class="tbtn" onclick="toggleEquipo(this,'e2','fail')">✗ Fallo</button>
-            </div>
-          </div>
-          <div class="fallo-tipo" id="fallo-e2">
-            <div class="flabel" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
-            <select class="finput" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
-          </div>
-          <div class="inv-row">
-            <span>Comandero 3</span>
-            <div style="display:flex;gap:5px">
-              <button class="tbtn ok" onclick="toggleEquipo(this,'e3','ok')">✓ OK</button>
-              <button class="tbtn" onclick="toggleEquipo(this,'e3','fail')">✗ Fallo</button>
-            </div>
-          </div>
-          <div class="fallo-tipo" id="fallo-e3">
-            <div class="flabel" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
-            <select class="finput" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
-          </div>
-          <div class="inv-row">
-            <span>Hostess Tablet</span>
-            <div style="display:flex;gap:5px">
-              <button class="tbtn ok" onclick="toggleEquipo(this,'e4','ok')">✓ OK</button>
-              <button class="tbtn" onclick="toggleEquipo(this,'e4','fail')">✗ Fallo</button>
-            </div>
-          </div>
-          <div class="fallo-tipo" id="fallo-e4">
-            <div class="flabel" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
-            <select class="finput" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
-          </div>
+        <div class="inv-row"><span>Comandero 1</span><div style="display:flex;gap:5px">
+          <button class="tbtn ok" onclick="togEq(this,'e1','ok')">✓ OK</button>
+          <button class="tbtn" onclick="togEq(this,'e1','fail')">✗ Fallo</button>
+        </div></div>
+        <div class="ftipo" id="ft-e1"><div class="lbl" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
+          <select class="inp" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
+        </div>
+        <div class="inv-row"><span>Comandero 2</span><div style="display:flex;gap:5px">
+          <button class="tbtn ok" onclick="togEq(this,'e2','ok')">✓ OK</button>
+          <button class="tbtn" onclick="togEq(this,'e2','fail')">✗ Fallo</button>
+        </div></div>
+        <div class="ftipo" id="ft-e2"><div class="lbl" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
+          <select class="inp" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
+        </div>
+        <div class="inv-row"><span>Comandero 3</span><div style="display:flex;gap:5px">
+          <button class="tbtn ok" onclick="togEq(this,'e3','ok')">✓ OK</button>
+          <button class="tbtn" onclick="togEq(this,'e3','fail')">✗ Fallo</button>
+        </div></div>
+        <div class="ftipo" id="ft-e3"><div class="lbl" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
+          <select class="inp" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
+        </div>
+        <div class="inv-row"><span>Hostess Tablet</span><div style="display:flex;gap:5px">
+          <button class="tbtn ok" onclick="togEq(this,'e4','ok')">✓ OK</button>
+          <button class="tbtn" onclick="togEq(this,'e4','fail')">✗ Fallo</button>
+        </div></div>
+        <div class="ftipo" id="ft-e4"><div class="lbl" style="color:#dc2626;margin-bottom:4px;font-size:11px">Tipo de fallo</div>
+          <select class="inp" style="font-size:11px"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
         </div>
       </div>
+      <div class="divv"></div>
 
-      <div class="divider"></div>
-
-      <!-- QUEJAS -->
-      <div class="sblock quejas">
+      <div class="sblk qj">
         <div class="stitle" style="color:#db2777">😞 Quejas de huéspedes</div>
-        <div id="quejas-lista">
-          <div class="queja-row">
-            <input class="qnum" type="number" placeholder="Hab." min="1" oninput="countQuejas()">
-            <input class="qtxt" type="text" placeholder="Descripción de la queja" oninput="countQuejas()">
+        <div id="qlist">
+          <div class="qrow">
+            <input class="qnum" type="number" placeholder="Hab." oninput="cntQ()">
+            <input class="qtxt" type="text" placeholder="Descripción de la queja" oninput="cntQ()">
           </div>
         </div>
-        <button class="btn-add-queja" onclick="addQueja()">+ Agregar otra queja</button>
-        <div style="font-size:11px;color:#64748b;margin-top:4px">Quejas registradas: <strong id="queja-count">0</strong></div>
+        <button style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer;padding:2px 0;margin-bottom:6px;font-family:Arial" onclick="addQ()">+ Agregar otra queja</button>
+        <div style="font-size:11px;color:#64748b">Quejas: <strong id="qcnt">0</strong></div>
       </div>
     </div>
   </div>
-  <button class="btn-submit" onclick="submitDemo()">Enviar registro de prueba</button>
+  <button class="btn-sub" onclick="submitD()">Enviar registro de prueba</button>
 </div>
 
-<!-- DASHBOARD A&B -->
-<div id="screen-dash">
-  <!-- HEADER -->
-  <div class="dash-header">
-    <div>
-      <div class="hotel-name" id="dash-hotel-name"></div>
-      <div class="hotel-sub" id="dash-hotel-sub">Dashboard A&B — Demo</div>
-    </div>
-    <button class="btn-salir" onclick="doLogout()">Salir</button>
+<!-- DASHBOARD -->
+<div id="s-dash" class="screen">
+  <div class="pheader">
+    <div><div class="hname" id="d-hname"></div><div class="hsub">Dashboard A&amp;B</div></div>
+    <button class="btn-out" onclick="doLogout()">Salir</button>
   </div>
 
-  <!-- FILTRO PERÍODO -->
-  <div class="card" style="padding:12px 16px">
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <span style="font-size:12px;color:#64748b;font-weight:500">Período:</span>
-      <button class="tbtn ok" id="pbtn-hoy" onclick="setPeriodo('hoy')">Hoy</button>
-      <button class="tbtn" id="pbtn-ayer" onclick="setPeriodo('ayer')">Ayer</button>
-      <button class="tbtn" id="pbtn-rango" onclick="setPeriodo('rango')">Rango</button>
-    </div>
-    <div id="rango-inputs" style="display:none;margin-top:10px;display:none">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <div><div class="flabel">Desde</div><input type="date" class="finput" id="rango-desde" style="width:140px"></div>
-        <div><div class="flabel">Hasta</div><input type="date" class="finput" id="rango-hasta" style="width:140px"></div>
-        <button class="tbtn ok" style="margin-top:16px" onclick="aplicarRango()">Aplicar</button>
+  <!-- NAV TABS -->
+  <div class="main-nav">
+    <div class="main-tab on" onclick="setMainTab('dash-data')">📊 Datos</div>
+    <div class="main-tab" onclick="setMainTab('dash-email')">📧 Emails</div>
+  </div>
+
+  <!-- DATOS TAB -->
+  <div id="dash-data">
+    <!-- PERÍODO -->
+    <div class="card" style="padding:12px 16px">
+      <div class="period-bar">
+        <span style="font-size:12px;color:#64748b;font-weight:500">Período:</span>
+        <button class="pbtn" id="pb-hoy" onclick="setPer('hoy')">Hoy</button>
+        <button class="pbtn on" id="pb-ayer" onclick="setPer('ayer')">Ayer</button>
+        <button class="pbtn" id="pb-rango" onclick="setPer('rango')">📅 Rango</button>
       </div>
-    </div>
-    <div id="periodo-label" style="font-size:11px;color:#64748b;margin-top:8px">📅 Mostrando: <strong>Ayer — 22/07/2026</strong> · Todos los hoteles activos</div>
-  </div>
-
-  <!-- KPIs CONSOLIDADOS -->
-  <div class="card">
-    <div class="stitle">Resumen consolidado — todos los hoteles</div>
-    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="kpi-box"><div class="kpi-lbl">INP Vinos</div><div class="kpi-val" style="color:#1d4ed8;font-size:18px" id="kpi-vinos">$6,840</div><div class="kpi-sub" id="kpi-vinos-sub">Ayer: $5,920</div></div>
-      <div class="kpi-box"><div class="kpi-lbl">INP Tomahawk</div><div class="kpi-val" style="color:#1d4ed8;font-size:18px" id="kpi-tomahawk">$2,720</div><div class="kpi-sub" id="kpi-tomahawk-sub">Ayer: $1,980</div></div>
-      <div class="kpi-box"><div class="kpi-lbl">INP Langosta</div><div class="kpi-val" style="color:#1d4ed8;font-size:18px" id="kpi-langosta">$4,960</div><div class="kpi-sub" id="kpi-langosta-sub">Ayer: $4,400</div></div>
-    </div>
-    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-top:0">
-      <div class="kpi-box"><div class="kpi-lbl">Faltantes A&B</div><div class="kpi-val" style="color:#dc2626;font-size:18px">9</div><div class="kpi-sub">4 hoteles</div></div>
-      <div class="kpi-box"><div class="kpi-lbl">Incid. Mant.</div><div class="kpi-val" style="color:#d97706;font-size:18px">5</div><div class="kpi-sub">3 hoteles</div></div>
-      <div class="kpi-box"><div class="kpi-lbl">Quejas</div><div class="kpi-val" style="color:#dc2626;font-size:18px">7</div><div class="kpi-sub">4 hoteles</div></div>
-    </div>
-  </div>
-
-  <!-- TABS -->
-  <div class="dash-tabs">
-    <div class="dash-tab active" onclick="setDashTab('inp')">💰 INP</div>
-    <div class="dash-tab" onclick="setDashTab('falt')">🍽️ Faltantes</div>
-    <div class="dash-tab" onclick="setDashTab('mant')">🔧 Mantenimiento</div>
-    <div class="dash-tab" onclick="setDashTab('inv')">📱 Equipos</div>
-    <div class="dash-tab" onclick="setDashTab('quejas')">😞 Quejas</div>
-  </div>
-
-  <!-- TAB INP — por hotel -->
-  <div id="dtab-inp">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div class="stitle" style="margin-bottom:0">Secrets Royal Beach (SERPC)</div>
-        <span class="chip chip-blue">$2,140</span>
+      <div id="rango-wrap">
+        <div class="g2" style="margin-bottom:8px">
+          <div><div class="lbl">Desde</div><input type="date" class="inp" id="r-desde"></div>
+          <div><div class="lbl">Hasta</div><input type="date" class="inp" id="r-hasta"></div>
+        </div>
+        <button class="pbtn on" onclick="applyR()">Aplicar rango</button>
       </div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+      <div id="per-lbl" style="font-size:11px;color:#64748b;margin-top:8px">📅 <strong>Ayer</strong> · Todos los hoteles activos</div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kgrid">
+      <div class="kbox"><div class="klbl">INP Vinos</div><div class="kval" style="color:#1d4ed8">$6,840</div><div class="ksub">↑ vs ayer $5,920</div></div>
+      <div class="kbox"><div class="klbl">INP Tomahawk</div><div class="kval" style="color:#1d4ed8">$2,720</div><div class="ksub">↑ vs ayer $1,980</div></div>
+      <div class="kbox"><div class="klbl">INP Langosta</div><div class="kval" style="color:#1d4ed8">$4,960</div><div class="ksub">↓ vs ayer $5,400</div></div>
+    </div>
+    <div class="kgrid">
+      <div class="kbox"><div class="klbl">Faltantes A&amp;B</div><div class="kval" style="color:#dc2626">9</div><div class="ksub">4 hoteles</div></div>
+      <div class="kbox"><div class="klbl">Incid. Mant.</div><div class="kval" style="color:#d97706">5</div><div class="ksub">3 hoteles</div></div>
+      <div class="kbox"><div class="klbl">Quejas</div><div class="kval" style="color:#dc2626">7</div><div class="ksub">4 hoteles</div></div>
+    </div>
+
+    <!-- TABS DETALLE -->
+    <div class="dtabs">
+      <div class="dtab on" onclick="setDTab('inp')">💰 INP</div>
+      <div class="dtab" onclick="setDTab('falt')">🍽️ Faltantes</div>
+      <div class="dtab" onclick="setDTab('mant')">🔧 Mant.</div>
+      <div class="dtab" onclick="setDTab('inv')">📱 Equipos</div>
+      <div class="dtab" onclick="setDTab('qj')">😞 Quejas</div>
+    </div>
+
+    <!-- INP -->
+    <div id="dt-inp">
+      <div class="card"><div class="hotel-tag">SERPC — Secrets Royal Beach</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>Oceana</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$890</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$1,240</td></tr>
           <tr><td>Bordeaux</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$640</td><td style="color:#1d4ed8;font-weight:600">$680</td><td>—</td></tr>
           <tr><td>Himitsu</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$610</td><td>—</td><td>—</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div class="stitle" style="margin-bottom:0">Dreams Royal Beach (DRRPC)</div>
-        <span class="chip chip-blue">$1,980</span>
+          <tr style="background:#f8fafc;font-weight:700"><td colspan="2">Total SERPC</td><td style="color:#1d4ed8">$2,140</td><td style="color:#1d4ed8">$680</td><td style="color:#1d4ed8">$1,240</td></tr>
+        </tbody></table>
       </div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+      <div class="card"><div class="hotel-tag">DRRPC — Dreams Royal Beach</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>Seaside Grill</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$720</td><td style="color:#1d4ed8;font-weight:600">$1,040</td><td>—</td></tr>
-          <tr><td>Portofino</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$220</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$—</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div class="stitle" style="margin-bottom:0">Dreams Onyx (DROPC)</div>
-        <span class="chip chip-blue">$1,560</span>
+          <tr><td>Portofino</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$220</td><td>—</td><td>—</td></tr>
+          <tr style="background:#f8fafc;font-weight:700"><td colspan="2">Total DRRPC</td><td style="color:#1d4ed8">$940</td><td style="color:#1d4ed8">$1,040</td><td style="color:#1d4ed8">—</td></tr>
+        </tbody></table>
       </div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+      <div class="card"><div class="hotel-tag">DROPC — Dreams Onyx</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>Tamarindo</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$560</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$1,000</td></tr>
-          <tr><td>Faire</td><td>Cena</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$—</td><td>—</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div class="stitle" style="margin-bottom:0">Breathless (BREPC)</div>
-        <span class="chip chip-blue">$1,160</span>
+          <tr style="background:#f8fafc;font-weight:700"><td colspan="2">Total DROPC</td><td style="color:#1d4ed8">$560</td><td>—</td><td style="color:#1d4ed8">$1,000</td></tr>
+        </tbody></table>
       </div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
+      <div class="card"><div class="hotel-tag">BREPC — Breathless</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>The Strip Grill</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$480</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$680</td></tr>
-          <tr><td>Culinaria</td><td>Cena</td><td>—</td><td>—</td><td>—</td></tr>
-        </tbody>
-      </table>
+          <tr style="background:#f8fafc;font-weight:700"><td colspan="2">Total BREPC</td><td style="color:#1d4ed8">$480</td><td>—</td><td style="color:#1d4ed8">$680</td></tr>
+        </tbody></table>
+      </div>
     </div>
-  </div>
 
-  <!-- TAB FALTANTES -->
-  <div id="dtab-falt" style="display:none">
-    <div class="card">
-      <div class="stitle">Secrets Royal Beach (SERPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Tipo</th><th>Producto</th></tr></thead>
+    <!-- FALTANTES -->
+    <div id="dt-falt" style="display:none">
+      <div class="card"><div class="hotel-tag">SERPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Producto</th></tr></thead>
         <tbody>
-          <tr><td>Oceana</td><td>Cena</td><td><span class="chip chip-red">Platillo</span></td><td>Langosta</td></tr>
-          <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip chip-purple">Vino</span></td><td>Malbec Reserva</td></tr>
-          <tr><td>Himitsu</td><td>Cena</td><td><span class="chip chip-yellow">Producto</span></td><td>Sake importado</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="stitle">Dreams Onyx (DROPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Tipo</th><th>Producto</th></tr></thead>
+          <tr><td>Oceana</td><td>Cena</td><td><span class="chip cr">Platillo</span></td><td>Langosta</td></tr>
+          <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip cp">Vino</span></td><td>Malbec Reserva</td></tr>
+          <tr><td>Himitsu</td><td>Cena</td><td><span class="chip cy">Producto</span></td><td>Sake importado</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">DROPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Producto</th></tr></thead>
         <tbody>
-          <tr><td>Tamarindo</td><td>Almuerzo</td><td><span class="chip chip-red">Platillo</span></td><td>Camarones</td></tr>
-          <tr><td>Spice</td><td>Cena</td><td><span class="chip chip-yellow">Producto</span></td><td>Salsa teriyaki</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="stitle">Breathless (BREPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Tipo</th><th>Producto</th></tr></thead>
+          <tr><td>Tamarindo</td><td>Almuerzo</td><td><span class="chip cr">Platillo</span></td><td>Camarones</td></tr>
+          <tr><td>Spice</td><td>Cena</td><td><span class="chip cy">Producto</span></td><td>Salsa teriyaki</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">BREPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Producto</th></tr></thead>
         <tbody>
-          <tr><td>Coquette</td><td>Cena</td><td><span class="chip chip-blue">Bebida</span></td><td>Gin Hendricks</td></tr>
-          <tr><td>The Strip Grill</td><td>Cena</td><td><span class="chip chip-purple">Vino</span></td><td>Rosé importado</td></tr>
-          <tr><td>Silk City</td><td>Cena</td><td><span class="chip chip-red">Platillo</span></td><td>Tuna Tataki</td></tr>
-          <tr><td>Culinaria</td><td>Cena</td><td><span class="chip chip-yellow">Producto</span></td><td>Aceite de trufa</td></tr>
-        </tbody>
-      </table>
+          <tr><td>Coquette</td><td>Cena</td><td><span class="chip cb">Bebida</span></td><td>Gin Hendricks</td></tr>
+          <tr><td>The Strip Grill</td><td>Cena</td><td><span class="chip cp">Vino</span></td><td>Rosé importado</td></tr>
+          <tr><td>Silk City</td><td>Cena</td><td><span class="chip cr">Platillo</span></td><td>Tuna Tataki</td></tr>
+        </tbody></table>
+      </div>
     </div>
-  </div>
 
-  <!-- TAB MANTENIMIENTO -->
-  <div id="dtab-mant" style="display:none">
-    <div class="card">
-      <div class="stitle">Secrets Royal Beach (SERPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Incidencia</th><th>Detalle</th></tr></thead>
+    <!-- MANTENIMIENTO -->
+    <div id="dt-mant" style="display:none">
+      <div class="card"><div class="hotel-tag">SERPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Detalle</th></tr></thead>
         <tbody>
-          <tr><td>Oceana</td><td>Cena</td><td><span class="chip chip-yellow">A/C</span></td><td>Fallo aire acondicionado</td></tr>
-          <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip chip-yellow">Música</span></td><td>Fallo música ambiental</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="stitle">Dreams Royal Beach (DRRPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Incidencia</th><th>Detalle</th></tr></thead>
+          <tr><td>Oceana</td><td>Cena</td><td><span class="chip cy">A/C</span></td><td>Fallo aire acondicionado</td></tr>
+          <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip cy">Música</span></td><td>Fallo música ambiental</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">DRRPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Detalle</th></tr></thead>
         <tbody>
-          <tr><td>Seaside Grill</td><td>Almuerzo</td><td><span class="chip chip-yellow">Puerta</span></td><td>Fallo puerta principal</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="stitle">Breathless (BREPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Incidencia</th><th>Detalle</th></tr></thead>
+          <tr><td>Seaside Grill</td><td>Almuerzo</td><td><span class="chip cy">Puerta</span></td><td>Fallo puerta principal</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">BREPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Detalle</th></tr></thead>
         <tbody>
-          <tr><td>Culinaria</td><td>Cena</td><td><span class="chip chip-yellow">Otro</span></td><td>Luces del salón sin funcionar</td></tr>
-          <tr><td>Silk City</td><td>Cena</td><td><span class="chip chip-yellow">A/C</span></td><td>Fallo aire acondicionado zona VIP</td></tr>
-        </tbody>
-      </table>
+          <tr><td>Culinaria</td><td>Cena</td><td><span class="chip cy">Otro</span></td><td>Luces sin funcionar</td></tr>
+          <tr><td>Silk City</td><td>Cena</td><td><span class="chip cy">A/C</span></td><td>Fallo A/C zona VIP</td></tr>
+        </tbody></table>
+      </div>
     </div>
-  </div>
 
-  <!-- TAB INVENTARIO -->
-  <div id="dtab-inv" style="display:none">
-    <div class="card">
-      <div class="stitle">Secrets Royal Beach (SERPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th style="text-align:center">CMD 1</th><th style="text-align:center">CMD 2</th><th style="text-align:center">CMD 3</th><th style="text-align:center">H.Tablet</th></tr></thead>
+    <!-- INVENTARIO -->
+    <div id="dt-inv" style="display:none">
+      <div class="card"><div class="hotel-tag">SERPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th style="text-align:center">CMD1</th><th style="text-align:center">CMD2</th><th style="text-align:center">CMD3</th><th style="text-align:center">Tablet</th></tr></thead>
         <tbody>
           <tr><td>Oceana</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td><td style="text-align:center;color:#16a34a">✓</td></tr>
           <tr><td>Bluewater Grill</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td></tr>
           <tr><td>Himitsu</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="stitle">Dreams Onyx (DROPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th style="text-align:center">CMD 1</th><th style="text-align:center">CMD 2</th><th style="text-align:center">CMD 3</th><th style="text-align:center">H.Tablet</th></tr></thead>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">DROPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th style="text-align:center">CMD1</th><th style="text-align:center">CMD2</th><th style="text-align:center">CMD3</th><th style="text-align:center">Tablet</th></tr></thead>
         <tbody>
           <tr><td>Tamarindo</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td></tr>
           <tr><td>Faire</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td></tr>
-        </tbody>
-      </table>
+        </tbody></table>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:11px;color:#dc2626;font-weight:500;margin-bottom:10px">
+        ⚠ 3 equipos con fallo — SERPC: 2 · DROPC: 1
+      </div>
     </div>
-    <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:11px;color:#dc2626;font-weight:500;margin-bottom:10px">
-      ⚠ 3 equipos con fallo en total — SERPC: 2 · DROPC: 1
+
+    <!-- QUEJAS -->
+    <div id="dt-qj" style="display:none">
+      <div class="card"><div class="hotel-tag">SERPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Himitsu</td><td>Cena</td><td><strong>1204</strong></td><td>Tiempo de espera largo</td></tr>
+          <tr><td>Oceana</td><td>Cena</td><td><strong>834</strong></td><td>Temperatura incorrecta del plato</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">DRRPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Portofino</td><td>Cena</td><td><strong>412</strong></td><td>Mesero poco atento</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">DROPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Tamarindo</td><td>Almuerzo</td><td><strong>708</strong></td><td>Error en la orden</td></tr>
+          <tr><td>Spice</td><td>Cena</td><td><strong>523</strong></td><td>Platillo llegó frío</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="hotel-tag">BREPC</div>
+        <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>Coquette</td><td>Cena</td><td><strong>901</strong></td><td>Música muy alta</td></tr>
+          <tr><td>The Strip Grill</td><td>Cena</td><td><strong>315</strong></td><td>Tiempo de espera excesivo</td></tr>
+        </tbody></table>
+      </div>
     </div>
   </div>
 
-  <!-- TAB QUEJAS -->
-  <div id="dtab-quejas" style="display:none">
-    <div class="card">
-      <div class="stitle">Secrets Royal Beach (SERPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
-        <tbody>
-          <tr><td>Himitsu</td><td>Cena</td><td style="font-weight:600">1204</td><td>Tiempo de espera muy largo</td></tr>
-          <tr><td>Oceana</td><td>Cena</td><td style="font-weight:600">834</td><td>Temperatura incorrecta del plato</td></tr>
-        </tbody>
-      </table>
+  <!-- EMAIL TAB -->
+  <div id="dash-email" style="display:none">
+    <div class="em-nav">
+      <button class="em-btn on" onclick="setEm('e1')">1· Comandero</button>
+      <button class="em-btn" onclick="setEm('e2')">2· INP/Faltantes</button>
+      <button class="em-btn" onclick="setEm('e3')">3· Mantenimiento</button>
+      <button class="em-btn" onclick="setEm('e4')">4· Música</button>
+      <button class="em-btn" onclick="setEm('e5')">5· Quejas</button>
     </div>
-    <div class="card">
-      <div class="stitle">Dreams Royal Beach (DRRPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
-        <tbody>
-          <tr><td>Portofino</td><td>Cena</td><td style="font-weight:600">412</td><td>Mesero poco atento</td></tr>
-        </tbody>
-      </table>
+
+    <!-- EMAIL 1: COMANDERO -->
+    <div id="em-e1" class="email-box">
+      <div class="em-meta">
+        <div class="em-subj">📊 Comandero · Todos los hoteles · 22/07/2026 · 5 faltantes · 2 fallos</div>
+        <div class="em-to">Para: Rob, Ciriaco, Ferreiro, Erika, Emilio · + individuales por hotel a GMs y Gerentes A&B</div>
+      </div>
+      <div class="em-hdr" style="background:#1d4ed8">
+        <div style="font-size:16px;font-weight:700">🍽️ Reporte Diario del Comandero Digital</div>
+        <div style="font-size:11px;opacity:.85;margin-top:3px">Cumplimiento del día 22/07/2026 · Grupo Martinón</div>
+      </div>
+      <div class="em-kpis" style="grid-template-columns:repeat(4,1fr)">
+        <div class="em-kbox"><div class="em-klbl">Esperados</div><div class="em-kval">39</div></div>
+        <div class="em-kbox"><div class="em-klbl">Cumplidos</div><div class="em-kval" style="color:#16a34a">34</div></div>
+        <div class="em-kbox"><div class="em-klbl">Cumplimiento</div><div class="em-kval" style="color:#d97706">87%</div></div>
+        <div class="em-kbox"><div class="em-klbl">Fallos cmd.</div><div class="em-kval" style="color:#dc2626">2</div></div>
+      </div>
+      <div class="em-sec">
+        <div class="em-sechdr" style="background:#fee2e2;color:#991b1b">❌ Registros faltantes (5)</div>
+        <div class="em-secbdy">
+          <div class="em-hotel-lbl">Secrets Royal Beach</div>
+          <div class="em-row"><span>🔴 Oceana — Desayuno</span></div>
+          <div class="em-hotel-lbl">Dreams Royal Beach</div>
+          <div class="em-row"><span>🔴 Seaside Grill — Desayuno</span></div>
+          <div class="em-row"><span>🔴 Tres Colores — Cena</span></div>
+          <div class="em-hotel-lbl">Dreams Onyx</div>
+          <div class="em-row"><span>🔴 Mercure — Cena</span></div>
+          <div class="em-row"><span>🔴 Faire — Cena</span></div>
+        </div>
+      </div>
+      <div class="em-sec">
+        <div class="em-sechdr" style="background:#fff7ed;color:#92400e">⚠️ Fallos del comandero (2)</div>
+        <div class="em-secbdy">
+          <div class="em-row"><span><b>SERPC</b> · Oceana · Cena</span><span style="color:#d97706">Parcial — WiFi</span></div>
+          <div class="em-row"><span><b>DRRPC</b> · Seaside Grill · Cena</span><span style="color:#dc2626">No — Sin papel</span></div>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <div class="stitle">Dreams Onyx (DROPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
-        <tbody>
-          <tr><td>Tamarindo</td><td>Almuerzo</td><td style="font-weight:600">708</td><td>Error en la orden</td></tr>
-          <tr><td>Spice</td><td>Cena</td><td style="font-weight:600">523</td><td>Platillo llegó frío</td></tr>
-        </tbody>
-      </table>
+
+    <!-- EMAIL 2: INP + FALTANTES -->
+    <div id="em-e2" class="email-box" style="display:none">
+      <div class="em-meta">
+        <div class="em-subj">💰 Ventas INP y Faltantes A&B · 22/07/2026</div>
+        <div class="em-to">Para: Rob, Emilio Punzano, Israel Gata (todos) · Joaquin Alcaraz (Varallo) · Carlos Tejerina (IOR) · Joel Gomez (Natura)</div>
+      </div>
+      <div class="em-hdr" style="background:#1e40af">
+        <div style="font-size:16px;font-weight:700">💰 Ventas INP y Faltantes A&B</div>
+        <div style="font-size:11px;opacity:.85;margin-top:3px">22/07/2026 · Grupo Martinón</div>
+      </div>
+      <div class="em-sec">
+        <div class="em-sechdr" style="background:#eff6ff;color:#1e40af">💰 Ventas de INP del día</div>
+        <div class="em-secbdy">
+          <div class="em-hotel-lbl">SERPC — Secrets Royal Beach</div>
+          <div class="em-row"><span>Oceana · Cena — Vinos</span><div><span style="font-weight:600">$890</span><span style="font-size:9px;color:#94a3b8;margin-left:6px">Ayer: $760</span></div></div>
+          <div class="em-row"><span>Bordeaux · Cena — Vinos</span><div><span style="font-weight:600">$640</span><span style="font-size:9px;color:#94a3b8;margin-left:6px">Ayer: $590</span></div></div>
+          <div class="em-row"><span>Bordeaux · Cena — Tomahawk</span><div><span style="font-weight:600">$680</span><span style="font-size:9px;color:#94a3b8;margin-left:6px">Ayer: $450</span></div></div>
+          <div class="em-row"><span>Oceana · Cena — Langosta</span><div><span style="font-weight:600">$1,240</span><span style="font-size:9px;color:#94a3b8;margin-left:6px">Ayer: $1,100</span></div></div>
+          <div class="em-hotel-lbl">DROPC — Dreams Onyx</div>
+          <div class="em-row"><span>Tamarindo · Cena — Vinos</span><div><span style="font-weight:600">$560</span><span style="font-size:9px;color:#94a3b8;margin-left:6px">Ayer: $480</span></div></div>
+          <div class="em-row"><span>Tamarindo · Cena — Langosta</span><div><span style="font-weight:600">$1,000</span><span style="font-size:9px;color:#94a3b8;margin-left:6px">Ayer: $920</span></div></div>
+        </div>
+      </div>
+      <div class="em-sec">
+        <div class="em-sechdr" style="background:#fef2f2;color:#991b1b">🍽️ Faltantes de A&B (9)</div>
+        <div class="em-secbdy">
+          <div class="em-hotel-lbl">SERPC</div>
+          <div class="em-row"><span>Oceana · Cena</span><span style="color:#dc2626">Platillo: Langosta</span></div>
+          <div class="em-row"><span>Bordeaux · Cena</span><span style="color:#dc2626">Vino: Malbec Reserva</span></div>
+          <div class="em-row"><span>Himitsu · Cena</span><span style="color:#dc2626">Producto: Sake importado</span></div>
+          <div class="em-hotel-lbl">DROPC</div>
+          <div class="em-row"><span>Tamarindo · Almuerzo</span><span style="color:#dc2626">Platillo: Camarones</span></div>
+          <div class="em-row"><span>Spice · Cena</span><span style="color:#dc2626">Producto: Salsa teriyaki</span></div>
+          <div class="em-hotel-lbl">BREPC</div>
+          <div class="em-row"><span>Coquette · Cena</span><span style="color:#dc2626">Bebida: Gin Hendricks</span></div>
+          <div class="em-row"><span>The Strip Grill · Cena</span><span style="color:#dc2626">Vino: Rosé importado</span></div>
+          <div class="em-row"><span>Silk City · Cena</span><span style="color:#dc2626">Platillo: Tuna Tataki</span></div>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <div class="stitle">Breathless (BREPC)</div>
-      <table class="tbl">
-        <thead><tr><th>Restaurante</th><th>Servicio</th><th>Hab.</th><th>Descripción</th></tr></thead>
-        <tbody>
-          <tr><td>Coquette</td><td>Cena</td><td style="font-weight:600">901</td><td>Música muy alta</td></tr>
-          <tr><td>The Strip Grill</td><td>Cena</td><td style="font-weight:600">315</td><td>Tiempo de espera excesivo</td></tr>
-        </tbody>
-      </table>
+
+    <!-- EMAIL 3: MANTENIMIENTO -->
+    <div id="em-e3" class="email-box" style="display:none">
+      <div class="em-meta">
+        <div class="em-subj">🔧 Incidencias de Mantenimiento · 22/07/2026 · 5 incidencias</div>
+        <div class="em-to">Para: Alexis De los Santos, Kerli Mercedes (todos) · Ramon Martinez (Natura) · Ricardo Melo (Varallo) · Armando Lopez (IOR)</div>
+      </div>
+      <div class="em-hdr" style="background:#92400e">
+        <div style="font-size:16px;font-weight:700">🔧 Incidencias de Mantenimiento</div>
+        <div style="font-size:11px;opacity:.85;margin-top:3px">22/07/2026 · Grupo Martinón</div>
+      </div>
+      <div class="em-sec">
+        <div class="em-sechdr" style="background:#fff7ed;color:#92400e">5 incidencias reportadas</div>
+        <div class="em-secbdy">
+          <div class="em-hotel-lbl">SERPC — Secrets Royal Beach</div>
+          <div class="em-row"><span>Oceana · Cena</span><span style="color:#d97706">Fallo aire acondicionado</span></div>
+          <div class="em-row"><span>Bordeaux · Cena</span><span style="color:#d97706">Fallo música ambiental</span></div>
+          <div class="em-hotel-lbl">DRRPC — Dreams Royal Beach</div>
+          <div class="em-row"><span>Seaside Grill · Almuerzo</span><span style="color:#d97706">Fallo puerta principal</span></div>
+          <div class="em-hotel-lbl">BREPC — Breathless</div>
+          <div class="em-row"><span>Culinaria · Cena</span><span style="color:#d97706">Luces sin funcionar</span></div>
+          <div class="em-row"><span>Silk City · Cena</span><span style="color:#d97706">Fallo A/C zona VIP</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMAIL 4: MÚSICA -->
+    <div id="em-e4" class="email-box" style="display:none">
+      <div class="em-meta">
+        <div class="em-subj">🎵 Fallos de Música Ambiental · 22/07/2026 · 2 reportes</div>
+        <div class="em-to">Para: Sergi Vendrell (todos los hoteles)</div>
+      </div>
+      <div class="em-hdr" style="background:#7c3aed">
+        <div style="font-size:16px;font-weight:700">🎵 Fallos de Música Ambiental</div>
+        <div style="font-size:11px;opacity:.85;margin-top:3px">22/07/2026 · Grupo Martinón</div>
+      </div>
+      <div class="em-sec">
+        <div class="em-sechdr" style="background:#f5f3ff;color:#7c3aed">2 fallos de música reportados</div>
+        <div class="em-secbdy">
+          <div class="em-row"><span><b>SERPC</b> · Bordeaux · Cena</span><span style="color:#7c3aed">Fallo música ambiental</span></div>
+          <div class="em-row"><span><b>BREPC</b> · Culinaria · Cena</span><span style="color:#7c3aed">Sin sonido en zona sur</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMAIL 5: QUEJAS -->
+    <div id="em-e5" class="email-box" style="display:none">
+      <div class="em-meta">
+        <div class="em-subj">😞 Quejas de Huéspedes · 22/07/2026 · 7 quejas</div>
+        <div class="em-to">Para: Glenys Silverio, Emilio Punzano, Israel Gata (todos los hoteles)</div>
+      </div>
+      <div class="em-hdr" style="background:#be185d">
+        <div style="font-size:16px;font-weight:700">😞 Quejas de Huéspedes</div>
+        <div style="font-size:11px;opacity:.85;margin-top:3px">22/07/2026 · Grupo Martinón</div>
+      </div>
+      <div class="em-kpis" style="grid-template-columns:repeat(2,1fr)">
+        <div class="em-kbox"><div class="em-klbl">Total quejas</div><div class="em-kval" style="color:#dc2626">7</div></div>
+        <div class="em-kbox"><div class="em-klbl">Hoteles afectados</div><div class="em-kval" style="color:#dc2626">4</div></div>
+      </div>
+      <div class="em-sec">
+        <div class="em-sechdr" style="background:#fdf2f8;color:#be185d">Detalle por hotel y restaurante</div>
+        <div class="em-secbdy">
+          <div class="em-hotel-lbl">SERPC — Secrets Royal Beach</div>
+          <div class="em-row"><span>Himitsu · Cena · Hab. <b>1204</b></span><span style="color:#dc2626">Tiempo de espera largo</span></div>
+          <div class="em-row"><span>Oceana · Cena · Hab. <b>834</b></span><span style="color:#dc2626">Temperatura del plato</span></div>
+          <div class="em-hotel-lbl">DRRPC — Dreams Royal Beach</div>
+          <div class="em-row"><span>Portofino · Cena · Hab. <b>412</b></span><span style="color:#dc2626">Mesero poco atento</span></div>
+          <div class="em-hotel-lbl">DROPC — Dreams Onyx</div>
+          <div class="em-row"><span>Tamarindo · Almuerzo · Hab. <b>708</b></span><span style="color:#dc2626">Error en la orden</span></div>
+          <div class="em-row"><span>Spice · Cena · Hab. <b>523</b></span><span style="color:#dc2626">Platillo llegó frío</span></div>
+          <div class="em-hotel-lbl">BREPC — Breathless</div>
+          <div class="em-row"><span>Coquette · Cena · Hab. <b>901</b></span><span style="color:#dc2626">Música muy alta</span></div>
+          <div class="em-row"><span>The Strip Grill · Cena · Hab. <b>315</b></span><span style="color:#dc2626">Tiempo de espera</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-const HOTELS = {
+var HOTELS={
   "SERPC3100":{name:"Secrets Royal Beach",code:"SERPC",tipo:"capitan",restaurantes:{"Bluewater Grill":["Cena"],"Himitsu":["Cena"],"Bordeaux":["Cena"],"El Patio":["Cena"],"Oceana":["Desayuno","Almuerzo","Cena"]}},
   "DRRPC2321":{name:"Dreams Royal Beach",code:"DRRPC",tipo:"capitan",restaurantes:{"Seaside Grill":["Desayuno","Almuerzo","Cena"],"Fusion":["Cena"],"Mercure":["Cena"],"Tres Colores":["Cena"],"Portofino":["Desayuno","Almuerzo","Cena"]}},
-  "DROPC1815":{name:"Dreams Onyx",code:"DROPC",tipo:"capitan",restaurantes:{"Cin Cin":["Cena"],"Capers":["Cena"],"Bluewater Grill":["Cena"],"Mercure":["Cena"],"Faire":["Cena"],"Spice":["Cena"],"Tamarindo":["Desayuno","Almuerzo","Cena"],"Room Service":["Desayuno","Almuerzo","Menú Nocturno"]}},
-  "BREPC2020":{name:"Breathless",code:"BREPC",tipo:"capitan",restaurantes:{"Coquette":["Cena"],"Spumante":["Cena"],"Silk City":["Cena"],"Culinaria":["Cena"],"The Strip Grill":["Desayuno","Almuerzo","Cena"],"Sofrito":["Cena"],"Room Service":["Desayuno","Almuerzo","Menú Nocturno"]}},
-  // Directores A&B
+  "DROPC1815":{name:"Dreams Onyx",code:"DROPC",tipo:"capitan",restaurantes:{"Cin Cin":["Cena"],"Capers":["Cena"],"Bluewater Grill":["Cena"],"Mercure":["Cena"],"Faire":["Cena"],"Spice":["Cena"],"Tamarindo":["Desayuno","Almuerzo","Cena"],"Room Service":["Desayuno","Almuerzo","Men\u00fa Nocturno"]}},
+  "BREPC2020":{name:"Breathless",code:"BREPC",tipo:"capitan",restaurantes:{"Coquette":["Cena"],"Spumante":["Cena"],"Silk City":["Cena"],"Culinaria":["Cena"],"The Strip Grill":["Desayuno","Almuerzo","Cena"],"Sofrito":["Cena"],"Room Service":["Desayuno","Almuerzo","Men\u00fa Nocturno"]}},
   "EP7341":{name:"Todos los hoteles",code:"CORP",tipo:"ayb",rol:"Emilio Punzano — Dir. Corporativo A&B"},
   "IG5823":{name:"Todos los hoteles",code:"CORP",tipo:"ayb",rol:"Israel Gata — Chef Ejecutivo Corporativo"},
   "JA4196":{name:"Varallo (SERPC / DRRPC)",code:"VARALLO",tipo:"ayb",rol:"Joaquin Alcaraz — Dir. A&B Varallo"},
   "CT8752":{name:"IOR (BREPC / DROPC)",code:"IOR",tipo:"ayb",rol:"Carlos Tejerina — Dir. A&B IOR"},
   "JG3047":{name:"Natura (DRFPC)",code:"NATURA",tipo:"ayb",rol:"Joel Gomez — Dir. A&B Natura"}
 };
-
-let currentHotel=null,isCerrado=false;
-
-function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo_Domingo'}).format(new Date());}
-function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo_Domingo'}).format(d);}
-
+var cur=null,cerr=false;
+function td(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo_Domingo'}).format(new Date());}
+function yd(){var d=new Date();d.setDate(d.getDate()-1);return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo_Domingo'}).format(d);}
+function fmt(s){return s.split('-').reverse().join('/');}
+function show(id){document.getElementById(id).style.display='block';}
+function hide(id){document.getElementById(id).style.display='none';}
 function doLogin(){
-  try{
-  const raw=document.getElementById('loginCode').value.trim().toUpperCase();
-  const h=HOTELS[raw];
-  if(!h){document.getElementById('loginError').style.display='block';return;}
-  document.getElementById('loginError').style.display='none';
-  currentHotel=h;
+  var raw=document.getElementById('loginCode').value.trim().toUpperCase();
+  var h=HOTELS[raw];
+  if(!h){show('loginErr');return;}
+  hide('loginErr');cur=h;
+  hide('s-login');
   if(h.tipo==='ayb'){
-    document.getElementById('screen-login').style.display='none';
-    document.getElementById('screen-dash').style.display='block';
-    document.getElementById('dash-hotel-name').textContent=h.rol;
-    setPeriodo('ayer');
+    show('s-dash');
+    document.getElementById('d-hname').textContent=h.rol;
+    setPer('ayer');
   } else {
-    document.getElementById('screen-login').style.display='none';
-    document.getElementById('screen-app').style.display='block';
-    document.getElementById('hotel-name').textContent=h.name;
-    document.getElementById('hotel-sub').textContent=h.code+' — Demo datos adicionales';
-    const hoy=today(),ayer=yesterday();
-    const fmt=s=>s.split('-').reverse().join('/');
-    document.getElementById('opt-hoy').textContent='Hoy — '+fmt(hoy);document.getElementById('opt-hoy').value=hoy;
-    document.getElementById('opt-ayer').textContent='Ayer — '+fmt(ayer);document.getElementById('opt-ayer').value=ayer;
-    const sel=document.getElementById('f-restaurante');
+    show('s-form');
+    document.getElementById('f-hname').textContent=h.name;
+    document.getElementById('f-hsub').textContent=h.code+' — Demo datos adicionales';
+    var hoy=td(),ayer=yd();
+    document.getElementById('opt-hoy').textContent='Hoy — '+fmt(hoy);
+    document.getElementById('opt-hoy').value=hoy;
+    document.getElementById('opt-ayer').textContent='Ayer — '+fmt(ayer);
+    document.getElementById('opt-ayer').value=ayer;
+    var sel=document.getElementById('f-rest');
     sel.innerHTML='<option value="">— Seleccionar —</option>';
-    Object.keys(h.restaurantes).forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o);});
-  }
-  }catch(err){
-    alert('Error en login: '+err.message);
+    Object.keys(h.restaurantes).forEach(function(r){var o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o);});
   }
 }
-
 function doLogout(){
-  currentHotel=null;isCerrado=false;
-  ['screen-app','screen-dash'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('screen-login').style.display='flex';
+  cur=null;cerr=false;
+  hide('s-form');hide('s-dash');
+  document.getElementById('s-login').style.display='flex';
   document.getElementById('loginCode').value='';
+  document.getElementById('f-alert').style.display='none';
+  document.getElementById('btn-cerr').className='btn-cerr';
+  document.getElementById('btn-cerr').textContent='🔴 Marcar como cerrado';
   document.getElementById('adic-body').style.display='none';
-  document.getElementById('adic-label').textContent='▶ Datos adicionales';
-  document.getElementById('form-alert').style.display='none';
-  document.getElementById('btn-cerrado').className='btn-cerrado';
-  document.getElementById('btn-cerrado').textContent='🔴 Marcar como cerrado';
-  // Reset equipos
-  document.querySelectorAll('.tbtn').forEach(b=>{b.className='tbtn'+(b.textContent.includes('OK')?' ok':'');});
-  document.querySelectorAll('.fallo-tipo').forEach(d=>d.style.display='none');
-  // Reset quejas
-  const ql=document.getElementById('quejas-lista');
-  ql.innerHTML='<div class="queja-row"><input class="qnum" type="number" placeholder="Hab." min="1" oninput="countQuejas()"><input class="qtxt" type="text" placeholder="Descripción de la queja" oninput="countQuejas()"></div>';
-  document.getElementById('queja-count').textContent='0';
+  document.getElementById('adic-lbl').textContent='▶ Datos adicionales';
+  document.querySelectorAll('.ftipo').forEach(function(d){d.style.display='none';});
 }
-
-function loadServicios(){
-  const rest=document.getElementById('f-restaurante').value;
-  const sel=document.getElementById('f-servicio');
-  sel.innerHTML='<option value="">— Seleccionar —</option>';
-  if(!rest||!currentHotel) return;
-  (currentHotel.restaurantes[rest]||[]).forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});
+function loadServs(){
+  var r=document.getElementById('f-rest').value;
+  var s=document.getElementById('f-serv');
+  s.innerHTML='<option value="">— Seleccionar —</option>';
+  if(!r||!cur)return;
+  (cur.restaurantes[r]||[]).forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o);});
 }
-
-function toggleIncidencia(v){
-  const w=document.getElementById('incidencia-wrap');
-  w.style.display=(v==='Parcial'||v==='No')?'block':'none';
-  if(v==='Si') document.getElementById('detalle-otros').style.display='none';
+function toggleIncid(v){document.getElementById('incid-wrap').style.display=(v==='Parcial'||v==='No')?'block':'none';}
+function toggleOtros(v){document.getElementById('det-otros').style.display=v==='Otros'?'block':'none';}
+function toggleMant(v){document.getElementById('mant-desc').style.display=v==='Otro'?'block':'none';}
+function toggleCerr(){
+  cerr=!cerr;
+  var b=document.getElementById('btn-cerr');
+  b.textContent=cerr?'🔵 Marcado como cerrado':'🔴 Marcar como cerrado';
+  b.className='btn-cerr'+(cerr?' on':'');
 }
-
-function toggleDetalleOtros(v){
-  document.getElementById('detalle-otros').style.display=v==='Otros'?'block':'none';
-}
-
-function toggleMantDesc(v){
-  document.getElementById('mant-desc-wrap').style.display=v==='Otro'?'block':'none';
-}
-
-function toggleCerrado(){
-  isCerrado=!isCerrado;
-  const btn=document.getElementById('btn-cerrado');
-  btn.textContent=isCerrado?'🔵 Marcado como cerrado':'🔴 Marcar como cerrado';
-  btn.className='btn-cerrado'+(isCerrado?' active':'');
-}
-
 function toggleAdic(){
-  const b=document.getElementById('adic-body');
-  const l=document.getElementById('adic-label');
-  const open=b.style.display==='block';
+  var b=document.getElementById('adic-body');
+  var l=document.getElementById('adic-lbl');
+  var open=b.style.display==='block';
   b.style.display=open?'none':'block';
   l.textContent=(open?'▶':'▼')+' Datos adicionales';
 }
-
-function toggleEquipo(btn,id,type){
-  const row=btn.closest('.inv-row');
-  row.querySelectorAll('.tbtn').forEach(b=>b.className='tbtn');
+function togEq(btn,id,type){
+  var row=btn.closest('.inv-row');
+  row.querySelectorAll('.tbtn').forEach(function(b){b.className='tbtn';});
   btn.className='tbtn '+(type==='ok'?'ok':'fail');
-  document.getElementById('fallo-'+id).style.display=type==='fail'?'block':'none';
+  document.getElementById('ft-'+id).style.display=type==='fail'?'block':'none';
 }
-
-function addQueja(){
-  const lista=document.getElementById('quejas-lista');
-  const row=document.createElement('div');row.className='queja-row';
-  row.innerHTML='<input class="qnum" type="number" placeholder="Hab." min="1" oninput="countQuejas()"><input class="qtxt" type="text" placeholder="Descripción de la queja" oninput="countQuejas()">';
-  lista.appendChild(row);
+function addQ(){
+  var l=document.getElementById('qlist');
+  var r=document.createElement('div');r.className='qrow';
+  r.innerHTML='<input class="qnum" type="number" placeholder="Hab." oninput="cntQ()"><input class="qtxt" type="text" placeholder="Descripción" oninput="cntQ()">';
+  l.appendChild(r);
 }
-
-function countQuejas(){
-  let c=0;document.querySelectorAll('.qnum').forEach(n=>{if(n.value.trim())c++;});
-  document.getElementById('queja-count').textContent=c;
+function cntQ(){
+  var c=0;document.querySelectorAll('.qnum').forEach(function(n){if(n.value.trim())c++;});
+  document.getElementById('qcnt').textContent=c;
 }
-
-function showAlert(msg,type){
-  const el=document.getElementById('form-alert');
-  el.className='alert alert-'+type;el.textContent=msg;el.style.display='block';
-  if(type==='success')setTimeout(()=>el.style.display='none',4000);
+function showAlert(m,t){
+  var el=document.getElementById('f-alert');
+  el.className='alert alert-'+t;el.textContent=m;el.style.display='block';
+  if(t==='success')setTimeout(function(){el.style.display='none';},4000);
 }
-
-function submitDemo(){
-  const rest=document.getElementById('f-restaurante').value;
-  const resp=document.getElementById('f-responsable').value.trim();
-  if(!rest){showAlert('Selecciona un restaurante.','error');return;}
-  if(!resp){showAlert('Ingresa el nombre del responsable.','error');return;}
-  showAlert('✅ Demo: formulario completo. En el sistema real esto se guardaría en el Sheet y aparecería en los reportes de las 8 AM.','success');
+function submitD(){
+  if(!document.getElementById('f-rest').value){showAlert('Selecciona un restaurante.','error');return;}
+  if(!document.getElementById('f-resp').value.trim()){showAlert('Ingresa el nombre del responsable.','error');return;}
+  showAlert('✅ Demo OK. En el sistema real esto se guardaría en el Sheet y aparecería en los reportes de las 8 AM.','success');
 }
-
-function setPeriodo(p){
-  ['hoy','ayer','rango'].forEach(id=>{
-    document.getElementById('pbtn-'+id).className='tbtn'+(id===p?' ok':'');
+function setMainTab(t){
+  document.getElementById('dash-data').style.display=t==='dash-data'?'block':'none';
+  document.getElementById('dash-email').style.display=t==='dash-email'?'block':'none';
+  document.querySelectorAll('.main-tab').forEach(function(el,i){
+    el.className='main-tab'+((['dash-data','dash-email'][i])===t?' on':'');
   });
-  const ri=document.getElementById('rango-inputs');
-  ri.style.display=p==='rango'?'block':'none';
-  const lbl=document.getElementById('periodo-label');
-  const fmt=s=>s.split('-').reverse().join('/');
-  if(p==='hoy') lbl.innerHTML='📅 Mostrando: <strong>Hoy — '+fmt(today())+'</strong> · Todos los hoteles activos';
-  else if(p==='ayer') lbl.innerHTML='📅 Mostrando: <strong>Ayer — '+fmt(yesterday())+'</strong> · Todos los hoteles activos';
-  else lbl.innerHTML='📅 Selecciona el rango de fechas y presiona Aplicar';
 }
-
-function aplicarRango(){
-  const desde=document.getElementById('rango-desde').value;
-  const hasta=document.getElementById('rango-hasta').value;
-  if(!desde||!hasta){alert('Selecciona ambas fechas');return;}
-  const fmt=s=>s.split('-').reverse().join('/');
-  document.getElementById('periodo-label').innerHTML='📅 Mostrando: <strong>'+fmt(desde)+' — '+fmt(hasta)+'</strong> · Todos los hoteles activos';
-}
-
-function setDashTab(tab){
-  ['inp','falt','mant','inv','quejas'].forEach(t=>{
-    document.getElementById('dtab-'+t).style.display=t===tab?'block':'none';
+function setPer(p){
+  ['hoy','ayer','rango'].forEach(function(id){
+    document.getElementById('pb-'+id).className='pbtn'+(id===p?' on':'');
   });
-  document.querySelectorAll('.dash-tab').forEach((el,i)=>{
-    el.className='dash-tab'+((['inp','falt','mant','inv','quejas'][i])===tab?' active':'');
+  var rw=document.getElementById('rango-wrap');
+  rw.style.display=p==='rango'?'block':'none';
+  var lbl=document.getElementById('per-lbl');
+  if(p==='hoy')lbl.innerHTML='📅 <strong>Hoy — '+fmt(td())+'</strong> · Todos los hoteles activos';
+  else if(p==='ayer')lbl.innerHTML='📅 <strong>Ayer — '+fmt(yd())+'</strong> · Todos los hoteles activos';
+  else lbl.innerHTML='📅 Selecciona el rango y presiona Aplicar';
+}
+function applyR(){
+  var d=document.getElementById('r-desde').value;
+  var h=document.getElementById('r-hasta').value;
+  if(!d||!h){alert('Selecciona ambas fechas');return;}
+  document.getElementById('per-lbl').innerHTML='📅 <strong>'+fmt(d)+' — '+fmt(h)+'</strong> · Todos los hoteles activos';
+}
+function setDTab(t){
+  ['inp','falt','mant','inv','qj'].forEach(function(id){
+    document.getElementById('dt-'+id).style.display=id===t?'block':'none';
+  });
+  document.querySelectorAll('.dtab').forEach(function(el,i){
+    el.className='dtab'+((['inp','falt','mant','inv','qj'][i])===t?' on':'');
+  });
+}
+function setEm(t){
+  ['e1','e2','e3','e4','e5'].forEach(function(id){
+    document.getElementById('em-'+id).style.display=id===t?'block':'none';
+  });
+  document.querySelectorAll('.em-btn').forEach(function(el,i){
+    el.className='em-btn'+((['e1','e2','e3','e4','e5'][i])===t?' on':'');
   });
 }
 </script>

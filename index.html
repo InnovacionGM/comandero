@@ -119,7 +119,11 @@
     .print-header{display:none;}
     .print-footer{display:none;}
     @media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr;}.charts-grid{grid-template-columns:1fr;}.hbar-label{width:90px;font-size:11px;}.filter-bar{flex-direction:column;}}
-  </style>
+  /* ── DATOS ADICIONALES ── */
+.adic-tbtn{padding:5px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;cursor:pointer;background:#f8fafc;color:#64748b;}
+.adic-tbtn.adic-ok{background:#f0fdf4;color:#15803d;border-color:#86efac;font-weight:600;}
+.adic-tbtn.adic-fail{background:#fef2f2;color:#dc2626;border-color:#fca5a5;font-weight:600;}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -238,6 +242,138 @@
       <label for="f-responsable">Nombre y apellido del capitán que reporta <span style="color:#ef4444;">*</span></label>
       <input type="text" id="f-responsable" placeholder="Nombre y apellido completo"/>
       <div class="field-msg" id="err-responsable">⚠ El nombre y apellido es obligatorio.</div>
+
+      <!-- ══ DATOS ADICIONALES ══ -->
+      <div style="margin-top:16px;">
+        <div id="adic-hdr" onclick="toggleDatosAdicionales()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:11px 14px;background:#f0f9ff;border-radius:9px;border:1px solid #bae6fd;margin-bottom:0;">
+          <span id="adic-lbl-form" style="font-size:13px;font-weight:600;color:#0369a1;">▶ Datos adicionales</span>
+          <span style="background:#fef08a;color:#713f12;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;">NUEVO</span>
+        </div>
+        <div id="adic-form-body" style="display:none;padding-top:12px;">
+
+          <!-- INP -->
+          <div style="border-left:3px solid #3b82f6;padding-left:12px;margin-bottom:14px;">
+            <div style="font-size:10px;font-weight:600;color:#2563eb;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">💰 Ventas de INP (USD)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div><label style="font-size:12px;color:#64748b;">Vinos</label><input class="field-input" type="number" id="inp-vinos" placeholder="0.00" min="0" step="0.01"></div>
+              <div><label style="font-size:12px;color:#64748b;">Tomahawk</label><input class="field-input" type="number" id="inp-tomahawk" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+            <div style="max-width:48%;"><label style="font-size:12px;color:#64748b;">Langosta</label><input class="field-input" type="number" id="inp-langosta" placeholder="0.00" min="0" step="0.01"></div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
+
+          <!-- MANTENIMIENTO -->
+          <div style="border-left:3px solid #f59e0b;padding-left:12px;margin-bottom:14px;">
+            <div style="font-size:10px;font-weight:600;color:#d97706;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">🔧 Incidencia de mantenimiento</div>
+            <div style="margin-bottom:8px;">
+              <label style="font-size:12px;color:#64748b;">Tipo</label>
+              <select class="field-input" id="mant-tipo" onchange="toggleMantDesc(this.value)">
+                <option value="">— Sin incidencias —</option>
+                <option>Fallo aire acondicionado</option>
+                <option>Fallo música ambiental</option>
+                <option>Fallo puerta principal</option>
+                <option value="Otro">Otro — describir</option>
+              </select>
+            </div>
+            <div id="mant-desc-wrap" style="display:none;">
+              <label style="font-size:12px;color:#64748b;">Describir el problema</label>
+              <input class="field-input" id="mant-desc" placeholder="¿Qué pasó exactamente?">
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
+
+          <!-- FALTANTES -->
+          <div style="border-left:3px solid #ef4444;padding-left:12px;margin-bottom:14px;">
+            <div style="font-size:10px;font-weight:600;color:#dc2626;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">🍽️ Faltantes de A&amp;B</div>
+            <div style="margin-bottom:8px;">
+              <label style="font-size:12px;color:#64748b;">Tipo de faltante</label>
+              <select class="field-input" id="falt-tipo">
+                <option value="">— Sin faltantes —</option>
+                <option>Se terminó el platillo</option>
+                <option>Se terminó el producto</option>
+                <option>Se acabó el vino</option>
+                <option>No había licor / bebida</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px;color:#64748b;">Especificar cuál</label>
+              <input class="field-input" id="falt-desc" placeholder="Ej: Malbec Reserva, Langosta...">
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
+
+          <!-- INVENTARIO -->
+          <div style="border-left:3px solid #8b5cf6;padding-left:12px;margin-bottom:14px;">
+            <div style="font-size:10px;font-weight:600;color:#7c3aed;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">📱 Inventario de equipos</div>
+            <div id="equipos-lista">
+              <div class="adic-inv-row" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc;font-size:13px;">
+                <span>Comandero 1</span>
+                <div style="display:flex;gap:5px;">
+                  <button type="button" class="adic-tbtn adic-ok" onclick="togEqAd(this,'ae1','ok')">✓ OK</button>
+                  <button type="button" class="adic-tbtn" onclick="togEqAd(this,'ae1','fail')">✗ Fallo</button>
+                </div>
+              </div>
+              <div id="adic-ft-ae1" style="display:none;margin:6px 0 6px 0;padding:8px;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5;">
+                <label style="font-size:11px;color:#dc2626;display:block;margin-bottom:4px;">Tipo de fallo</label>
+                <select class="field-input" style="font-size:11px;"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
+              </div>
+              <div class="adic-inv-row" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc;font-size:13px;">
+                <span>Comandero 2</span>
+                <div style="display:flex;gap:5px;">
+                  <button type="button" class="adic-tbtn adic-ok" onclick="togEqAd(this,'ae2','ok')">✓ OK</button>
+                  <button type="button" class="adic-tbtn" onclick="togEqAd(this,'ae2','fail')">✗ Fallo</button>
+                </div>
+              </div>
+              <div id="adic-ft-ae2" style="display:none;margin:6px 0 6px 0;padding:8px;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5;">
+                <label style="font-size:11px;color:#dc2626;display:block;margin-bottom:4px;">Tipo de fallo</label>
+                <select class="field-input" style="font-size:11px;"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
+              </div>
+              <div class="adic-inv-row" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc;font-size:13px;">
+                <span>Comandero 3</span>
+                <div style="display:flex;gap:5px;">
+                  <button type="button" class="adic-tbtn adic-ok" onclick="togEqAd(this,'ae3','ok')">✓ OK</button>
+                  <button type="button" class="adic-tbtn" onclick="togEqAd(this,'ae3','fail')">✗ Fallo</button>
+                </div>
+              </div>
+              <div id="adic-ft-ae3" style="display:none;margin:6px 0 6px 0;padding:8px;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5;">
+                <label style="font-size:11px;color:#dc2626;display:block;margin-bottom:4px;">Tipo de fallo</label>
+                <select class="field-input" style="font-size:11px;"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
+              </div>
+              <div class="adic-inv-row" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13px;">
+                <span>Hostess Tablet</span>
+                <div style="display:flex;gap:5px;">
+                  <button type="button" class="adic-tbtn adic-ok" onclick="togEqAd(this,'ae4','ok')">✓ OK</button>
+                  <button type="button" class="adic-tbtn" onclick="togEqAd(this,'ae4','fail')">✗ Fallo</button>
+                </div>
+              </div>
+              <div id="adic-ft-ae4" style="display:none;margin:6px 0 0 0;padding:8px;background:#fef2f2;border-radius:6px;border:1px solid #fca5a5;">
+                <label style="font-size:11px;color:#dc2626;display:block;margin-bottom:4px;">Tipo de fallo</label>
+                <select class="field-input" style="font-size:11px;"><option>No se conecta</option><option>No enciende</option><option>Pantalla dañada</option><option>Otro</option></select>
+              </div>
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
+
+          <!-- QUEJAS -->
+          <div style="border-left:3px solid #ec4899;padding-left:12px;margin-bottom:8px;">
+            <div style="font-size:10px;font-weight:600;color:#db2777;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">😞 Quejas de huéspedes</div>
+            <div id="quejas-adic-lista">
+              <div style="display:flex;gap:6px;margin-bottom:6px;">
+                <input class="field-input" type="number" placeholder="Hab." style="width:80px;text-align:center;" oninput="cntQAd()">
+                <input class="field-input" type="text" placeholder="Descripción de la queja" style="flex:1;" oninput="cntQAd()">
+              </div>
+            </div>
+            <button type="button" onclick="addQAd()" style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer;padding:2px 0;margin-bottom:6px;">+ Agregar otra queja</button>
+            <div style="font-size:11px;color:#64748b;">Quejas registradas: <strong id="qcnt-adic">0</strong></div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ══ FIN DATOS ADICIONALES ══ -->
 
       <div id="form-alert" class="alert"></div>
       <div style="display:flex;gap:10px;margin-top:18px;">
@@ -663,6 +799,22 @@ async function doLogin(){
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-admin').style.display='block';
     await loadAllRecords();renderAdmin();return;
+  }
+  // ── Usuarios A&B (solo dashboard) ──
+  if(AYB_USERS[raw]){
+    const ayb=AYB_USERS[raw];
+    document.getElementById('screen-login').style.display='none';
+    document.getElementById('screen-admin').style.display='block';
+    isAdmin=true;isCorpAdmin=true;
+    await loadAllRecords();
+    renderAdmin();
+    // Marcar contexto A&B para filtrar hoteles visibles
+    window._aybUser=ayb;
+    // Ocultar tab Config y borrar para usuarios A&B
+    const tabConfig=document.getElementById('anav-config');
+    if(tabConfig) tabConfig.style.display='none';
+    document.getElementById('hotel-pill-admin')&&(document.getElementById('hotel-pill-admin').textContent=ayb.rol);
+    return;
   }
   const hotel=HOTELS[raw];
   if(!hotel){document.getElementById('loginError').style.display='block';return;}
@@ -1114,6 +1266,7 @@ function clearForm(){
   document.getElementById('detalle-req').style.display='none';
   ['fecha','restaurante','servicio','pax','incidencia','detalle','responsable'].forEach(f=>clearFieldError(f));
   hideAlert();
+  clearDatosAdicionales();
 }
 function showAlert(msg,type){const el=document.getElementById('form-alert');el.className='alert alert-'+type;el.textContent=msg;el.style.display='block';if(type==='success')setTimeout(hideAlert,4000);}
 function hideAlert(){document.getElementById('form-alert').style.display='none';}
@@ -1151,7 +1304,8 @@ async function submitForm(){
     incid       = cmd!=='Si'?document.getElementById('f-incidencia').value:'';
     detalle     = cmd!=='Si'?document.getElementById('f-detalle').value.trim():'';
   }
-  const rec={id:Date.now().toString(),fecha,hotel:currentHotel.name,hotelCode:currentHotel.code,restaurante:rest,servicio:serv,pax:finalPax,comandero:finalCmd,incidencia:incid,detalle,responsable:resp,timestamp:new Date().toISOString()};
+  const adic=getDatosAdicionales();
+  const rec={id:Date.now().toString(),fecha,hotel:currentHotel.name,hotelCode:currentHotel.code,restaurante:rest,servicio:serv,pax:finalPax,comandero:finalCmd,incidencia:incid,detalle,responsable:resp,timestamp:new Date().toISOString(),...adic};
   const btn=document.getElementById('btn-submit');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Enviando...';
   showAlert('Enviando registro...','loading');
@@ -1272,7 +1426,100 @@ function exportCSV(){
   a.download=`Comandero_${currentHotel.code}_${today()}.csv`;a.click();
 }
 
-// ── ADMIN ──
+// ── DATOS ADICIONALES ──
+function toggleDatosAdicionales(){
+  const b=document.getElementById('adic-form-body');
+  const l=document.getElementById('adic-lbl-form');
+  const open=b.style.display==='block';
+  b.style.display=open?'none':'block';
+  l.textContent=(open?'▶':'▼')+' Datos adicionales';
+}
+function toggleMantDesc(v){
+  document.getElementById('mant-desc-wrap').style.display=v==='Otro'?'block':'none';
+}
+function togEqAd(btn,id,type){
+  const row=btn.closest('.adic-inv-row')||btn.parentElement.parentElement;
+  row.querySelectorAll('.adic-tbtn').forEach(b=>{b.className='adic-tbtn';});
+  btn.className='adic-tbtn adic-'+(type==='ok'?'ok':'fail');
+  document.getElementById('adic-ft-'+id).style.display=type==='fail'?'block':'none';
+}
+function addQAd(){
+  const l=document.getElementById('quejas-adic-lista');
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;gap:6px;margin-bottom:6px;';
+  d.innerHTML='<input class="field-input" type="number" placeholder="Hab." style="width:80px;text-align:center;" oninput="cntQAd()"><input class="field-input" type="text" placeholder="Descripción de la queja" style="flex:1;" oninput="cntQAd()">';
+  l.appendChild(d);
+}
+function cntQAd(){
+  let c=0;
+  document.querySelectorAll('#quejas-adic-lista input[type=number]').forEach(n=>{if(n.value.trim())c++;});
+  document.getElementById('qcnt-adic').textContent=c;
+}
+function getDatosAdicionales(){
+  // Recolectar todos los datos adicionales para enviar junto con el registro
+  const vinos=document.getElementById('inp-vinos').value||'';
+  const tomahawk=document.getElementById('inp-tomahawk').value||'';
+  const langosta=document.getElementById('inp-langosta').value||'';
+  const mantTipo=document.getElementById('mant-tipo').value||'';
+  const mantDesc=document.getElementById('mant-desc')?.value||'';
+  const faltTipo=document.getElementById('falt-tipo').value||'';
+  const faltDesc=document.getElementById('falt-desc').value||'';
+  // Inventario
+  const eqs=['ae1','ae2','ae3','ae4'];
+  const eqNames=['Comandero 1','Comandero 2','Comandero 3','Hostess Tablet'];
+  const inventario=eqs.map((id,i)=>{
+    const failBtn=document.querySelector(`#adic-ft-${id}`);
+    const isFail=failBtn&&failBtn.style.display==='block';
+    const tipoFallo=isFail?(failBtn.querySelector('select')?.value||''):'';
+    return {equipo:eqNames[i],estado:isFail?'Fallo':'OK',tipoFallo};
+  });
+  // Quejas
+  const quejas=[];
+  const qrows=document.querySelectorAll('#quejas-adic-lista div');
+  qrows.forEach(row=>{
+    const num=row.querySelector('input[type=number]')?.value?.trim();
+    const desc=row.querySelector('input[type=text]')?.value?.trim();
+    if(num||desc) quejas.push({habitacion:num||'',descripcion:desc||''});
+  });
+  return {
+    inp_vinos:vinos, inp_tomahawk:tomahawk, inp_langosta:langosta,
+    mant_tipo:mantTipo, mant_desc:mantDesc,
+    falt_tipo:faltTipo, falt_desc:faltDesc,
+    inventario:JSON.stringify(inventario),
+    quejas:JSON.stringify(quejas),
+    num_quejas:quejas.length
+  };
+}
+function clearDatosAdicionales(){
+  ['inp-vinos','inp-tomahawk','inp-langosta','mant-desc','falt-desc'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  const mantTipo=document.getElementById('mant-tipo');
+  if(mantTipo) mantTipo.value='';
+  const faltTipo=document.getElementById('falt-tipo');
+  if(faltTipo) faltTipo.value='';
+  document.getElementById('mant-desc-wrap').style.display='none';
+  ['ae1','ae2','ae3','ae4'].forEach(id=>{
+    const ft=document.getElementById('adic-ft-'+id);
+    if(ft) ft.style.display='none';
+    document.querySelectorAll(`[onclick*="${id}"]`).forEach(b=>b.className='adic-tbtn adic-ok');
+  });
+  document.getElementById('quejas-adic-lista').innerHTML='<div style="display:flex;gap:6px;margin-bottom:6px;"><input class="field-input" type="number" placeholder="Hab." style="width:80px;text-align:center;" oninput="cntQAd()"><input class="field-input" type="text" placeholder="Descripción de la queja" style="flex:1;" oninput="cntQAd()"></div>';
+  document.getElementById('qcnt-adic').textContent='0';
+  document.getElementById('adic-form-body').style.display='none';
+  document.getElementById('adic-lbl-form').textContent='▶ Datos adicionales';
+}
+
+// ── USUARIOS A&B (solo dashboard, no formulario) ──
+const AYB_USERS = {
+  'EP7341':{rol:'Emilio Punzano — Dir. Corporativo A&B', hoteles:['SERPC','DRRPC','DROPC','BREPC']},
+  'IG5823':{rol:'Israel Gata — Chef Ejecutivo Corporativo', hoteles:['SERPC','DRRPC','DROPC','BREPC']},
+  'JA4196':{rol:'Joaquin Alcaraz — Dir. A&B Varallo', hoteles:['SERPC','DRRPC']},
+  'CT8752':{rol:'Carlos Tejerina — Dir. A&B IOR', hoteles:['BREPC','DROPC']},
+  'JG3047':{rol:'Joel Gomez — Dir. A&B Natura', hoteles:['DRFPC']}
+};
+
 function getFilteredAdminRecords(){
   const hotel=document.getElementById('adm-filter-hotel').value;
   const rest=document.getElementById('adm-filter-rest').value;

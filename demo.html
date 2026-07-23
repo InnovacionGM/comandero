@@ -123,7 +123,7 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
     <div class="ltitle">Reporte Diario del Comandero Digital</div>
     <div class="lsub">Ingresa tu código de acceso</div>
     <div class="lbl" style="margin-top:14px">Código de acceso</div>
-    <input type="text" id="loginCode" class="inp" placeholder="Ej: SERPC3100 o EP7341" maxlength="12" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="text" id="loginCode" class="inp" placeholder="Ingresa tu código de acceso" maxlength="12" onkeydown="if(event.key==='Enter')doLogin()">
     <div class="lerr" id="loginErr">Código incorrecto. Verifica con tu supervisor.</div>
     <button class="btn-blue" onclick="doLogin()">Entrar →</button>
     <div class="lver">Demo V.2 · Jul 2026 · Los datos no se guardan</div>
@@ -460,7 +460,7 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
 
     <!-- INP -->
     <div id="dt-inp">
-      <div class="card"><div class="hotel-tag">SERPC — Secrets Royal Beach</div>
+      <div class="card" data-hotel="SERPC"><div class="hotel-tag">SERPC — Secrets Royal Beach</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>Oceana</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$890</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$1,240</td></tr>
@@ -469,7 +469,7 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
           <tr style="background:#f8fafc;font-weight:700"><td colspan="2">Total SERPC</td><td style="color:#1d4ed8">$2,140</td><td style="color:#1d4ed8">$680</td><td style="color:#1d4ed8">$1,240</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">DRRPC — Dreams Royal Beach</div>
+      <div class="card" data-hotel="DRRPC"><div class="hotel-tag">DRRPC — Dreams Royal Beach</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>Seaside Grill</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$720</td><td style="color:#1d4ed8;font-weight:600">$1,040</td><td>—</td></tr>
@@ -477,14 +477,14 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
           <tr style="background:#f8fafc;font-weight:700"><td colspan="2">Total DRRPC</td><td style="color:#1d4ed8">$940</td><td style="color:#1d4ed8">$1,040</td><td style="color:#1d4ed8">—</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">DROPC — Dreams Onyx</div>
+      <div class="card" data-hotel="DROPC"><div class="hotel-tag">DROPC — Dreams Onyx</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>Tamarindo</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$560</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$1,000</td></tr>
           <tr style="background:#f8fafc;font-weight:700"><td colspan="2">Total DROPC</td><td style="color:#1d4ed8">$560</td><td>—</td><td style="color:#1d4ed8">$1,000</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">BREPC — Breathless</div>
+      <div class="card" data-hotel="BREPC"><div class="hotel-tag">BREPC — Breathless</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Vinos</th><th>Tomahawk</th><th>Langosta</th></tr></thead>
         <tbody>
           <tr><td>The Strip Grill</td><td>Cena</td><td style="color:#1d4ed8;font-weight:600">$480</td><td>—</td><td style="color:#1d4ed8;font-weight:600">$680</td></tr>
@@ -495,7 +495,7 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
 
     <!-- FALTANTES -->
     <div id="dt-falt" style="display:none">
-      <div class="card"><div class="hotel-tag">SERPC</div>
+      <div class="card" data-hotel="SERPC"><div class="hotel-tag">SERPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Producto</th></tr></thead>
         <tbody>
           <tr><td>Oceana</td><td>Cena</td><td><span class="chip cr">Platillo</span></td><td>Langosta</td></tr>
@@ -503,14 +503,14 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
           <tr><td>Himitsu</td><td>Cena</td><td><span class="chip cy">Producto</span></td><td>Sake importado</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">DROPC</div>
+      <div class="card" data-hotel="DROPC"><div class="hotel-tag">DROPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Producto</th></tr></thead>
         <tbody>
           <tr><td>Tamarindo</td><td>Almuerzo</td><td><span class="chip cr">Platillo</span></td><td>Camarones</td></tr>
           <tr><td>Spice</td><td>Cena</td><td><span class="chip cy">Producto</span></td><td>Salsa teriyaki</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">BREPC</div>
+      <div class="card" data-hotel="BREPC"><div class="hotel-tag">BREPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Producto</th></tr></thead>
         <tbody>
           <tr><td>Coquette</td><td>Cena</td><td><span class="chip cb">Bebida</span></td><td>Gin Hendricks</td></tr>
@@ -522,20 +522,20 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
 
     <!-- MANTENIMIENTO -->
     <div id="dt-mant" style="display:none">
-      <div class="card"><div class="hotel-tag">SERPC</div>
+      <div class="card" data-hotel="SERPC"><div class="hotel-tag">SERPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Detalle</th></tr></thead>
         <tbody>
           <tr><td>Oceana</td><td>Cena</td><td><span class="chip cy">A/C</span></td><td>Fallo aire acondicionado</td></tr>
           <tr><td>Bordeaux</td><td>Cena</td><td><span class="chip cy">Música</span></td><td>Fallo música ambiental</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">DRRPC</div>
+      <div class="card" data-hotel="DRRPC"><div class="hotel-tag">DRRPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Detalle</th></tr></thead>
         <tbody>
           <tr><td>Seaside Grill</td><td>Almuerzo</td><td><span class="chip cy">Puerta</span></td><td>Fallo puerta principal</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">BREPC</div>
+      <div class="card" data-hotel="BREPC"><div class="hotel-tag">BREPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Tipo</th><th>Detalle</th></tr></thead>
         <tbody>
           <tr><td>Culinaria</td><td>Cena</td><td><span class="chip cy">Otro</span></td><td>Luces sin funcionar</td></tr>
@@ -546,7 +546,7 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
 
     <!-- INVENTARIO -->
     <div id="dt-inv" style="display:none">
-      <div class="card"><div class="hotel-tag">SERPC</div>
+      <div class="card" data-hotel="SERPC"><div class="hotel-tag">SERPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th style="text-align:center">CMD1</th><th style="text-align:center">CMD2</th><th style="text-align:center">CMD3</th><th style="text-align:center">Tablet</th></tr></thead>
         <tbody>
           <tr><td>Oceana</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td><td style="text-align:center;color:#16a34a">✓</td></tr>
@@ -554,7 +554,7 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
           <tr><td>Himitsu</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">DROPC</div>
+      <div class="card" data-hotel="DROPC"><div class="hotel-tag">DROPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th style="text-align:center">CMD1</th><th style="text-align:center">CMD2</th><th style="text-align:center">CMD3</th><th style="text-align:center">Tablet</th></tr></thead>
         <tbody>
           <tr><td>Tamarindo</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#16a34a">✓</td><td style="text-align:center;color:#dc2626">✗</td></tr>
@@ -568,27 +568,27 @@ body{font-family:Arial,sans-serif;background:#f1f5f9;min-height:100vh}
 
     <!-- QUEJAS -->
     <div id="dt-qj" style="display:none">
-      <div class="card"><div class="hotel-tag">SERPC</div>
+      <div class="card" data-hotel="SERPC"><div class="hotel-tag">SERPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
         <tbody>
           <tr><td>Himitsu</td><td>Cena</td><td><strong>1204</strong></td><td>Tiempo de espera largo</td></tr>
           <tr><td>Oceana</td><td>Cena</td><td><strong>834</strong></td><td>Temperatura incorrecta del plato</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">DRRPC</div>
+      <div class="card" data-hotel="DRRPC"><div class="hotel-tag">DRRPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
         <tbody>
           <tr><td>Portofino</td><td>Cena</td><td><strong>412</strong></td><td>Mesero poco atento</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">DROPC</div>
+      <div class="card" data-hotel="DROPC"><div class="hotel-tag">DROPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
         <tbody>
           <tr><td>Tamarindo</td><td>Almuerzo</td><td><strong>708</strong></td><td>Error en la orden</td></tr>
           <tr><td>Spice</td><td>Cena</td><td><strong>523</strong></td><td>Platillo llegó frío</td></tr>
         </tbody></table>
       </div>
-      <div class="card"><div class="hotel-tag">BREPC</div>
+      <div class="card" data-hotel="BREPC"><div class="hotel-tag">BREPC</div>
         <table class="tbl"><thead><tr><th>Restaurante</th><th>Serv.</th><th>Hab.</th><th>Descripción</th></tr></thead>
         <tbody>
           <tr><td>Coquette</td><td>Cena</td><td><strong>901</strong></td><td>Música muy alta</td></tr>
@@ -771,11 +771,11 @@ var HOTELS={
   "DRRPC2321":{name:"Dreams Royal Beach",code:"DRRPC",tipo:"capitan",restaurantes:{"Seaside Grill":["Desayuno","Almuerzo","Cena"],"Fusion":["Cena"],"Mercure":["Cena"],"Tres Colores":["Cena"],"Portofino":["Desayuno","Almuerzo","Cena"]}},
   "DROPC1815":{name:"Dreams Onyx",code:"DROPC",tipo:"capitan",restaurantes:{"Cin Cin":["Cena"],"Capers":["Cena"],"Bluewater Grill":["Cena"],"Mercure":["Cena"],"Faire":["Cena"],"Spice":["Cena"],"Tamarindo":["Desayuno","Almuerzo","Cena"],"Room Service":["Desayuno","Almuerzo","Men\u00fa Nocturno"]}},
   "BREPC2020":{name:"Breathless",code:"BREPC",tipo:"capitan",restaurantes:{"Coquette":["Cena"],"Spumante":["Cena"],"Silk City":["Cena"],"Culinaria":["Cena"],"The Strip Grill":["Desayuno","Almuerzo","Cena"],"Sofrito":["Cena"],"Room Service":["Desayuno","Almuerzo","Men\u00fa Nocturno"]}},
-  "EP7341":{name:"Todos los hoteles",code:"CORP",tipo:"ayb",rol:"Emilio Punzano — Dir. Corporativo A&B"},
-  "IG5823":{name:"Todos los hoteles",code:"CORP",tipo:"ayb",rol:"Israel Gata — Chef Ejecutivo Corporativo"},
-  "JA4196":{name:"Varallo (SERPC / DRRPC)",code:"VARALLO",tipo:"ayb",rol:"Joaquin Alcaraz — Dir. A&B Varallo"},
-  "CT8752":{name:"IOR (BREPC / DROPC)",code:"IOR",tipo:"ayb",rol:"Carlos Tejerina — Dir. A&B IOR"},
-  "JG3047":{name:"Natura (DRFPC)",code:"NATURA",tipo:"ayb",rol:"Joel Gomez — Dir. A&B Natura"}
+  "EP7341":{name:"Todos los hoteles",code:"CORP",tipo:"ayb",rol:"Emilio Punzano — Dir. Corporativo A&B",hoteles:["SERPC","DRRPC","DROPC","BREPC"]},
+  "IG5823":{name:"Todos los hoteles",code:"CORP",tipo:"ayb",rol:"Israel Gata — Chef Ejecutivo Corporativo",hoteles:["SERPC","DRRPC","DROPC","BREPC"]},
+  "JA4196":{name:"Varallo (SERPC / DRRPC)",code:"VARALLO",tipo:"ayb",rol:"Joaquin Alcaraz — Dir. A&B Varallo",hoteles:["SERPC","DRRPC"]},
+  "CT8752":{name:"IOR (BREPC / DROPC)",code:"IOR",tipo:"ayb",rol:"Carlos Tejerina — Dir. A&B IOR",hoteles:["BREPC","DROPC"]},
+  "JG3047":{name:"Natura (DRFPC)",code:"NATURA",tipo:"ayb",rol:"Joel Gomez — Dir. A&B Natura",hoteles:["DRFPC"]}
 };
 var cur=null,cerr=false;
 function td(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santo_Domingo'}).format(new Date());}
@@ -793,6 +793,7 @@ function doLogin(){
     show('s-dash');
     document.getElementById('d-hname').textContent=h.rol;
     setPer('ayer');
+    filtrarHotelesDash(h.hoteles);
   } else {
     show('s-form');
     document.getElementById('f-hname').textContent=h.name;
@@ -867,6 +868,20 @@ function submitD(){
   if(!document.getElementById('f-rest').value){showAlert('Selecciona un restaurante.','error');return;}
   if(!document.getElementById('f-resp').value.trim()){showAlert('Ingresa el nombre del responsable.','error');return;}
   showAlert('✅ Demo OK. En el sistema real esto se guardaría en el Sheet y aparecería en los reportes de las 8 AM.','success');
+}
+function filtrarHotelesDash(hoteles){
+  // Mostrar solo las cards del hotel que corresponde al usuario
+  document.querySelectorAll('#s-dash [data-hotel]').forEach(function(card){
+    var h = card.getAttribute('data-hotel');
+    card.style.display = hoteles.indexOf(h) >= 0 ? 'block' : 'none';
+  });
+  // Actualizar KPIs según hoteles visibles (simplificado en demo)
+  var todos = hoteles.length === 4;
+  if(!todos){
+    // Ajustar texto del período label
+    var lbl = document.getElementById('per-lbl');
+    if(lbl) lbl.innerHTML = lbl.innerHTML.replace('Todos los hoteles activos', hoteles.join(' / '));
+  }
 }
 function setHotelTab(t){
   document.getElementById('hotel-reg').style.display=t==='reg'?'block':'none';

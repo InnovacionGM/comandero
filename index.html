@@ -167,7 +167,10 @@
       <h1>Reporte Diario del Comandero Digital</h1>
       <div style="margin-top:4px;"><span class="hotel-pill" id="hotel-pill"></span></div>
     </div>
-    <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span id="current-user-label" style="font-size:11px;color:#64748b;background:#f1f5f9;padding:3px 10px;border-radius:99px;display:none;"></span>
+      <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
+    </div>
   </div>
   <div class="tabs no-print" style="margin-bottom:20px;">
     <div class="tab active" id="nav-form" onclick="showSection('form')">📋 Registrar</div>
@@ -455,14 +458,85 @@
   </div>
 </div>
 
+<!-- DASHBOARD A&B -->
+<div id="screen-ayb" style="display:none;">
+  <div class="page-header no-print">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#1e293b;" id="ayb-rol-label"></div>
+      <div style="font-size:11px;color:#64748b;">Dashboard A&amp;B · <span id="ayb-hoteles-label"></span></div>
+    </div>
+    <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
+  </div>
+
+  <!-- FILTRO PERÍODO -->
+  <div class="card no-print" style="margin-bottom:12px;">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:12px;color:#64748b;font-weight:500;">Período:</span>
+      <button class="btn btn-sm" id="ayb-pb-hoy" onclick="setAybPeriodo('hoy')" style="border-radius:20px;">Hoy</button>
+      <button class="btn btn-sm" id="ayb-pb-ayer" onclick="setAybPeriodo('ayer')" style="border-radius:20px;background:#1d4ed8;color:#fff;border-color:#1d4ed8;">Ayer</button>
+      <button class="btn btn-sm" id="ayb-pb-rango" onclick="setAybPeriodo('rango')" style="border-radius:20px;">📅 Rango</button>
+    </div>
+    <div id="ayb-rango-wrap" style="display:none;margin-top:10px;display:none;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+        <div><label style="font-size:12px;color:#64748b;display:block;margin-bottom:3px;">Desde</label><input type="date" class="field-input" id="ayb-desde" style="width:150px;"></div>
+        <div><label style="font-size:12px;color:#64748b;display:block;margin-bottom:3px;">Hasta</label><input type="date" class="field-input" id="ayb-hasta" style="width:150px;"></div>
+        <button class="btn btn-sm" onclick="aplicarAybRango()" style="background:#1d4ed8;color:#fff;border-color:#1d4ed8;border-radius:20px;">Aplicar</button>
+      </div>
+    </div>
+    <div id="ayb-periodo-label" style="font-size:11px;color:#64748b;margin-top:8px;">📅 <strong>Ayer</strong> · Cargando datos...</div>
+  </div>
+
+  <!-- KPIs -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;" id="ayb-kpis">
+    <div class="card" style="text-align:center;padding:12px;">
+      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">INP Vinos</div>
+      <div style="font-size:20px;font-weight:700;color:#1d4ed8;margin-top:3px;" id="ayb-kpi-vinos">$0</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px;">
+      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">INP Tomahawk</div>
+      <div style="font-size:20px;font-weight:700;color:#1d4ed8;margin-top:3px;" id="ayb-kpi-tomahawk">$0</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px;">
+      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">INP Langosta</div>
+      <div style="font-size:20px;font-weight:700;color:#1d4ed8;margin-top:3px;" id="ayb-kpi-langosta">$0</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px;">
+      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Faltantes A&amp;B</div>
+      <div style="font-size:20px;font-weight:700;color:#dc2626;margin-top:3px;" id="ayb-kpi-falt">0</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px;">
+      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Incid. Mant.</div>
+      <div style="font-size:20px;font-weight:700;color:#d97706;margin-top:3px;" id="ayb-kpi-mant">0</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px;">
+      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Quejas</div>
+      <div style="font-size:20px;font-weight:700;color:#dc2626;margin-top:3px;" id="ayb-kpi-quejas">0</div>
+    </div>
+  </div>
+
+  <!-- TABS DETALLE -->
+  <div style="display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;" class="no-print">
+    <button class="btn btn-sm ayb-tab active" id="aybt-inp" onclick="setAybTab('inp')" style="border-radius:20px;white-space:nowrap;background:#1d4ed8;color:#fff;border-color:#1d4ed8;">💰 INP</button>
+    <button class="btn btn-sm ayb-tab" id="aybt-falt" onclick="setAybTab('falt')" style="border-radius:20px;white-space:nowrap;">🍽️ Faltantes</button>
+    <button class="btn btn-sm ayb-tab" id="aybt-mant" onclick="setAybTab('mant')" style="border-radius:20px;white-space:nowrap;">🔧 Mant.</button>
+    <button class="btn btn-sm ayb-tab" id="aybt-inv" onclick="setAybTab('inv')" style="border-radius:20px;white-space:nowrap;">📱 Equipos</button>
+    <button class="btn btn-sm ayb-tab" id="aybt-quejas" onclick="setAybTab('quejas')" style="border-radius:20px;white-space:nowrap;">😞 Quejas</button>
+  </div>
+
+  <div id="ayb-content"></div>
+</div>
+
 <!-- APP ADMIN -->
 <div id="screen-admin" style="display:none;">
   <div class="page-header">
     <div>
       <h1>Reporte Diario del Comandero Digital</h1>
-      <div style="margin-top:4px;"><span class="admin-pill">👑 Panel Administrador</span></div>
+      <div style="margin-top:4px;"><span class="admin-pill" id="admin-role-pill">👑 Panel Administrador</span></div>
     </div>
-    <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span id="admin-user-label" style="font-size:11px;color:#64748b;background:#f1f5f9;padding:3px 10px;border-radius:99px;display:none;"></span>
+      <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
+    </div>
   </div>
 
   <div class="admin-section no-print">
@@ -792,28 +866,30 @@ async function doLogin(){
     isAdmin=true;isCorpAdmin=false;
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-admin').style.display='block';
+    document.getElementById('admin-user-label').style.display='inline';
+    document.getElementById('admin-user-label').textContent='👤 Rob Avila';
+    document.getElementById('admin-role-pill').textContent='👑 Administrador';
     await loadAllRecords();renderAdmin();return;
   }
   if(raw===CORP_CODE){
     isAdmin=true;isCorpAdmin=true;
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-admin').style.display='block';
+    document.getElementById('admin-user-label').style.display='inline';
+    document.getElementById('admin-user-label').textContent='👤 Corporativo';
+    document.getElementById('admin-role-pill').textContent='🏢 Vista Corporativa';
     await loadAllRecords();renderAdmin();return;
   }
   // ── Usuarios A&B (solo dashboard) ──
   if(AYB_USERS[raw]){
     const ayb=AYB_USERS[raw];
-    document.getElementById('screen-login').style.display='none';
-    document.getElementById('screen-admin').style.display='block';
-    isAdmin=true;isCorpAdmin=true;
-    await loadAllRecords();
-    renderAdmin();
-    // Marcar contexto A&B para filtrar hoteles visibles
     window._aybUser=ayb;
-    // Ocultar tab Config y borrar para usuarios A&B
-    const tabConfig=document.getElementById('anav-config');
-    if(tabConfig) tabConfig.style.display='none';
-    document.getElementById('hotel-pill-admin')&&(document.getElementById('hotel-pill-admin').textContent=ayb.rol);
+    document.getElementById('screen-login').style.display='none';
+    document.getElementById('screen-ayb').style.display='block';
+    document.getElementById('ayb-rol-label').textContent=ayb.rol;
+    document.getElementById('ayb-hoteles-label').textContent=ayb.hoteles.join(' · ');
+    await loadAllRecords();
+    setAybPeriodo('ayer');
     return;
   }
   const hotel=HOTELS[raw];
@@ -823,6 +899,9 @@ async function doLogin(){
   document.getElementById('screen-login').style.display='none';
   document.getElementById('screen-app').style.display='block';
   document.getElementById('hotel-pill').textContent=hotel.name+' ('+hotel.code+')';
+  // Mostrar hotel en label de usuario
+  const cul=document.getElementById('current-user-label');
+  if(cul){cul.textContent='🏨 '+hotel.code;cul.style.display='inline';}
   document.getElementById('f-fecha').value=today();
   populateRestaurantes();renderSessionLog();verificarPendientesHotel();
   // Restringir fecha: solo hoy o ayer
@@ -833,11 +912,17 @@ async function doLogin(){
 }
 function doLogout(){
   currentHotel=null;isAdmin=false;isCorpAdmin=false;records=[];allRecords=[];
-  isCerrado=false;
+  isCerrado=false;window._aybUser=null;
   document.getElementById('screen-app').style.display='none';
   document.getElementById('screen-admin').style.display='none';
+  document.getElementById('screen-ayb').style.display='none';
   document.getElementById('screen-login').style.display='flex';
   document.getElementById('hotelCode').value='';
+  // Reset labels de usuario
+  const cul=document.getElementById('current-user-label');
+  if(cul){cul.textContent='';cul.style.display='none';}
+  const aul=document.getElementById('admin-user-label');
+  if(aul){aul.textContent='';aul.style.display='none';}
   clearForm();
   document.getElementById('form-alert').style.display='none';
   document.getElementById('form-alert').dataset.horario='no';
@@ -1424,6 +1509,183 @@ function exportCSV(){
   const rows=recs.map(r=>cols.map(c=>`"${(r[c]||'').toString().replace(/"/g,'""')}"`).join(','));
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+[cols.join(','),...rows].join('\n')],{type:'text/csv;charset=utf-8;'}));
   a.download=`Comandero_${currentHotel.code}_${today()}.csv`;a.click();
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD A&B — Funciones completas
+// ══════════════════════════════════════════
+let _aybFechaDesde=null, _aybFechaHasta=null, _aybTabActual='inp';
+
+function setAybPeriodo(p){
+  ['hoy','ayer','rango'].forEach(id=>{
+    const btn=document.getElementById('ayb-pb-'+id);
+    if(!btn) return;
+    if(id===p){btn.style.background='#1d4ed8';btn.style.color='#fff';btn.style.borderColor='#1d4ed8';}
+    else{btn.style.background='';btn.style.color='';btn.style.borderColor='';}
+  });
+  const rw=document.getElementById('ayb-rango-wrap');
+  if(rw) rw.style.display=p==='rango'?'block':'none';
+  const lbl=document.getElementById('ayb-periodo-label');
+  const fmt=s=>s.split('-').reverse().join('/');
+  if(p==='hoy'){
+    _aybFechaDesde=today();_aybFechaHasta=today();
+    if(lbl) lbl.innerHTML='📅 <strong>Hoy — '+fmt(today())+'</strong>';
+  } else if(p==='ayer'){
+    _aybFechaDesde=yesterday();_aybFechaHasta=yesterday();
+    if(lbl) lbl.innerHTML='📅 <strong>Ayer — '+fmt(yesterday())+'</strong>';
+  } else {
+    if(lbl) lbl.innerHTML='📅 Selecciona el rango y presiona Aplicar';
+    return;
+  }
+  renderAybDash();
+}
+
+function aplicarAybRango(){
+  const d=document.getElementById('ayb-desde').value;
+  const h=document.getElementById('ayb-hasta').value;
+  if(!d||!h){return;}
+  _aybFechaDesde=d;_aybFechaHasta=h;
+  const fmt=s=>s.split('-').reverse().join('/');
+  const lbl=document.getElementById('ayb-periodo-label');
+  if(lbl) lbl.innerHTML='📅 <strong>'+fmt(d)+' — '+fmt(h)+'</strong>';
+  renderAybDash();
+}
+
+function setAybTab(t){
+  _aybTabActual=t;
+  ['inp','falt','mant','inv','quejas'].forEach(id=>{
+    const btn=document.getElementById('aybt-'+id);
+    if(!btn) return;
+    if(id===t){btn.style.background='#1d4ed8';btn.style.color='#fff';btn.style.borderColor='#1d4ed8';}
+    else{btn.style.background='';btn.style.color='';btn.style.borderColor='';}
+  });
+  renderAybTab(t);
+}
+
+function getAybRecords(){
+  if(!window._aybUser||!allRecords) return [];
+  const hoteles=window._aybUser.hoteles||[];
+  return allRecords.filter(r=>{
+    const ok=hoteles.indexOf(r.hotelCode)>=0;
+    if(!ok) return false;
+    if(!_aybFechaDesde) return true;
+    return r.fecha>=_aybFechaDesde && r.fecha<=_aybFechaHasta;
+  });
+}
+
+function renderAybDash(){
+  const recs=getAybRecords();
+  // KPIs
+  let vinos=0,tomahawk=0,langosta=0,falt=0,mant=0,quejas=0;
+  recs.forEach(r=>{
+    vinos+=Number(r.inp_vinos)||0;
+    tomahawk+=Number(r.inp_tomahawk)||0;
+    langosta+=Number(r.inp_langosta)||0;
+    if(r.falt_tipo) falt++;
+    if(r.mant_tipo) mant++;
+    quejas+=Number(r.num_quejas)||0;
+  });
+  const fmt$=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('ayb-kpi-vinos').textContent=fmt$(vinos);
+  document.getElementById('ayb-kpi-tomahawk').textContent=fmt$(tomahawk);
+  document.getElementById('ayb-kpi-langosta').textContent=fmt$(langosta);
+  document.getElementById('ayb-kpi-falt').textContent=falt;
+  document.getElementById('ayb-kpi-mant').textContent=mant;
+  document.getElementById('ayb-kpi-quejas').textContent=quejas;
+  renderAybTab(_aybTabActual);
+}
+
+function renderAybTab(t){
+  const recs=getAybRecords();
+  const hoteles=window._aybUser?.hoteles||[];
+  const content=document.getElementById('ayb-content');
+  if(!content) return;
+
+  function hotelTag(code){
+    const nombres={'SERPC':'Secrets Royal Beach','DRRPC':'Dreams Royal Beach','DROPC':'Dreams Onyx','BREPC':'Breathless','DRFPC':'Dreams Flora'};
+    return `<div style="font-size:11px;font-weight:700;color:#1e293b;background:#f1f5f9;padding:4px 10px;border-radius:6px;margin-bottom:8px;display:inline-block;">${code} — ${nombres[code]||code}</div>`;
+  }
+
+  function tbl(headers, rows){
+    if(!rows.length) return '<p style="color:#94a3b8;font-size:12px;padding:8px 0;">Sin datos para este período.</p>';
+    let h='<div style="overflow-x:auto;"><table style="width:100%;font-size:11px;border-collapse:collapse;">';
+    h+='<thead><tr>';
+    headers.forEach(hh=>h+=`<th style="background:#203864;color:#fff;padding:6px 8px;text-align:left;white-space:nowrap;">${hh}</th>`);
+    h+='</tr></thead><tbody>';
+    rows.forEach((row,i)=>{
+      h+=`<tr style="background:${i%2===0?'#fff':'#f8fafc'};">`;
+      row.forEach(v=>h+=`<td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;">${v||'—'}</td>`);
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+    return h;
+  }
+
+  let html='';
+
+  if(t==='inp'){
+    hoteles.forEach(h=>{
+      const hr=recs.filter(r=>r.hotelCode===h&&(r.inp_vinos||r.inp_tomahawk||r.inp_langosta));
+      if(!hr.length) return;
+      const fmt$=n=>n?'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
+      const rows=hr.map(r=>[r.restaurante,r.servicio,fmt$(r.inp_vinos),fmt$(r.inp_tomahawk),fmt$(r.inp_langosta)]);
+      const tv=hr.reduce((s,r)=>s+Number(r.inp_vinos||0),0);
+      const tt=hr.reduce((s,r)=>s+Number(r.inp_tomahawk||0),0);
+      const tl=hr.reduce((s,r)=>s+Number(r.inp_langosta||0),0);
+      rows.push([`<strong>Total</strong>`,'','<strong>$'+tv.toLocaleString('en-US',{minimumFractionDigits:2})+'</strong>','<strong>$'+tt.toLocaleString('en-US',{minimumFractionDigits:2})+'</strong>','<strong>$'+tl.toLocaleString('en-US',{minimumFractionDigits:2})+'</strong>']);
+      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Vinos','Tomahawk','Langosta'],rows)}</div>`;
+    });
+    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin ventas INP registradas para este período.</p></div>';
+
+  } else if(t==='falt'){
+    hoteles.forEach(h=>{
+      const hr=recs.filter(r=>r.hotelCode===h&&r.falt_tipo);
+      if(!hr.length) return;
+      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Tipo','Producto'],hr.map(r=>[r.restaurante,r.servicio,r.falt_tipo,r.falt_desc]))}</div>`;
+    });
+    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin faltantes registrados para este período.</p></div>';
+
+  } else if(t==='mant'){
+    hoteles.forEach(h=>{
+      const hr=recs.filter(r=>r.hotelCode===h&&r.mant_tipo);
+      if(!hr.length) return;
+      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Tipo','Descripción'],hr.map(r=>[r.restaurante,r.servicio,r.mant_tipo,r.mant_desc]))}</div>`;
+    });
+    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin incidencias de mantenimiento registradas.</p></div>';
+
+  } else if(t==='inv'){
+    hoteles.forEach(h=>{
+      const hr=recs.filter(r=>r.hotelCode===h&&r.inventario);
+      if(!hr.length) return;
+      const rows=[];
+      hr.forEach(r=>{
+        try{
+          const inv=JSON.parse(r.inventario||'[]');
+          const fallos=inv.filter(e=>e.estado==='Fallo').map(e=>e.equipo+(e.tipoFallo?' ('+e.tipoFallo+')':'')).join(', ')||'—';
+          rows.push([r.restaurante,r.servicio,fallos]);
+        }catch(e){}
+      });
+      if(rows.length) html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Equipos con fallo'],rows)}</div>`;
+    });
+    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin fallos de equipos registrados.</p></div>';
+
+  } else if(t==='quejas'){
+    hoteles.forEach(h=>{
+      const hr=recs.filter(r=>r.hotelCode===h&&Number(r.num_quejas)>0);
+      if(!hr.length) return;
+      const rows=[];
+      hr.forEach(r=>{
+        try{
+          const qs=JSON.parse(r.quejas||'[]');
+          qs.forEach(q=>rows.push([r.restaurante,r.servicio,q.habitacion||'—',q.descripcion||'—']));
+        }catch(e){}
+      });
+      if(rows.length) html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Hab.','Descripción'],rows)}</div>`;
+    });
+    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin quejas registradas para este período.</p></div>';
+  }
+
+  content.innerHTML=html;
 }
 
 // ── DATOS ADICIONALES ──

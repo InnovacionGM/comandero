@@ -425,6 +425,11 @@
         <div class="dash-tab" onclick="setDashTab('incidencias')">Incidencias</div>
         <div class="dash-tab" onclick="setDashTab('restaurantes')">Restaurantes</div>
         <div class="dash-tab" onclick="setDashTab('registros')">Registros</div>
+        <div class="dash-tab" onclick="setDashTab('inp')">💰 INP</div>
+        <div class="dash-tab" onclick="setDashTab('falt')">🍽️ Faltantes</div>
+        <div class="dash-tab" onclick="setDashTab('mant')">🔧 Mant.</div>
+        <div class="dash-tab" onclick="setDashTab('equipos')">📱 Equipos</div>
+        <div class="dash-tab" onclick="setDashTab('quejas')">😞 Quejas</div>
       </div>
 
       <div id="dash-resumen">
@@ -454,6 +459,14 @@
           </table>
         </div>
       </div>
+
+      <!-- TABS DATOS ADICIONALES DEL HOTEL -->
+      <div id="dash-inp" style="display:none;"><div id="dash-inp-content"><p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Cargando datos INP...</p></div></div>
+      <div id="dash-falt" style="display:none;"><div id="dash-falt-content"><p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Cargando faltantes...</p></div></div>
+      <div id="dash-mant" style="display:none;"><div id="dash-mant-content"><p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Cargando mantenimiento...</p></div></div>
+      <div id="dash-equipos" style="display:none;"><div id="dash-equipos-content"><p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Cargando equipos...</p></div></div>
+      <div id="dash-quejas" style="display:none;"><div id="dash-quejas-content"><p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Cargando quejas...</p></div></div>
+
     </div>
   </div>
 </div>
@@ -516,6 +529,10 @@
 
   <!-- TABS DETALLE -->
   <div style="display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;" class="no-print">
+    <button class="btn btn-sm ayb-tab" id="aybt-resumen" onclick="setAybTab('resumen')" style="border-radius:20px;white-space:nowrap;">📊 Resumen</button>
+    <button class="btn btn-sm ayb-tab" id="aybt-porhotel" onclick="setAybTab('porhotel')" style="border-radius:20px;white-space:nowrap;">🏨 Por Hotel</button>
+    <button class="btn btn-sm ayb-tab" id="aybt-problemas" onclick="setAybTab('problemas')" style="border-radius:20px;white-space:nowrap;">⚠️ Problemas</button>
+    <button class="btn btn-sm ayb-tab" id="aybt-registros" onclick="setAybTab('registros')" style="border-radius:20px;white-space:nowrap;">📋 Registros</button>
     <button class="btn btn-sm ayb-tab active" id="aybt-inp" onclick="setAybTab('inp')" style="border-radius:20px;white-space:nowrap;background:#1d4ed8;color:#fff;border-color:#1d4ed8;">💰 INP</button>
     <button class="btn btn-sm ayb-tab" id="aybt-falt" onclick="setAybTab('falt')" style="border-radius:20px;white-space:nowrap;">🍽️ Faltantes</button>
     <button class="btn btn-sm ayb-tab" id="aybt-mant" onclick="setAybTab('mant')" style="border-radius:20px;white-space:nowrap;">🔧 Mant.</button>
@@ -1447,15 +1464,22 @@ async function showSection(s){
 }
 function setDashTab(t){
   activeDashTab=t;
-  ['resumen','incidencias','restaurantes','registros'].forEach(id=>{document.getElementById('dash-'+id).style.display=id===t?'block':'none';});
-  document.querySelectorAll('.dash-tab').forEach((el,i)=>{el.className='dash-tab'+(['resumen','incidencias','restaurantes','registros'][i]===t?' active':'');});
+  const allTabs=['resumen','incidencias','restaurantes','registros','inp','falt','mant','equipos','quejas'];
+  allTabs.forEach(id=>{
+    const el=document.getElementById('dash-'+id);
+    if(el) el.style.display=id===t?'block':'none';
+  });
+  document.querySelectorAll('.dash-tab').forEach((el,i)=>{
+    el.className='dash-tab'+(allTabs[i]===t?' active':'');
+  });
   renderActiveDashTab();
 }
 function renderActiveDashTab(){
-  if(activeDashTab==='resumen')renderDashResumen();
-  else if(activeDashTab==='incidencias')renderDashIncidencias();
-  else if(activeDashTab==='restaurantes')renderDashRestaurantes();
-  else renderDashRegistros();
+  if(activeDashTab==='resumen') renderDashResumen();
+  else if(activeDashTab==='incidencias') renderDashIncidencias();
+  else if(activeDashTab==='restaurantes') renderDashRestaurantes();
+  else if(activeDashTab==='registros') renderDashRegistros();
+  else renderDashAdicional(activeDashTab);
 }
 
 // ── DASHBOARD HOTEL ──
@@ -1502,6 +1526,72 @@ function renderDashRegistros(){
   const tbody=document.getElementById('tabla-registros');
   if(!recs.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:20px;">Sin registros para este período</td></tr>';return;}
   tbody.innerHTML=[...recs].reverse().map(r=>{const bc=r.comandero==='Si'?'badge-ok':r.comandero==='Parcial'?'badge-parcial':'badge-fallo';return`<tr><td>${r.fecha}</td><td>${r.restaurante}</td><td>${r.servicio}</td><td style="font-weight:700;">${r.pax}</td><td><span class="badge ${bc}">${r.comandero}</span></td><td style="font-size:11px;color:#ef4444;">${r.incidencia||'—'}</td><td>${r.responsable}</td></tr>`;}).join('');
+}
+
+function renderDashAdicional(t){
+  const recs=getFilteredHotelRecords();
+  const contenedorId='dash-'+t+'-content';
+  const el=document.getElementById(contenedorId);
+  if(!el) return;
+
+  function tbl(headers,rows){
+    if(!rows.length) return '<p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Sin datos para este período.</p>';
+    let h='<div style="overflow-x:auto;"><table style="width:100%;font-size:12px;border-collapse:collapse;">';
+    h+='<thead><tr>';
+    headers.forEach(hh=>h+=`<th style="background:#203864;color:#fff;padding:6px 8px;text-align:left;">${hh}</th>`);
+    h+='</tr></thead><tbody>';
+    rows.forEach((row,i)=>{
+      h+=`<tr style="background:${i%2===0?'#fff':'#f8fafc'};">`;
+      row.forEach(v=>h+=`<td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;">${v||'—'}</td>`);
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+    return h;
+  }
+
+  const fmt$=n=>n?'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
+  let html='';
+
+  if(t==='inp'){
+    const r2=recs.filter(r=>r.inp_vinos||r.inp_tomahawk||r.inp_langosta);
+    const rows=r2.map(r=>[r.fecha,r.restaurante,r.servicio,fmt$(r.inp_vinos),fmt$(r.inp_tomahawk),fmt$(r.inp_langosta)]);
+    const tv=r2.reduce((s,r)=>s+Number(r.inp_vinos||0),0);
+    const tt=r2.reduce((s,r)=>s+Number(r.inp_tomahawk||0),0);
+    const tl=r2.reduce((s,r)=>s+Number(r.inp_langosta||0),0);
+    if(rows.length) rows.push(['<strong>Total</strong>','','','<strong>'+fmt$(tv)+'</strong>','<strong>'+fmt$(tt)+'</strong>','<strong>'+fmt$(tl)+'</strong>']);
+    html=tbl(['Fecha','Restaurante','Servicio','Vinos','Tomahawk','Langosta'],rows);
+
+  } else if(t==='falt'){
+    const rows=recs.filter(r=>r.falt_tipo).map(r=>[r.fecha,r.restaurante,r.servicio,r.falt_tipo,r.falt_desc]);
+    html=tbl(['Fecha','Restaurante','Servicio','Tipo','Producto'],rows);
+
+  } else if(t==='mant'){
+    const rows=recs.filter(r=>r.mant_tipo).map(r=>[r.fecha,r.restaurante,r.servicio,r.mant_tipo,r.mant_desc]);
+    html=tbl(['Fecha','Restaurante','Servicio','Tipo','Descripción'],rows);
+
+  } else if(t==='equipos'){
+    const rows=[];
+    recs.filter(r=>r.inventario).forEach(r=>{
+      try{
+        const inv=JSON.parse(r.inventario||'[]');
+        const fallos=inv.filter(e=>e.estado==='Fallo').map(e=>e.equipo+(e.tipoFallo?' ('+e.tipoFallo+')':'')).join(', ')||'Ninguno';
+        rows.push([r.fecha,r.restaurante,r.servicio,fallos]);
+      }catch(e){}
+    });
+    html=tbl(['Fecha','Restaurante','Servicio','Equipos con fallo'],rows);
+
+  } else if(t==='quejas'){
+    const rows=[];
+    recs.filter(r=>Number(r.num_quejas)>0).forEach(r=>{
+      try{
+        const qs=JSON.parse(r.quejas||'[]');
+        qs.forEach(q=>rows.push([r.fecha,r.restaurante,r.servicio,q.habitacion||'—',q.descripcion||'—']));
+      }catch(e){}
+    });
+    html=tbl(['Fecha','Restaurante','Servicio','Hab.','Descripción'],rows);
+  }
+
+  el.innerHTML=html;
 }
 function exportCSV(){
   const recs=getFilteredHotelRecords();
@@ -1553,7 +1643,8 @@ function aplicarAybRango(){
 
 function setAybTab(t){
   _aybTabActual=t;
-  ['inp','falt','mant','inv','quejas'].forEach(id=>{
+  const allTabs=['resumen','porhotel','problemas','registros','inp','falt','mant','inv','quejas'];
+  allTabs.forEach(id=>{
     const btn=document.getElementById('aybt-'+id);
     if(!btn) return;
     if(id===t){btn.style.background='#1d4ed8';btn.style.color='#fff';btn.style.borderColor='#1d4ed8';}
@@ -1623,7 +1714,48 @@ function renderAybTab(t){
 
   let html='';
 
-  if(t==='inp'){
+  if(t==='resumen'){
+    const tot=recs.length;
+    const pax=recs.reduce((s,r)=>s+Number(r.pax||0),0);
+    const ok=recs.filter(r=>r.comandero==='Si').length;
+    const fail=recs.filter(r=>(r.comandero==='Parcial'||r.comandero==='No')&&!(r.incidencia||'').includes('Cerrado')).length;
+    const pct=tot?Math.round(ok/tot*100):0;
+    html=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Registros</div><div style="font-size:24px;font-weight:700;">${tot}</div></div>
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Total Pax</div><div style="font-size:24px;font-weight:700;">${pax.toLocaleString()}</div></div>
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Cumplimiento</div><div style="font-size:24px;font-weight:700;color:${pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626'};">${pct}%</div></div>
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Incidencias</div><div style="font-size:24px;font-weight:700;color:${fail>0?'#dc2626':'#16a34a'};">${fail}</div></div>
+    </div>`;
+
+  } else if(t==='porhotel'){
+    const nombres={'SERPC':'Secrets Royal Beach','DRRPC':'Dreams Royal Beach','DROPC':'Dreams Onyx','BREPC':'Breathless','DRFPC':'Dreams Flora'};
+    hoteles.forEach(h=>{
+      const hr=recs.filter(r=>r.hotelCode===h);
+      if(!hr.length) return;
+      const ok=hr.filter(r=>r.comandero==='Si').length;
+      const pct=Math.round(ok/hr.length*100);
+      const pax=hr.reduce((s,r)=>s+Number(r.pax||0),0);
+      html+=`<div class="card" style="margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:700;color:#1e293b;margin-bottom:8px;">${h} — ${nombres[h]||h}</div>
+        <div style="display:flex;gap:16px;font-size:12px;flex-wrap:wrap;">
+          <span>Registros: <strong>${hr.length}</strong></span>
+          <span>Pax: <strong>${pax.toLocaleString()}</strong></span>
+          <span>Cumplimiento: <strong style="color:${pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626'};">${pct}%</strong></span>
+        </div>
+      </div>`;
+    });
+    if(!html) html='<p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Sin datos para este período.</p>';
+
+  } else if(t==='problemas'){
+    const fallos=recs.filter(r=>r.comandero==='Parcial'||r.comandero==='No');
+    const rows=fallos.map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.comandero,r.incidencia||'—',r.detalle||'—']);
+    html=tbl(['Hotel','Fecha','Restaurante','Servicio','Estado','Incidencia','Detalle'],rows);
+
+  } else if(t==='registros'){
+    const rows=[...recs].reverse().map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.pax,r.comandero,r.responsable]);
+    html=tbl(['Hotel','Fecha','Restaurante','Servicio','Pax','Comandero','Responsable'],rows);
+
+  } else if(t==='inp'){
     hoteles.forEach(h=>{
       const hr=recs.filter(r=>r.hotelCode===h&&(r.inp_vinos||r.inp_tomahawk||r.inp_langosta));
       if(!hr.length) return;

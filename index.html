@@ -611,6 +611,11 @@
     <div class="tab" id="anav-hoteles" onclick="setAdminTab('hoteles')">🏨 Por Hotel</div>
     <div class="tab" id="anav-problemas" onclick="setAdminTab('problemas')">⚠️ Problemas</div>
     <div class="tab" id="anav-registros" onclick="setAdminTab('registros')">📋 Registros</div>
+    <div class="tab" id="anav-inp" onclick="setAdminTab('inp')">💰 INP</div>
+    <div class="tab" id="anav-falt" onclick="setAdminTab('falt')">🍽️ Faltantes</div>
+    <div class="tab" id="anav-mant" onclick="setAdminTab('mant')">🔧 Mant.</div>
+    <div class="tab" id="anav-equipos" onclick="setAdminTab('equipos')">📱 Equipos</div>
+    <div class="tab" id="anav-quejas" onclick="setAdminTab('quejas')">😞 Quejas</div>
     <div class="tab" id="anav-config" onclick="setAdminTab('config')" style="display:none;">⚙️ Config</div>
   </div>
 
@@ -666,6 +671,14 @@
       </div>
     </div>
   </div>
+
+  <!-- TABS DATOS ADICIONALES — ADMIN -->
+  <div id="admin-inp"    style="display:none;"><div id="adm-inp-content"   ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando datos INP...</p></div></div>
+  <div id="admin-falt"   style="display:none;"><div id="adm-falt-content"  ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando faltantes...</p></div></div>
+  <div id="admin-mant"   style="display:none;"><div id="adm-mant-content"  ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando mantenimiento...</p></div></div>
+  <div id="admin-equipos"style="display:none;"><div id="adm-equipos-content"><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando equipos...</p></div></div>
+  <div id="admin-quejas" style="display:none;"><div id="adm-quejas-content" ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando quejas...</p></div></div>
+
 </div>
 
 <div class="print-footer" id="print-footer">
@@ -1945,12 +1958,84 @@ function setAdminTab(t){
     const sec=document.getElementById('admin-'+id);
     if(sec) sec.style.display=id===t?'block':'none';
   });
-  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-config'].forEach((id,i)=>{
+  const adminTabs=['resumen','hoteles','problemas','registros','inp','falt','mant','equipos','quejas','config'];
+  adminTabs.forEach(id=>{
+    const sec=document.getElementById('admin-'+id);
+    if(sec) sec.style.display=id===t?'block':'none';
+  });
+  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-inp','anav-falt','anav-mant','anav-equipos','anav-quejas','anav-config'].forEach((id,i)=>{
     const el=document.getElementById(id);
-    if(el) el.className='tab'+(['resumen','hoteles','problemas','registros','config'][i]===t?' active':'');
+    if(el) el.className='tab'+(adminTabs[i]===t?' active':'');
   });
   if(t==='config') renderAdminConfig();
+  else if(['inp','falt','mant','equipos','quejas'].indexOf(t)>=0) renderAdminAdicional(t);
   else renderAdmin();
+}
+
+function renderAdminAdicional(t){
+  const recs = getFilteredAdminRecords().filter(r=>!eliminados.has(r.id));
+  const contenedorId='adm-'+t+'-content';
+  const el=document.getElementById(contenedorId);
+  if(!el) return;
+
+  function tbl(headers,rows){
+    if(!rows.length) return '<p style="color:#94a3b8;text-align:center;padding:30px;font-size:13px;">Sin datos para este período y filtro seleccionado.</p>';
+    let h='<div style="overflow-x:auto;"><table style="width:100%;font-size:12px;border-collapse:collapse;">';
+    h+='<thead><tr>';
+    headers.forEach(hh=>h+=`<th style="background:#203864;color:#fff;padding:7px 10px;text-align:left;">${hh}</th>`);
+    h+='</tr></thead><tbody>';
+    rows.forEach((row,i)=>{
+      h+=`<tr style="background:${i%2===0?'#fff':'#f8fafc'};">`;
+      row.forEach(v=>h+=`<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">${v||'—'}</td>`);
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+    return h;
+  }
+
+  const fmt$=n=>n?'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
+  let html='';
+
+  if(t==='inp'){
+    const r2=recs.filter(r=>r.inp_vinos||r.inp_tomahawk||r.inp_langosta);
+    const rows=r2.map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,fmt$(r.inp_vinos),fmt$(r.inp_tomahawk),fmt$(r.inp_langosta)]);
+    const tv=r2.reduce((s,r)=>s+Number(r.inp_vinos||0),0);
+    const tt=r2.reduce((s,r)=>s+Number(r.inp_tomahawk||0),0);
+    const tl=r2.reduce((s,r)=>s+Number(r.inp_langosta||0),0);
+    if(rows.length) rows.push(['<strong>TOTAL</strong>','','','','<strong>'+fmt$(tv)+'</strong>','<strong>'+fmt$(tt)+'</strong>','<strong>'+fmt$(tl)+'</strong>']);
+    html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Vinos','Tomahawk','Langosta'],rows)}</div>`;
+
+  } else if(t==='falt'){
+    const rows=recs.filter(r=>r.falt_tipo).map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.falt_tipo,r.falt_desc]);
+    html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Tipo','Producto'],rows)}</div>`;
+
+  } else if(t==='mant'){
+    const rows=recs.filter(r=>r.mant_tipo).map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.mant_tipo,r.mant_desc]);
+    html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Tipo','Descripción'],rows)}</div>`;
+
+  } else if(t==='equipos'){
+    const rows=[];
+    recs.filter(r=>r.inventario).forEach(r=>{
+      try{
+        const inv=JSON.parse(r.inventario||'[]');
+        const fallos=inv.filter(e=>e.estado==='Fallo').map(e=>e.equipo+(e.tipoFallo?' ('+e.tipoFallo+')':'')).join(', ')||'Ninguno';
+        if(fallos!=='Ninguno') rows.push([r.hotelCode,r.fecha,r.restaurante,r.servicio,fallos]);
+      }catch(e){}
+    });
+    html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Equipos con fallo'],rows)}</div>`;
+
+  } else if(t==='quejas'){
+    const rows=[];
+    recs.filter(r=>Number(r.num_quejas)>0).forEach(r=>{
+      try{
+        const qs=JSON.parse(r.quejas||'[]');
+        qs.forEach(q=>rows.push([r.hotelCode,r.fecha,r.restaurante,r.servicio,q.habitacion||'—',q.descripcion||'—']));
+      }catch(e){}
+    });
+    html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Hab.','Descripción'],rows)}</div>`;
+  }
+
+  el.innerHTML=html;
 }
 
 function renderAdminConfig(){

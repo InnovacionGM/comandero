@@ -689,7 +689,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwYeRSHl-dcp_pYNSoyn3qXuUeOwe9dgCYofzr1-7pFM43yVTIRY2yjj54pw7pXXx02OQ/exec';
-const ADMIN_CODE='161452';      // Rob — acceso total
+const ADMIN_CODE='RA1614';      // Rob — acceso total (administrador/creador/maestro/ghost)
+const ADMIN_CODE_2='EQ6304';    // Erika — mismos permisos totales
 const CORP_CODE='1614';         // Corporativos — vista completa sin Config ni borrar
 const HOTELS={
   "SERPC3100":{name:"Secrets Royal Beach",code:"SERPC",restaurantes:{"Bluewater Grill":["Cena"],"Himitsu":["Cena"],"Bordeaux":["Cena"],"El Patio":["Cena"],"Oceana":["Desayuno","Almuerzo","Cena"]}},
@@ -892,12 +893,12 @@ function exportPDF(mode){
 async function doLogin(){
   const raw=document.getElementById('hotelCode').value.trim().toUpperCase();
   document.getElementById('loginError').style.display='none';
-  if(raw===ADMIN_CODE){
+  if(raw===ADMIN_CODE || raw===ADMIN_CODE_2){
     isAdmin=true;isCorpAdmin=false;
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-admin').style.display='block';
     document.getElementById('admin-user-label').style.display='inline';
-    document.getElementById('admin-user-label').textContent='👤 Rob Avila';
+    document.getElementById('admin-user-label').textContent = raw===ADMIN_CODE_2 ? '👤 Erika Quispe' : '👤 Rob Avila';
     document.getElementById('admin-role-pill').textContent='👑 Administrador';
     await loadAllRecords();renderAdmin();return;
   }

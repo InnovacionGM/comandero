@@ -152,7 +152,10 @@
       <p>Registro diario A&amp;B · Grupo Martinón</p>
     </div>
     <label for="hotelCode">Código de acceso</label>
-    <input type="text" id="hotelCode" placeholder="Ingresa tu código" maxlength="12"/>
+    <div style="position:relative;">
+      <input type="password" id="hotelCode" placeholder="Ingresa tu código" maxlength="12" autocomplete="off" style="width:100%;padding-right:40px;box-sizing:border-box;"/>
+      <span onclick="toggleVerCodigo()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;user-select:none;" title="Mostrar/ocultar código">👁️</span>
+    </div>
     <div id="loginError" class="alert alert-error">Código incorrecto. Verifica con tu supervisor.</div>
     <button class="btn btn-primary" style="width:100%;margin-top:16px;justify-content:center;font-size:15px;" onclick="doLogin()">Entrar →</button>
     <p style="text-align:center;font-size:12px;color:#94a3b8;margin-top:16px;">Si no tienes código, contacta a tu jefe de A&amp;B.</p>
@@ -890,6 +893,12 @@ function exportPDF(mode){
   }
   document.getElementById('print-footer-date').textContent=d;
   window.print();
+}
+
+// ── Mostrar/ocultar el código mientras se escribe (seguridad: por defecto oculto) ──
+function toggleVerCodigo(){
+  const input=document.getElementById('hotelCode');
+  input.type = input.type==='password' ? 'text' : 'password';
 }
 
 // ── LOGIN ──

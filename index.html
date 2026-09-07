@@ -48,9 +48,10 @@
     .login-logo h2{font-size:20px;font-weight:700;}
     .login-logo p{font-size:13px;color:#64748b;margin-top:4px;}
     #hotelCode{text-transform:uppercase;font-size:16px;font-weight:600;text-align:center;letter-spacing:.1em;}
-    .tabs{display:flex;gap:2px;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:20px;}
-    .tab{flex:1;padding:7px;text-align:center;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;color:#64748b;transition:all .15s;}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:#f1f5f9;border-radius:10px;padding:4px;margin-bottom:20px;}
+    .tab{padding:8px 4px;text-align:center;font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;color:#64748b;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .tab.active{background:#fff;color:#1d4ed8;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+    @media (max-width:640px){ .tabs{grid-template-columns:repeat(3,1fr);} .tab{font-size:11px;padding:8px 2px;} }
     .dash-tabs{display:flex;border-bottom:1.5px solid #e2e8f0;margin-bottom:16px;flex-wrap:wrap;}
     .dash-tab{padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:#64748b;font-weight:600;margin-bottom:-1.5px;white-space:nowrap;}
     .dash-tab.active{color:#1d4ed8;border-bottom-color:#1d4ed8;}
@@ -553,7 +554,9 @@
       <h1>Reporte Diario del Comandero Digital</h1>
       <div style="margin-top:4px;"><span class="admin-pill" id="admin-role-pill">👑 Panel Administrador</span></div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-sm no-print" id="hdr-btn-usuarios" onclick="setAdminTab('usuarios')" style="display:none;background:#eff6ff;color:#1d4ed8;" title="Usuarios y Reportes">👥 Usuarios</button>
+      <button class="btn btn-sm no-print" id="hdr-btn-config" onclick="setAdminTab('config')" style="display:none;background:#f1f5f9;color:#475569;" title="Configuración">⚙️ Config</button>
       <span id="admin-user-label" style="font-size:11px;color:#64748b;background:#f1f5f9;padding:3px 10px;border-radius:99px;display:none;"></span>
       <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
     </div>
@@ -619,8 +622,6 @@
     <div class="tab" id="anav-mant" onclick="setAdminTab('mant')">🔧 Mant.</div>
     <div class="tab" id="anav-equipos" onclick="setAdminTab('equipos')">📱 Equipos</div>
     <div class="tab" id="anav-quejas" onclick="setAdminTab('quejas')">😞 Quejas</div>
-    <div class="tab" id="anav-usuarios" onclick="setAdminTab('usuarios')" style="display:none;">👥 Usuarios</div>
-    <div class="tab" id="anav-config" onclick="setAdminTab('config')" style="display:none;">⚙️ Config</div>
   </div>
 
   <!-- PANEL CONFIG -->
@@ -644,6 +645,7 @@
       <div class="card" style="padding:18px;"><div class="section-title">Tipos de fallo reportados</div><div class="hbar" id="adm-hbar-tipos-resumen"></div></div>
     </div>
     <div class="card" style="padding:18px;margin-bottom:16px;"><div class="section-title">Pax por servicio</div><div class="hbar" id="adm-hbar-pax-servicio"></div></div>
+    <div class="card" style="padding:18px;margin-bottom:16px;"><div class="section-title">Pax por restaurante (según filtro actual)</div><div class="hbar" id="adm-hbar-pax-restaurante"></div></div>
     <div class="card" style="padding:18px;"><div class="section-title">Registros por hotel</div><div class="hbar" id="adm-hbar-hoteles"></div></div>
   </div>
   <div id="admin-hoteles" style="display:none;"><div id="adm-hotel-cards"></div></div>
@@ -1948,8 +1950,8 @@ function getFilteredAdminRecords(){
 }
 async function renderAdmin(){
   // Mostrar u ocultar tab Config y botón borrar según tipo de usuario
-  const tabConfig = document.getElementById('anav-config');
-  const tabUsuarios = document.getElementById('anav-usuarios');
+  const tabConfig = document.getElementById('hdr-btn-config');
+  const tabUsuarios = document.getElementById('hdr-btn-usuarios');
   const btnBorrar = document.getElementById('btn-borrar-admin');
   if(tabConfig) tabConfig.style.display = isCorpAdmin ? 'none' : '';
   if(tabUsuarios) tabUsuarios.style.display = isCorpAdmin ? 'none' : '';
@@ -1978,10 +1980,13 @@ function setAdminTab(t){
     const sec=document.getElementById('admin-'+id);
     if(sec) sec.style.display=id===t?'block':'none';
   });
-  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-inp','anav-falt','anav-mant','anav-equipos','anav-quejas','anav-usuarios','anav-config'].forEach((id,i)=>{
+  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-inp','anav-falt','anav-mant','anav-equipos','anav-quejas'].forEach((id,i)=>{
     const el=document.getElementById(id);
     if(el) el.className='tab'+(adminTabs[i]===t?' active':'');
   });
+  const hdrU=document.getElementById('hdr-btn-usuarios'), hdrC=document.getElementById('hdr-btn-config');
+  if(hdrU && hdrU.style.display!=='none') hdrU.style.outline = t==='usuarios' ? '2px solid #1d4ed8' : 'none';
+  if(hdrC && hdrC.style.display!=='none') hdrC.style.outline = t==='config' ? '2px solid #475569' : 'none';
   if(t==='config') renderAdminConfig();
   else if(t==='usuarios') renderAdminUsuarios();
   else if(['inp','falt','mant','equipos','quejas'].indexOf(t)>=0) renderAdminAdicional(t);
@@ -2326,14 +2331,18 @@ function renderAdminResumen(){
   const ok=recs.filter(r=>r.comandero==='Si').length,fail=recs.filter(r=>(r.comandero==='Parcial'||r.comandero==='No')&&!r.incidencia.includes('Cerrado')).length;
   const pct=tot?Math.round(ok/tot*100):0;
   document.getElementById('adm-kpi').innerHTML=`<div class="kpi-card"><div class="kpi-label">Total registros</div><div class="kpi-value">${tot}</div></div><div class="kpi-card"><div class="kpi-label">Total pax</div><div class="kpi-value">${pax.toLocaleString()}</div></div><div class="kpi-card"><div class="kpi-label">Uso correcto</div><div class="kpi-value ${pct>=80?'green':pct>=60?'amber':'red'}">${pct}%</div></div><div class="kpi-card"><div class="kpi-label">Incidencias</div><div class="kpi-value ${fail>0?'red':''}">${fail}</div></div>`;
-  const byHotel={},paxServ={},byTipoFallo={};
+  const hotelFiltroActivo = document.getElementById('adm-filter-hotel').value;
+  const byHotel={},paxServ={},byTipoFallo={},paxRest={};
   recs.forEach(r=>{
     byHotel[r.hotel]=(byHotel[r.hotel]||0)+1;
     paxServ[r.servicio]=(paxServ[r.servicio]||0)+r.pax;
+    const restKey = hotelFiltroActivo ? r.restaurante : (r.hotelCode+' · '+r.restaurante);
+    paxRest[restKey]=(paxRest[restKey]||0)+r.pax;
     if(r.incidencia && !r.incidencia.includes('Cerrado')) byTipoFallo[r.incidencia]=(byTipoFallo[r.incidencia]||0)+1;
   });
   renderHBar('adm-hbar-hoteles',byHotel,'#6366f1');
   renderHBar('adm-hbar-pax-servicio',paxServ,'#0ea5e9');
+  renderHBar('adm-hbar-pax-restaurante',paxRest,'#8b5cf6');
   renderHBar('adm-hbar-tipos-resumen',byTipoFallo,'#ef4444');
   setTimeout(()=>{
     if(admChartUso)admChartUso.destroy();

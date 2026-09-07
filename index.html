@@ -616,6 +616,7 @@
     <div class="tab" id="anav-mant" onclick="setAdminTab('mant')">🔧 Mant.</div>
     <div class="tab" id="anav-equipos" onclick="setAdminTab('equipos')">📱 Equipos</div>
     <div class="tab" id="anav-quejas" onclick="setAdminTab('quejas')">😞 Quejas</div>
+    <div class="tab" id="anav-usuarios" onclick="setAdminTab('usuarios')" style="display:none;">👥 Usuarios</div>
     <div class="tab" id="anav-config" onclick="setAdminTab('config')" style="display:none;">⚙️ Config</div>
   </div>
 
@@ -678,6 +679,7 @@
   <div id="admin-mant"   style="display:none;"><div id="adm-mant-content"  ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando mantenimiento...</p></div></div>
   <div id="admin-equipos"style="display:none;"><div id="adm-equipos-content"><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando equipos...</p></div></div>
   <div id="admin-quejas" style="display:none;"><div id="adm-quejas-content" ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando quejas...</p></div></div>
+  <div id="admin-usuarios" style="display:none;"><div id="adm-usuarios-content"><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando usuarios...</p></div></div>
 
 </div>
 
@@ -703,6 +705,7 @@ const HOTELS={
 };
 
 let currentHotel=null,isAdmin=false,isCorpAdmin=false,records=[],allRecords=[];
+let currentUserCode=null; // código con el que se inició sesión (RA1614/EQ6304/etc.) — se manda al backend en cada acción del módulo de usuarios
 let chartUso=null,chartPax=null,admChartUso=null,admChartServ=null;
 let activeDashTab='resumen',activeAdminTab='resumen';
 let eliminados=new Set();
@@ -894,7 +897,7 @@ async function doLogin(){
   const raw=document.getElementById('hotelCode').value.trim().toUpperCase();
   document.getElementById('loginError').style.display='none';
   if(raw===ADMIN_CODE || raw===ADMIN_CODE_2){
-    isAdmin=true;isCorpAdmin=false;
+    isAdmin=true;isCorpAdmin=false;currentUserCode=raw;
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-admin').style.display='block';
     document.getElementById('admin-user-label').style.display='inline';
@@ -1937,8 +1940,10 @@ function getFilteredAdminRecords(){
 async function renderAdmin(){
   // Mostrar u ocultar tab Config y botón borrar según tipo de usuario
   const tabConfig = document.getElementById('anav-config');
+  const tabUsuarios = document.getElementById('anav-usuarios');
   const btnBorrar = document.getElementById('btn-borrar-admin');
   if(tabConfig) tabConfig.style.display = isCorpAdmin ? 'none' : '';
+  if(tabUsuarios) tabUsuarios.style.display = isCorpAdmin ? 'none' : '';
   if(btnBorrar) btnBorrar.style.display = isCorpAdmin ? 'none' : '';
   await loadAllRecords();
   const hotel=document.getElementById('adm-filter-hotel').value;
@@ -1959,16 +1964,17 @@ function setAdminTab(t){
     const sec=document.getElementById('admin-'+id);
     if(sec) sec.style.display=id===t?'block':'none';
   });
-  const adminTabs=['resumen','hoteles','problemas','registros','inp','falt','mant','equipos','quejas','config'];
+  const adminTabs=['resumen','hoteles','problemas','registros','inp','falt','mant','equipos','quejas','usuarios','config'];
   adminTabs.forEach(id=>{
     const sec=document.getElementById('admin-'+id);
     if(sec) sec.style.display=id===t?'block':'none';
   });
-  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-inp','anav-falt','anav-mant','anav-equipos','anav-quejas','anav-config'].forEach((id,i)=>{
+  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-inp','anav-falt','anav-mant','anav-equipos','anav-quejas','anav-usuarios','anav-config'].forEach((id,i)=>{
     const el=document.getElementById(id);
     if(el) el.className='tab'+(adminTabs[i]===t?' active':'');
   });
   if(t==='config') renderAdminConfig();
+  else if(t==='usuarios') renderAdminUsuarios();
   else if(['inp','falt','mant','equipos','quejas'].indexOf(t)>=0) renderAdminAdicional(t);
   else renderAdmin();
 }
@@ -2070,6 +2076,217 @@ function renderAdminConfig(){
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;margin-bottom:8px;"><div><div style="font-size:13px;font-weight:700;color:#991b1b;">'+rest+'</div><div style="font-size:11px;color:#64748b;">'+hCode+' &middot; Cierre hasta: <strong>'+v.hasta+'</strong></div></div><button onclick="cancelarCierre(\''+key+'\')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;">Cancelar</button></div>';
     }).join('');
   }
+}
+
+// ============================================================
+// MÓDULO DE USUARIOS Y REPORTES — pestaña "👥 Usuarios"
+// Consume las funciones que ya existen en Code.gs (listar_usuarios,
+// crear_usuario, editar_usuario, inactivar_usuario, eliminar_usuario).
+// Solo visible para Rob (RA1614) y Erika (EQ6304) — ver renderAdmin().
+// ============================================================
+
+const REPORTES_LABEL={
+  CONSOLIDADO_TODOS:'Consolidado Todos los Hoteles',
+  INDIVIDUAL_HOTEL:'Individual por Hotel',
+  CONSOLIDADO_COMPLEJO:'Consolidado por Complejo',
+  INP_FALTANTES:'INP y Faltantes A&B',
+  MANTENIMIENTO:'Mantenimiento',
+  MUSICA:'Música Ambiental',
+  QUEJAS:'Quejas de Huéspedes'
+};
+const HOTELES_CATALOGO=['SERPC','DRRPC','BREPC','DROPC'];
+let usuariosCache=[];
+
+async function renderAdminUsuarios(){
+  const cont=document.getElementById('adm-usuarios-content');
+  if(!cont) return;
+  cont.innerHTML='<p style="color:#94a3b8;text-align:center;padding:30px;">Cargando usuarios...</p>';
+  try{
+    const res=await fetch(APPS_SCRIPT_URL+'?action=listar_usuarios');
+    const json=await res.json();
+    usuariosCache=(json.usuarios||[]);
+  }catch(e){
+    cont.innerHTML='<p style="color:#dc2626;text-align:center;padding:30px;">Error cargando usuarios. Intenta de nuevo.</p>';
+    return;
+  }
+  pintarTablaUsuarios();
+}
+
+function pintarTablaUsuarios(){
+  const cont=document.getElementById('adm-usuarios-content');
+  if(!cont) return;
+  const esMaestro = isAdmin && !isCorpAdmin;
+
+  let html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">';
+  html+='<div style="font-size:14px;font-weight:700;color:#1e293b;">👥 Usuarios y Reportes ('+usuariosCache.length+')</div>';
+  html+='<button class="btn btn-sm" style="background:#1d4ed8;color:#fff;" onclick="abrirFormularioUsuario(null)">+ Nuevo Usuario</button>';
+  html+='</div>';
+
+  if(usuariosCache.length===0){
+    html+='<div style="text-align:center;padding:30px;color:#94a3b8;">No hay usuarios registrados todavía.</div>';
+    cont.innerHTML=html;
+    return;
+  }
+
+  html+='<div style="overflow-x:auto;"><table width="100%" style="border-collapse:collapse;font-size:12px;">';
+  html+='<thead><tr style="background:#203864;color:#fff;">'+
+        '<th style="padding:7px 10px;text-align:left;">Código</th>'+
+        '<th style="padding:7px 10px;text-align:left;">Nombre</th>'+
+        '<th style="padding:7px 10px;text-align:left;">Cargo</th>'+
+        '<th style="padding:7px 10px;text-align:left;">Complejo</th>'+
+        '<th style="padding:7px 10px;text-align:left;">Estado</th>'+
+        '<th style="padding:7px 10px;text-align:left;">Reportes</th>'+
+        '<th style="padding:7px 10px;text-align:left;">Hoteles</th>'+
+        '<th style="padding:7px 10px;text-align:left;">Acciones</th></tr></thead><tbody>';
+
+  usuariosCache.forEach((u,i)=>{
+    const sinHotel = (u.reportes||[]).length>0 && (u.hoteles||[]).length===0;
+    const bg = sinHotel ? '#fef2f2' : (i%2===0?'#ffffff':'#f8fafc');
+    const estadoTxt = u.estado==='Activo' ? '🟢 Activo' : '⚪ Inactivo';
+    const reportesTxt = (u.reportes||[]).map(r=>REPORTES_LABEL[r]||r).join(', ') || '—';
+    const hotelesTxt = (u.hoteles||[]).join(', ') || (sinHotel ? '⚠️ SIN HOTEL' : '—');
+
+    html+='<tr style="background:'+bg+';">';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;font-weight:600;">'+u.codigo+'</td>';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">'+(u.nombre||'—')+'</td>';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">'+(u.cargo||'—')+'</td>';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">'+(u.complejo||'—')+'</td>';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">'+estadoTxt+'</td>';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">'+reportesTxt+'</td>';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">'+hotelesTxt+'</td>';
+    html+='<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;white-space:nowrap;">';
+    html+='<button class="btn btn-sm" style="padding:3px 8px;margin-right:4px;" onclick="abrirFormularioUsuario('+u.fila+')">✏️</button>';
+    html+='<button class="btn btn-sm" style="padding:3px 8px;margin-right:4px;" onclick="toggleInactivarUsuario('+u.fila+',\''+u.codigo+'\',\''+u.estado+'\')">'+(u.estado==='Activo'?'🔴':'🟢')+'</button>';
+    if(esMaestro){
+      html+='<button class="btn btn-sm" style="padding:3px 8px;background:#fee2e2;color:#991b1b;" onclick="eliminarUsuarioConfirm('+u.fila+',\''+u.codigo+'\')">🗑️</button>';
+    }
+    html+='</td></tr>';
+  });
+  html+='</tbody></table></div>';
+  cont.innerHTML=html;
+}
+
+function abrirFormularioUsuario(fila){
+  const u = fila ? usuariosCache.find(x=>x.fila===fila) : null;
+  const esMaestro = isAdmin && !isCorpAdmin;
+  const reportesActuales = u ? (u.reportes||[]) : [];
+  const hotelesActuales = u ? (u.hoteles||[]) : [];
+  const esTodosActual = hotelesActuales.indexOf('TODOS')>=0;
+
+  const checksReportes = Object.keys(REPORTES_LABEL).map(key=>{
+    const checked = reportesActuales.indexOf(key)>=0 ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;"><input type="checkbox" value="'+key+'" '+checked+' class="chk-reporte"> '+REPORTES_LABEL[key]+'</label>';
+  }).join('');
+
+  const checksHoteles = HOTELES_CATALOGO.map(code=>{
+    const checked = hotelesActuales.indexOf(code)>=0 ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;"><input type="checkbox" value="'+code+'" '+checked+' class="chk-hotel"> '+code+'</label>';
+  }).join('');
+
+  const opcionTodos = esMaestro
+    ? '<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;font-weight:700;color:#1d4ed8;"><input type="checkbox" id="chk-todos-hoteles" '+(esTodosActual?'checked':'')+' onchange="toggleChkTodos()"> Todos los hoteles</label>'
+    : '';
+
+  const modalHtml = '<div id="modal-usuario-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;">'+
+    '<div style="background:#fff;border-radius:12px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;padding:20px;">'+
+    '<div style="font-size:16px;font-weight:700;color:#1e293b;margin-bottom:14px;">'+(u?'Editar Usuario':'Nuevo Usuario')+'</div>'+
+    '<input type="hidden" id="fu-fila" value="'+(fila||'')+'">'+
+    '<label style="font-size:12px;color:#64748b;">Nombre completo</label>'+
+    '<input type="text" id="fu-nombre" value="'+(u?u.nombre:'')+'" style="width:100%;padding:8px;border:1px solid #e2e8f0;border-radius:6px;margin:4px 0 10px;">'+
+    '<label style="font-size:12px;color:#64748b;">Cargo</label>'+
+    '<input type="text" id="fu-cargo" value="'+(u?u.cargo:'')+'" style="width:100%;padding:8px;border:1px solid #e2e8f0;border-radius:6px;margin:4px 0 10px;">'+
+    '<label style="font-size:12px;color:#64748b;">Complejo</label>'+
+    '<select id="fu-complejo" style="width:100%;padding:8px;border:1px solid #e2e8f0;border-radius:6px;margin:4px 0 10px;">'+
+      ['Varallo','IOR','Natura','Corporativo'].map(c=>'<option value="'+c+'" '+(u&&u.complejo===c?'selected':'')+'>'+c+'</option>').join('')+
+    '</select>'+
+    '<label style="font-size:12px;color:#64748b;">Correo</label>'+
+    '<input type="email" id="fu-correo" value="'+(u?u.correo:'')+'" style="width:100%;padding:8px;border:1px solid #e2e8f0;border-radius:6px;margin:4px 0 14px;">'+
+    '<div style="font-size:12px;font-weight:700;color:#1e293b;margin-bottom:4px;">Reportes asignados</div>'+
+    checksReportes+
+    '<div style="font-size:12px;font-weight:700;color:#1e293b;margin:12px 0 4px;">Hoteles asignados</div>'+
+    opcionTodos+
+    '<div id="hoteles-individuales" style="'+(esTodosActual?'display:none;':'')+'">'+checksHoteles+'</div>'+
+    '<div id="form-usuario-error" style="color:#dc2626;font-size:12px;margin-top:10px;display:none;"></div>'+
+    '<div style="display:flex;gap:8px;margin-top:16px;">'+
+    '<button class="btn btn-sm" style="flex:1;background:#f1f5f9;" onclick="cerrarModalUsuario()">Cancelar</button>'+
+    '<button class="btn btn-sm" style="flex:1;background:#1d4ed8;color:#fff;" onclick="guardarUsuario()">Guardar</button>'+
+    '</div></div></div>';
+
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function toggleChkTodos(){
+  const chk=document.getElementById('chk-todos-hoteles');
+  const cont=document.getElementById('hoteles-individuales');
+  if(cont) cont.style.display = chk.checked ? 'none' : '';
+}
+
+function cerrarModalUsuario(){
+  const el=document.getElementById('modal-usuario-overlay');
+  if(el) el.remove();
+}
+
+async function guardarUsuario(){
+  const fila=document.getElementById('fu-fila').value;
+  const nombre=document.getElementById('fu-nombre').value.trim();
+  const cargo=document.getElementById('fu-cargo').value.trim();
+  const complejo=document.getElementById('fu-complejo').value;
+  const correo=document.getElementById('fu-correo').value.trim();
+  const reportes=[...document.querySelectorAll('.chk-reporte:checked')].map(el=>el.value);
+  const chkTodos=document.getElementById('chk-todos-hoteles');
+  const hoteles = (chkTodos && chkTodos.checked) ? ['TODOS'] : [...document.querySelectorAll('.chk-hotel:checked')].map(el=>el.value);
+
+  const errEl=document.getElementById('form-usuario-error');
+  if(!nombre||!correo){
+    errEl.textContent='Nombre y correo son obligatorios.'; errEl.style.display='block'; return;
+  }
+
+  const body = fila
+    ? {action:'editar_usuario', fila:Number(fila), cambios:{nombre,cargo,complejo,correo,reportes,hoteles}, codigoQuienEjecuta:currentUserCode}
+    : {action:'crear_usuario', usuario:{nombre,cargo,complejo,correo,reportes,hoteles}, codigoQuienEjecuta:currentUserCode};
+
+  try{
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+    const json=await resp.json();
+    if(json.status==='ok'){
+      cerrarModalUsuario();
+      renderAdminUsuarios();
+    } else {
+      errEl.textContent=json.message||'No se pudo guardar.'; errEl.style.display='block';
+    }
+  }catch(e){
+    errEl.textContent='Error de conexión. Intenta de nuevo.'; errEl.style.display='block';
+  }
+}
+
+async function toggleInactivarUsuario(fila,codigo,estadoActual){
+  if(estadoActual==='Activo'){
+    if(!confirm('¿Inactivar a '+codigo+'? Dejará de recibir reportes hasta que lo reactives.')) return;
+    try{
+      const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'inactivar_usuario',fila:Number(fila),codigoQuienEjecuta:currentUserCode})});
+      const json=await resp.json();
+      if(json.status!=='ok') alert(json.message||'No se pudo inactivar.');
+    }catch(e){ alert('Error de conexión.'); }
+  } else {
+    // Reactivar = editar estado directamente
+    try{
+      const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'editar_usuario',fila:Number(fila),cambios:{estado:'Activo'},codigoQuienEjecuta:currentUserCode})});
+      const json=await resp.json();
+      if(json.status!=='ok') alert(json.message||'No se pudo reactivar.');
+    }catch(e){ alert('Error de conexión.'); }
+  }
+  renderAdminUsuarios();
+}
+
+async function eliminarUsuarioConfirm(fila,codigo){
+  if(!confirm('⚠️ Esto elimina a '+codigo+' PERMANENTEMENTE, no es reversible. ¿Continuar?')) return;
+  if(!confirm('Confirma una vez más: ¿eliminar definitivamente a '+codigo+'?')) return;
+  try{
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'eliminar_usuario',fila:Number(fila),codigoQuienEjecuta:currentUserCode})});
+    const json=await resp.json();
+    if(json.status!=='ok') alert(json.message||'No se pudo eliminar.');
+  }catch(e){ alert('Error de conexión.'); }
+  renderAdminUsuarios();
 }
 
 function toggleHotel(code){

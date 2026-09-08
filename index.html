@@ -270,7 +270,7 @@
 
           <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
 
-          <!-- MANTENIMIENTO / MÚSICA — FIX: ahora acepta varias incidencias -->
+          <!-- MANTENIMIENTO / MÚSICA — FIX: ahora acepta varias incidencias, Tipo es desplegable -->
           <div style="border-left:3px solid #f59e0b;padding-left:12px;margin-bottom:14px;">
             <div style="font-size:10px;font-weight:600;color:#d97706;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">🔧 Incidencias de mantenimiento / música</div>
             <div id="mant-adic-lista">
@@ -278,18 +278,26 @@
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
                   <div>
                     <label style="font-size:11px;color:#64748b;">Categoría</label>
-                    <select class="field-input mant-cat" style="font-size:12px;">
+                    <select class="field-input mant-cat" style="font-size:12px;" onchange="actualizarTipoOpciones(this)">
                       <option value="Mantenimiento">🔧 Mantenimiento</option>
                       <option value="Música">🎵 Música</option>
                     </select>
                   </div>
                   <div>
                     <label style="font-size:11px;color:#64748b;">Tipo</label>
-                    <input class="field-input mant-tipo-row" type="text" placeholder="Ej: Aire acondicionado" style="font-size:12px;">
+                    <select class="field-input mant-tipo-row" style="font-size:12px;" onchange="actualizarDescVisibility(this)">
+                      <option>Fallo Aire Acondicionado</option>
+                      <option>Problemas con la Electricidad</option>
+                      <option>Problemas con la Puerta Principal</option>
+                      <option>Luces Fundidas</option>
+                      <option value="Otro">Otro</option>
+                    </select>
                   </div>
                 </div>
-                <label style="font-size:11px;color:#64748b;">Descripción</label>
-                <input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?">
+                <div class="mant-desc-wrap" style="display:none;">
+                  <label style="font-size:11px;color:#64748b;">Descripción <span class="mant-desc-req" style="color:#ef4444;display:none;">*</span></label>
+                  <input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?">
+                </div>
               </div>
             </div>
             <button type="button" onclick="addMantAd()" style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer;padding:2px 0;">+ Agregar otra incidencia</button>
@@ -1390,6 +1398,24 @@ function validateForm(){
     const biDet=document.getElementById('f-bookinside-detalle')?.value.trim();
     if(!biDet){setFieldError('bookinside-detalle',true);valid=false;}else clearFieldError('bookinside-detalle');
   } else { clearFieldError('bookinside-detalle'); }
+  // Incidencias de Mantenimiento con Tipo "Otro" — descripción obligatoria
+  if(!validarIncidenciasMantenimiento()) valid=false;
+  return valid;
+}
+function validarIncidenciasMantenimiento(){
+  let valid=true;
+  document.querySelectorAll('#mant-adic-lista .mant-adic-row').forEach(row=>{
+    const cat=row.querySelector('.mant-cat')?.value;
+    const tipo=row.querySelector('.mant-tipo-row')?.value;
+    const descInput=row.querySelector('.mant-desc-row');
+    if(cat==='Mantenimiento'&&tipo==='Otro'){
+      const desc=descInput?.value.trim();
+      if(!desc){ valid=false; descInput?.classList.add('field-error'); }
+      else { descInput?.classList.remove('field-error'); }
+    } else if(descInput){
+      descInput.classList.remove('field-error');
+    }
+  });
   return valid;
 }
 
@@ -1717,13 +1743,39 @@ function addMantAd(){
   d.style.cssText='border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:8px;background:#fffbeb;';
   d.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">'+
     '<div><label style="font-size:11px;color:#64748b;">Categoría</label>'+
-    '<select class="field-input mant-cat" style="font-size:12px;"><option value="Mantenimiento">🔧 Mantenimiento</option><option value="Música">🎵 Música</option></select></div>'+
+    '<select class="field-input mant-cat" style="font-size:12px;" onchange="actualizarTipoOpciones(this)"><option value="Mantenimiento">🔧 Mantenimiento</option><option value="Música">🎵 Música</option></select></div>'+
     '<div><label style="font-size:11px;color:#64748b;">Tipo</label>'+
-    '<input class="field-input mant-tipo-row" type="text" placeholder="Ej: Aire acondicionado" style="font-size:12px;"></div></div>'+
-    '<label style="font-size:11px;color:#64748b;">Descripción</label>'+
-    '<input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?">'+
+    '<select class="field-input mant-tipo-row" style="font-size:12px;" onchange="actualizarDescVisibility(this)">'+
+    '<option>Fallo Aire Acondicionado</option><option>Problemas con la Electricidad</option><option>Problemas con la Puerta Principal</option><option>Luces Fundidas</option><option value="Otro">Otro</option>'+
+    '</select></div></div>'+
+    '<div class="mant-desc-wrap" style="display:none;">'+
+    '<label style="font-size:11px;color:#64748b;">Descripción <span class="mant-desc-req" style="color:#ef4444;display:none;">*</span></label>'+
+    '<input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?"></div>'+
     '<button type="button" onclick="this.parentElement.remove()" style="font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;padding:4px 0 0;">✕ Quitar esta incidencia</button>';
   l.appendChild(d);
+}
+function actualizarTipoOpciones(selectCategoria){
+  const row=selectCategoria.closest('.mant-adic-row');
+  const selectTipo=row.querySelector('.mant-tipo-row');
+  const cat=selectCategoria.value;
+  selectTipo.innerHTML = cat==='Música'
+    ? '<option>Fallo</option><option>Sin Música</option>'
+    : '<option>Fallo Aire Acondicionado</option><option>Problemas con la Electricidad</option><option>Problemas con la Puerta Principal</option><option>Luces Fundidas</option><option value="Otro">Otro</option>';
+  actualizarDescVisibility(selectTipo);
+}
+function actualizarDescVisibility(selectTipo){
+  const row=selectTipo.closest('.mant-adic-row');
+  const cat=row.querySelector('.mant-cat').value;
+  const tipo=selectTipo.value;
+  const wrap=row.querySelector('.mant-desc-wrap');
+  const req=row.querySelector('.mant-desc-req');
+  const mostrar = cat==='Mantenimiento' && tipo==='Otro';
+  wrap.style.display = mostrar ? 'block' : 'none';
+  if(req) req.style.display = mostrar ? 'inline' : 'none';
+  if(!mostrar){
+    const descInput=row.querySelector('.mant-desc-row');
+    if(descInput){ descInput.value=''; descInput.classList.remove('field-error'); }
+  }
 }
 function toggleBookInside(){
   const v=document.getElementById('f-bookinside').value;
@@ -1805,7 +1857,7 @@ function clearDatosAdicionales(){
   document.getElementById('bookinside-detalle-wrap').style.display='none';
   clearFieldError('bookinside-detalle');
   // Resetear lista de incidencias de mantenimiento a una sola fila vacía
-  document.getElementById('mant-adic-lista').innerHTML='<div class="mant-adic-row" style="border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:8px;background:#fffbeb;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;"><div><label style="font-size:11px;color:#64748b;">Categoría</label><select class="field-input mant-cat" style="font-size:12px;"><option value="Mantenimiento">🔧 Mantenimiento</option><option value="Música">🎵 Música</option></select></div><div><label style="font-size:11px;color:#64748b;">Tipo</label><input class="field-input mant-tipo-row" type="text" placeholder="Ej: Aire acondicionado" style="font-size:12px;"></div></div><label style="font-size:11px;color:#64748b;">Descripción</label><input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?"></div>';
+  document.getElementById('mant-adic-lista').innerHTML='<div class="mant-adic-row" style="border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:8px;background:#fffbeb;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;"><div><label style="font-size:11px;color:#64748b;">Categoría</label><select class="field-input mant-cat" style="font-size:12px;" onchange="actualizarTipoOpciones(this)"><option value="Mantenimiento">🔧 Mantenimiento</option><option value="Música">🎵 Música</option></select></div><div><label style="font-size:11px;color:#64748b;">Tipo</label><select class="field-input mant-tipo-row" style="font-size:12px;" onchange="actualizarDescVisibility(this)"><option>Fallo Aire Acondicionado</option><option>Problemas con la Electricidad</option><option>Problemas con la Puerta Principal</option><option>Luces Fundidas</option><option value="Otro">Otro</option></select></div></div><div class="mant-desc-wrap" style="display:none;"><label style="font-size:11px;color:#64748b;">Descripción <span class="mant-desc-req" style="color:#ef4444;display:none;">*</span></label><input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?"></div></div>';
   ['ae1','ae2','ae3','ae4'].forEach(id=>{
     const ft=document.getElementById('adic-ft-'+id);
     if(ft) ft.style.display='none';

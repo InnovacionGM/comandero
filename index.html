@@ -503,77 +503,6 @@
 </div>
 
 <!-- DASHBOARD A&B -->
-<div id="screen-ayb" style="display:none;">
-  <div class="page-header no-print">
-    <div>
-      <div style="font-size:15px;font-weight:700;color:#1e293b;" id="ayb-rol-label"></div>
-      <div style="font-size:11px;color:#64748b;">Dashboard A&amp;B · <span id="ayb-hoteles-label"></span></div>
-    </div>
-    <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
-  </div>
-
-  <!-- FILTRO PERÍODO -->
-  <div class="card no-print" style="margin-bottom:12px;">
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <span style="font-size:12px;color:#64748b;font-weight:500;">Período:</span>
-      <button class="btn btn-sm" id="ayb-pb-hoy" onclick="setAybPeriodo('hoy')" style="border-radius:20px;">Hoy</button>
-      <button class="btn btn-sm" id="ayb-pb-ayer" onclick="setAybPeriodo('ayer')" style="border-radius:20px;background:#1d4ed8;color:#fff;border-color:#1d4ed8;">Ayer</button>
-      <button class="btn btn-sm" id="ayb-pb-rango" onclick="setAybPeriodo('rango')" style="border-radius:20px;">📅 Rango</button>
-    </div>
-    <div id="ayb-rango-wrap" style="display:none;margin-top:10px;display:none;">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
-        <div><label style="font-size:12px;color:#64748b;display:block;margin-bottom:3px;">Desde</label><input type="date" class="field-input" id="ayb-desde" style="width:150px;"></div>
-        <div><label style="font-size:12px;color:#64748b;display:block;margin-bottom:3px;">Hasta</label><input type="date" class="field-input" id="ayb-hasta" style="width:150px;"></div>
-        <button class="btn btn-sm" onclick="aplicarAybRango()" style="background:#1d4ed8;color:#fff;border-color:#1d4ed8;border-radius:20px;">Aplicar</button>
-      </div>
-    </div>
-    <div id="ayb-periodo-label" style="font-size:11px;color:#64748b;margin-top:8px;">📅 <strong>Ayer</strong> · Cargando datos...</div>
-  </div>
-
-  <!-- KPIs -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;" id="ayb-kpis">
-    <div class="card" style="text-align:center;padding:12px;">
-      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">INP Vinos</div>
-      <div style="font-size:20px;font-weight:700;color:#1d4ed8;margin-top:3px;" id="ayb-kpi-vinos">$0</div>
-    </div>
-    <div class="card" style="text-align:center;padding:12px;">
-      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">INP Tomahawk</div>
-      <div style="font-size:20px;font-weight:700;color:#1d4ed8;margin-top:3px;" id="ayb-kpi-tomahawk">$0</div>
-    </div>
-    <div class="card" style="text-align:center;padding:12px;">
-      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">INP Langosta</div>
-      <div style="font-size:20px;font-weight:700;color:#1d4ed8;margin-top:3px;" id="ayb-kpi-langosta">$0</div>
-    </div>
-    <div class="card" style="text-align:center;padding:12px;">
-      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Faltantes A&amp;B</div>
-      <div style="font-size:20px;font-weight:700;color:#dc2626;margin-top:3px;" id="ayb-kpi-falt">0</div>
-    </div>
-    <div class="card" style="text-align:center;padding:12px;">
-      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Incid. Mant.</div>
-      <div style="font-size:20px;font-weight:700;color:#d97706;margin-top:3px;" id="ayb-kpi-mant">0</div>
-    </div>
-    <div class="card" style="text-align:center;padding:12px;">
-      <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Quejas</div>
-      <div style="font-size:20px;font-weight:700;color:#dc2626;margin-top:3px;" id="ayb-kpi-quejas">0</div>
-    </div>
-  </div>
-
-  <!-- TABS DETALLE -->
-  <div style="display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;" class="no-print">
-    <button class="btn btn-sm ayb-tab" id="aybt-resumen" onclick="setAybTab('resumen')" style="border-radius:20px;white-space:nowrap;">📊 Resumen</button>
-    <button class="btn btn-sm ayb-tab" id="aybt-porhotel" onclick="setAybTab('porhotel')" style="border-radius:20px;white-space:nowrap;">🏨 Por Hotel</button>
-    <button class="btn btn-sm ayb-tab" id="aybt-problemas" onclick="setAybTab('problemas')" style="border-radius:20px;white-space:nowrap;">⚠️ Problemas</button>
-    <button class="btn btn-sm ayb-tab" id="aybt-registros" onclick="setAybTab('registros')" style="border-radius:20px;white-space:nowrap;">📋 Registros</button>
-    <button class="btn btn-sm ayb-tab active" id="aybt-inp" onclick="setAybTab('inp')" style="border-radius:20px;white-space:nowrap;background:#1d4ed8;color:#fff;border-color:#1d4ed8;">💰 INP</button>
-    <button class="btn btn-sm ayb-tab" id="aybt-falt" onclick="setAybTab('falt')" style="border-radius:20px;white-space:nowrap;">🍽️ Faltantes</button>
-    <button class="btn btn-sm ayb-tab" id="aybt-mant" onclick="setAybTab('mant')" style="border-radius:20px;white-space:nowrap;">🔧 Mant.</button>
-    <button class="btn btn-sm ayb-tab" id="aybt-inv" onclick="setAybTab('inv')" style="border-radius:20px;white-space:nowrap;">📱 Equipos</button>
-    <button class="btn btn-sm ayb-tab" id="aybt-quejas" onclick="setAybTab('quejas')" style="border-radius:20px;white-space:nowrap;">😞 Quejas</button>
-  </div>
-
-  <div id="ayb-content"></div>
-</div>
-
 <!-- APP ADMIN -->
 <div id="screen-admin" style="display:none;">
   <div class="page-header">
@@ -740,6 +669,8 @@ const HOTELS={
 };
 
 let currentHotel=null,isAdmin=false,isCorpAdmin=false,records=[],allRecords=[];
+let isFullAdmin=false; // true SOLO para RA1614/EQ6304 — controla Usuarios/Config/Eliminar
+let userHotelesScope=null; // null = sin restricción (admin/corp); array = hoteles permitidos (usuarios del Catálogo)
 let currentUserCode=null; // código con el que se inició sesión (RA1614/EQ6304/etc.) — se manda al backend en cada acción del módulo de usuarios
 let chartUso=null,chartPax=null,admChartUso=null,admChartServ=null;
 let activeDashTab='resumen',activeAdminTab='resumen';
@@ -938,21 +869,23 @@ async function doLogin(){
   const raw=document.getElementById('hotelCode').value.trim().toUpperCase();
   document.getElementById('loginError').style.display='none';
   if(raw===ADMIN_CODE || raw===ADMIN_CODE_2){
-    isAdmin=true;isCorpAdmin=false;currentUserCode=raw;
+    isAdmin=true;isCorpAdmin=false;isFullAdmin=true;userHotelesScope=null;currentUserCode=raw;
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-admin').style.display='block';
     document.getElementById('admin-user-label').style.display='inline';
     document.getElementById('admin-user-label').textContent = raw===ADMIN_CODE_2 ? '👤 Erika Quispe' : '👤 Rob Avila';
     document.getElementById('admin-role-pill').textContent='👑 Administrador';
+    restringirFiltroHotelSelect();
     await loadAllRecords();renderAdmin();return;
   }
   if(raw===CORP_CODE){
-    isAdmin=true;isCorpAdmin=true;
+    isAdmin=true;isCorpAdmin=true;isFullAdmin=false;userHotelesScope=null;
     document.getElementById('screen-login').style.display='none';
     document.getElementById('screen-admin').style.display='block';
     document.getElementById('admin-user-label').style.display='inline';
     document.getElementById('admin-user-label').textContent='👤 Corporativo';
     document.getElementById('admin-role-pill').textContent='🏢 Vista Corporativa';
+    restringirFiltroHotelSelect();
     await loadAllRecords();renderAdmin();return;
   }
   const hotel=HOTELS[raw];
@@ -972,10 +905,10 @@ async function doLogin(){
     inputFecha.value = today();
     return;
   }
-  // ── Usuarios A&B / corporativos — FIX: ahora dinámico desde el Catálogo
-  // (Usuarios_Reportes) en vez de la lista fija AYB_USERS. Cualquier código
-  // activo del Catálogo con hoteles asignados entra aquí automáticamente,
-  // sin tener que tocar código cuando se agrega o cambia alguien. ──
+  // ── Usuarios A&B / corporativos — FIX: ahora entran al MISMO Panel Admin
+  // rico que usan Rob/Erika (matriz de servicio, desglose por restaurante,
+  // etc.), pero con los datos limitados a los hoteles que tengan asignados
+  // en el Catálogo. Ya no existe una pantalla A&B separada y más simple. ──
   try{
     const res=await fetch(APPS_SCRIPT_URL+'?action=listar_usuarios');
     const json=await res.json();
@@ -985,27 +918,26 @@ async function doLogin(){
       const hotelesUsuario=(match.hoteles.indexOf('TODOS')>=0)
         ? ['SERPC','DRRPC','BREPC','DROPC']
         : match.hoteles;
-      const ayb={rol:(match.nombre||match.codigo)+(match.cargo?' — '+match.cargo:''), hoteles:hotelesUsuario};
-      window._aybUser=ayb;
+      isAdmin=true;isCorpAdmin=false;isFullAdmin=false;userHotelesScope=hotelesUsuario;currentUserCode=raw;
       document.getElementById('screen-login').style.display='none';
-      document.getElementById('screen-ayb').style.display='block';
-      document.getElementById('ayb-rol-label').textContent=ayb.rol;
-      document.getElementById('ayb-hoteles-label').textContent=ayb.hoteles.join(' · ');
-      await loadAllRecords();
-      setAybPeriodo('ayer');
-      return;
+      document.getElementById('screen-admin').style.display='block';
+      document.getElementById('admin-user-label').style.display='inline';
+      document.getElementById('admin-user-label').textContent='👤 '+(match.nombre||match.codigo);
+      document.getElementById('admin-role-pill').textContent='🔎 '+(match.cargo||'Consulta')+' · '+hotelesUsuario.join(', ');
+      restringirFiltroHotelSelect();
+      await loadAllRecords();renderAdmin();return;
     }
   }catch(e){ /* si falla la consulta, sigue al mensaje de código incorrecto */ }
   document.getElementById('loginError').style.display='block';
 }
 function doLogout(){
-  currentHotel=null;isAdmin=false;isCorpAdmin=false;records=[];allRecords=[];
+  currentHotel=null;isAdmin=false;isCorpAdmin=false;isFullAdmin=false;userHotelesScope=null;records=[];allRecords=[];
   isCerrado=false;window._aybUser=null;
   document.getElementById('screen-app').style.display='none';
   document.getElementById('screen-admin').style.display='none';
-  document.getElementById('screen-ayb').style.display='none';
   document.getElementById('screen-login').style.display='flex';
   document.getElementById('hotelCode').value='';
+  restringirFiltroHotelSelect();
   // Reset labels de usuario
   const cul=document.getElementById('current-user-label');
   if(cul){cul.textContent='';cul.style.display='none';}
@@ -1770,229 +1702,6 @@ function exportCSV(){
   a.download=`Comandero_${currentHotel.code}_${today()}.csv`;a.click();
 }
 
-// ══════════════════════════════════════════
-// DASHBOARD A&B — Funciones completas
-// ══════════════════════════════════════════
-let _aybFechaDesde=null, _aybFechaHasta=null, _aybTabActual='inp';
-
-function setAybPeriodo(p){
-  ['hoy','ayer','rango'].forEach(id=>{
-    const btn=document.getElementById('ayb-pb-'+id);
-    if(!btn) return;
-    if(id===p){btn.style.background='#1d4ed8';btn.style.color='#fff';btn.style.borderColor='#1d4ed8';}
-    else{btn.style.background='';btn.style.color='';btn.style.borderColor='';}
-  });
-  const rw=document.getElementById('ayb-rango-wrap');
-  if(rw) rw.style.display=p==='rango'?'block':'none';
-  const lbl=document.getElementById('ayb-periodo-label');
-  const fmt=s=>s.split('-').reverse().join('/');
-  if(p==='hoy'){
-    _aybFechaDesde=today();_aybFechaHasta=today();
-    if(lbl) lbl.innerHTML='📅 <strong>Hoy — '+fmt(today())+'</strong>';
-  } else if(p==='ayer'){
-    _aybFechaDesde=yesterday();_aybFechaHasta=yesterday();
-    if(lbl) lbl.innerHTML='📅 <strong>Ayer — '+fmt(yesterday())+'</strong>';
-  } else {
-    if(lbl) lbl.innerHTML='📅 Selecciona el rango y presiona Aplicar';
-    return;
-  }
-  renderAybDash();
-}
-
-function aplicarAybRango(){
-  const d=document.getElementById('ayb-desde').value;
-  const h=document.getElementById('ayb-hasta').value;
-  if(!d||!h){return;}
-  _aybFechaDesde=d;_aybFechaHasta=h;
-  const fmt=s=>s.split('-').reverse().join('/');
-  const lbl=document.getElementById('ayb-periodo-label');
-  if(lbl) lbl.innerHTML='📅 <strong>'+fmt(d)+' — '+fmt(h)+'</strong>';
-  renderAybDash();
-}
-
-function setAybTab(t){
-  _aybTabActual=t;
-  const allTabs=['resumen','porhotel','problemas','registros','inp','falt','mant','inv','quejas'];
-  allTabs.forEach(id=>{
-    const btn=document.getElementById('aybt-'+id);
-    if(!btn) return;
-    if(id===t){btn.style.background='#1d4ed8';btn.style.color='#fff';btn.style.borderColor='#1d4ed8';}
-    else{btn.style.background='';btn.style.color='';btn.style.borderColor='';}
-  });
-  renderAybTab(t);
-}
-
-function getAybRecords(){
-  if(!window._aybUser||!allRecords) return [];
-  const hoteles=window._aybUser.hoteles||[];
-  return allRecords.filter(r=>{
-    const ok=hoteles.indexOf(r.hotelCode)>=0;
-    if(!ok) return false;
-    if(!_aybFechaDesde) return true;
-    return r.fecha>=_aybFechaDesde && r.fecha<=_aybFechaHasta;
-  });
-}
-
-function renderAybDash(){
-  const recs=getAybRecords();
-  // KPIs
-  let vinos=0,tomahawk=0,langosta=0,falt=0,mant=0,quejas=0;
-  recs.forEach(r=>{
-    vinos+=Number(r.inp_vinos)||0;
-    tomahawk+=Number(r.inp_tomahawk)||0;
-    langosta+=Number(r.inp_langosta)||0;
-    if((r.faltantes_ab||[]).length) falt+=r.faltantes_ab.length;
-    if((r.incidencias_mtto||[]).length) mant+=r.incidencias_mtto.length;
-    quejas+=Number(r.num_quejas)||0;
-  });
-  const fmt$=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  document.getElementById('ayb-kpi-vinos').textContent=fmt$(vinos);
-  document.getElementById('ayb-kpi-tomahawk').textContent=fmt$(tomahawk);
-  document.getElementById('ayb-kpi-langosta').textContent=fmt$(langosta);
-  document.getElementById('ayb-kpi-falt').textContent=falt;
-  document.getElementById('ayb-kpi-mant').textContent=mant;
-  document.getElementById('ayb-kpi-quejas').textContent=quejas;
-  renderAybTab(_aybTabActual);
-}
-
-function renderAybTab(t){
-  const recs=getAybRecords();
-  const hoteles=window._aybUser?.hoteles||[];
-  const content=document.getElementById('ayb-content');
-  if(!content) return;
-
-  function hotelTag(code){
-    const nombres={'SERPC':'Secrets Royal Beach','DRRPC':'Dreams Royal Beach','DROPC':'Dreams Onyx','BREPC':'Breathless','DRFPC':'Dreams Flora'};
-    return `<div style="font-size:11px;font-weight:700;color:#1e293b;background:#f1f5f9;padding:4px 10px;border-radius:6px;margin-bottom:8px;display:inline-block;">${code} — ${nombres[code]||code}</div>`;
-  }
-
-  function tbl(headers, rows){
-    if(!rows.length) return '<p style="color:#94a3b8;font-size:12px;padding:8px 0;">Sin datos para este período.</p>';
-    let h='<div style="overflow-x:auto;"><table style="width:100%;font-size:11px;border-collapse:collapse;">';
-    h+='<thead><tr>';
-    headers.forEach(hh=>h+=`<th style="background:#203864;color:#fff;padding:6px 8px;text-align:left;white-space:nowrap;">${hh}</th>`);
-    h+='</tr></thead><tbody>';
-    rows.forEach((row,i)=>{
-      h+=`<tr style="background:${i%2===0?'#fff':'#f8fafc'};">`;
-      row.forEach(v=>h+=`<td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;">${v||'—'}</td>`);
-      h+='</tr>';
-    });
-    h+='</tbody></table></div>';
-    return h;
-  }
-
-  let html='';
-
-  if(t==='resumen'){
-    const tot=recs.length;
-    const pax=recs.reduce((s,r)=>s+Number(r.pax||0),0);
-    const ok=recs.filter(r=>r.comandero==='Si').length;
-    const fail=recs.filter(r=>(r.comandero==='Parcial'||r.comandero==='No')&&!(r.incidencia||'').includes('Cerrado')).length;
-    const pct=tot?Math.round(ok/tot*100):0;
-    html=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
-      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Registros</div><div style="font-size:24px;font-weight:700;">${tot}</div></div>
-      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Total Pax</div><div style="font-size:24px;font-weight:700;">${pax.toLocaleString()}</div></div>
-      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Cumplimiento</div><div style="font-size:24px;font-weight:700;color:${pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626'};">${pct}%</div></div>
-      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:11px;color:#64748b;text-transform:uppercase;">Incidencias</div><div style="font-size:24px;font-weight:700;color:${fail>0?'#dc2626':'#16a34a'};">${fail}</div></div>
-    </div>`;
-
-  } else if(t==='porhotel'){
-    const nombres={'SERPC':'Secrets Royal Beach','DRRPC':'Dreams Royal Beach','DROPC':'Dreams Onyx','BREPC':'Breathless','DRFPC':'Dreams Flora'};
-    hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h);
-      if(!hr.length) return;
-      const ok=hr.filter(r=>r.comandero==='Si').length;
-      const pct=Math.round(ok/hr.length*100);
-      const pax=hr.reduce((s,r)=>s+Number(r.pax||0),0);
-      html+=`<div class="card" style="margin-bottom:10px;">
-        <div style="font-size:12px;font-weight:700;color:#1e293b;margin-bottom:8px;">${h} — ${nombres[h]||h}</div>
-        <div style="display:flex;gap:16px;font-size:12px;flex-wrap:wrap;">
-          <span>Registros: <strong>${hr.length}</strong></span>
-          <span>Pax: <strong>${pax.toLocaleString()}</strong></span>
-          <span>Cumplimiento: <strong style="color:${pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626'};">${pct}%</strong></span>
-        </div>
-      </div>`;
-    });
-    if(!html) html='<p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Sin datos para este período.</p>';
-
-  } else if(t==='problemas'){
-    const fallos=recs.filter(r=>r.comandero==='Parcial'||r.comandero==='No');
-    const rows=fallos.map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.comandero,r.incidencia||'—',r.detalle||'—']);
-    html=tbl(['Hotel','Fecha','Restaurante','Servicio','Estado','Incidencia','Detalle'],rows);
-
-  } else if(t==='registros'){
-    const rows=[...recs].reverse().map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.pax,r.comandero,r.responsable]);
-    html=tbl(['Hotel','Fecha','Restaurante','Servicio','Pax','Comandero','Responsable'],rows);
-
-  } else if(t==='inp'){
-    hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h&&(r.inp_vinos||r.inp_tomahawk||r.inp_langosta));
-      if(!hr.length) return;
-      const fmt$=n=>n?'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
-      const rows=hr.map(r=>[r.restaurante,r.servicio,fmt$(r.inp_vinos),fmt$(r.inp_tomahawk),fmt$(r.inp_langosta)]);
-      const tv=hr.reduce((s,r)=>s+Number(r.inp_vinos||0),0);
-      const tt=hr.reduce((s,r)=>s+Number(r.inp_tomahawk||0),0);
-      const tl=hr.reduce((s,r)=>s+Number(r.inp_langosta||0),0);
-      rows.push([`<strong>Total</strong>`,'','<strong>$'+tv.toLocaleString('en-US',{minimumFractionDigits:2})+'</strong>','<strong>$'+tt.toLocaleString('en-US',{minimumFractionDigits:2})+'</strong>','<strong>$'+tl.toLocaleString('en-US',{minimumFractionDigits:2})+'</strong>']);
-      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Vinos','Tomahawk','Langosta'],rows)}</div>`;
-    });
-    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin ventas INP registradas para este período.</p></div>';
-
-  } else if(t==='falt'){
-    hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h&&(r.faltantes_ab||[]).length);
-      if(!hr.length) return;
-      const rows=[];
-      hr.forEach(r=>(r.faltantes_ab||[]).forEach(f=>rows.push([r.restaurante,r.servicio,f.tipo,f.desc])));
-      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Tipo','Producto'],rows)}</div>`;
-    });
-    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin faltantes registrados para este período.</p></div>';
-
-  } else if(t==='mant'){
-    hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h&&(r.incidencias_mtto||[]).length);
-      if(!hr.length) return;
-      const rows=[];
-      hr.forEach(r=>(r.incidencias_mtto||[]).forEach(i=>rows.push([r.restaurante,r.servicio,(i.categoria||'Mantenimiento'),i.tipo,i.desc])));
-      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Categoría','Tipo','Descripción'],rows)}</div>`;
-    });
-    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin incidencias de mantenimiento registradas.</p></div>';
-
-  } else if(t==='inv'){
-    hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h&&r.inventario);
-      if(!hr.length) return;
-      const rows=[];
-      hr.forEach(r=>{
-        try{
-          const inv=JSON.parse(r.inventario||'[]');
-          const fallos=inv.filter(e=>e.estado==='Fallo').map(e=>e.equipo+(e.tipoFallo?' ('+e.tipoFallo+')':'')).join(', ')||'—';
-          rows.push([r.restaurante,r.servicio,fallos]);
-        }catch(e){}
-      });
-      if(rows.length) html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Equipos con fallo'],rows)}</div>`;
-    });
-    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin fallos de equipos registrados.</p></div>';
-
-  } else if(t==='quejas'){
-    hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h&&Number(r.num_quejas)>0);
-      if(!hr.length) return;
-      const rows=[];
-      hr.forEach(r=>{
-        try{
-          const qs=JSON.parse(r.quejas||'[]');
-          qs.forEach(q=>rows.push([r.restaurante,r.servicio,q.habitacion||'—',q.descripcion||'—']));
-        }catch(e){}
-      });
-      if(rows.length) html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Hab.','Descripción'],rows)}</div>`;
-    });
-    if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin quejas registradas para este período.</p></div>';
-  }
-
-  content.innerHTML=html;
-}
-
 // ── DATOS ADICIONALES ──
 function toggleDatosAdicionales(){
   const b=document.getElementById('adic-form-body');
@@ -2112,20 +1821,36 @@ function clearDatosAdicionales(){
 // usuarios A&B/corporativos ahora es 100% dinámico contra el Catálogo
 // (ver doLogin), así que ya no hace falta mantener esta lista a mano.
 
+// FIX: oculta del <select> de hotel las opciones fuera del alcance del
+// usuario logueado (Emilio, directores A&B, etc.) — Rob/Erika/Corporativo
+// ven todas. El filtro real y definitivo igual lo aplica getFilteredAdminRecords().
+function restringirFiltroHotelSelect(){
+  const sel=document.getElementById('adm-filter-hotel');
+  if(!sel) return;
+  [...sel.options].forEach(opt=>{
+    if(!opt.value) { opt.style.display=''; return; } // "Todos los hoteles" siempre visible (queda acotado igual por el filtro duro)
+    opt.style.display = (!userHotelesScope || userHotelesScope.indexOf(opt.value)>=0) ? '' : 'none';
+  });
+  if(userHotelesScope && sel.value && userHotelesScope.indexOf(sel.value)<0) sel.value='';
+}
 function getFilteredAdminRecords(){
   const hotel=document.getElementById('adm-filter-hotel').value;
   const rest=document.getElementById('adm-filter-rest').value;
   const serv=document.getElementById('adm-filter-serv').value;
-  return filterByDate(allRecords,getAdminDateRange()).filter(r=>!eliminados.has(r.id)&&(!hotel||r.hotelCode===hotel)&&(!rest||r.restaurante===rest)&&(!serv||r.servicio===serv));
+  let recs=filterByDate(allRecords,getAdminDateRange()).filter(r=>!eliminados.has(r.id)&&(!hotel||r.hotelCode===hotel)&&(!rest||r.restaurante===rest)&&(!serv||r.servicio===serv));
+  // FIX: filtro duro por si el usuario tiene hoteles restringidos (Catálogo) —
+  // se aplica siempre, sin importar lo que diga el <select>, como defensa adicional
+  if(userHotelesScope) recs=recs.filter(r=>userHotelesScope.indexOf(r.hotelCode)>=0);
+  return recs;
 }
 async function renderAdmin(){
   // Mostrar u ocultar tab Config y botón borrar según tipo de usuario
   const tabConfig = document.getElementById('hdr-btn-config');
   const tabUsuarios = document.getElementById('hdr-btn-usuarios');
   const btnBorrar = document.getElementById('btn-borrar-admin');
-  if(tabConfig) tabConfig.style.display = isCorpAdmin ? 'none' : '';
-  if(tabUsuarios) tabUsuarios.style.display = isCorpAdmin ? 'none' : '';
-  if(btnBorrar) btnBorrar.style.display = isCorpAdmin ? 'none' : '';
+  if(tabConfig) tabConfig.style.display = isFullAdmin ? '' : 'none';
+  if(tabUsuarios) tabUsuarios.style.display = isFullAdmin ? '' : 'none';
+  if(btnBorrar) btnBorrar.style.display = isFullAdmin ? '' : 'none';
   await loadAllRecords();
   const hotel=document.getElementById('adm-filter-hotel').value;
   const restSel=document.getElementById('adm-filter-rest');
@@ -2322,7 +2047,7 @@ async function renderAdminUsuarios(){
 function pintarTablaUsuarios(){
   const cont=document.getElementById('adm-usuarios-content');
   if(!cont) return;
-  const esMaestro = isAdmin && !isCorpAdmin;
+  const esMaestro = isFullAdmin;
 
   let html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">';
   html+='<div style="font-size:14px;font-weight:700;color:#1e293b;">👥 Usuarios y Reportes ('+usuariosCache.length+')</div>';
@@ -2379,7 +2104,7 @@ function pintarTablaUsuarios(){
 
 function abrirFormularioUsuario(fila){
   const u = fila ? usuariosCache.find(x=>x.fila===fila) : null;
-  const esMaestro = isAdmin && !isCorpAdmin;
+  const esMaestro = isFullAdmin;
   const reportesActuales = u ? (u.reportes||[]) : [];
   const hotelesActuales = u ? (u.hoteles||[]) : [];
   const esTodosActual = hotelesActuales.indexOf('TODOS')>=0;

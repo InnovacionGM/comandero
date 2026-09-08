@@ -270,23 +270,29 @@
 
           <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
 
-          <!-- MANTENIMIENTO -->
+          <!-- MANTENIMIENTO / MÚSICA — FIX: ahora acepta varias incidencias -->
           <div style="border-left:3px solid #f59e0b;padding-left:12px;margin-bottom:14px;">
-            <div style="font-size:10px;font-weight:600;color:#d97706;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">🔧 Incidencia de mantenimiento</div>
-            <div style="margin-bottom:8px;">
-              <label style="font-size:12px;color:#64748b;">Tipo</label>
-              <select class="field-input" id="mant-tipo" onchange="toggleMantDesc(this.value)">
-                <option value="">— Sin incidencias —</option>
-                <option>Fallo aire acondicionado</option>
-                <option>Fallo música ambiental</option>
-                <option>Fallo puerta principal</option>
-                <option value="Otro">Otro — describir</option>
-              </select>
+            <div style="font-size:10px;font-weight:600;color:#d97706;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">🔧 Incidencias de mantenimiento / música</div>
+            <div id="mant-adic-lista">
+              <div class="mant-adic-row" style="border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:8px;background:#fffbeb;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+                  <div>
+                    <label style="font-size:11px;color:#64748b;">Categoría</label>
+                    <select class="field-input mant-cat" style="font-size:12px;">
+                      <option value="Mantenimiento">🔧 Mantenimiento</option>
+                      <option value="Música">🎵 Música</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size:11px;color:#64748b;">Tipo</label>
+                    <input class="field-input mant-tipo-row" type="text" placeholder="Ej: Aire acondicionado" style="font-size:12px;">
+                  </div>
+                </div>
+                <label style="font-size:11px;color:#64748b;">Descripción</label>
+                <input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?">
+              </div>
             </div>
-            <div id="mant-desc-wrap" style="display:none;">
-              <label style="font-size:12px;color:#64748b;">Describir el problema</label>
-              <input class="field-input" id="mant-desc" placeholder="¿Qué pasó exactamente?">
-            </div>
+            <button type="button" onclick="addMantAd()" style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer;padding:2px 0;">+ Agregar otra incidencia</button>
           </div>
 
           <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
@@ -307,6 +313,27 @@
             <div>
               <label style="font-size:12px;color:#64748b;">Especificar cuál</label>
               <input class="field-input" id="falt-desc" placeholder="Ej: Malbec Reserva, Langosta...">
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
+
+          <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
+
+          <!-- BOOKINSIDE -->
+          <div style="border-left:3px solid #14b8a6;padding-left:12px;margin-bottom:14px;">
+            <div style="font-size:10px;font-weight:600;color:#0d9488;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">💻 BookInside</div>
+            <label for="f-bookinside" style="font-size:12px;color:#64748b;">¿Funcionó correctamente el BookInside?</label>
+            <select class="field-input" id="f-bookinside" onchange="toggleBookInside()">
+              <option value="">— Sin responder —</option>
+              <option value="Si">✅ Sí — funcionó correctamente</option>
+              <option value="Parcial">⚠️ Parcial — con interrupciones</option>
+              <option value="No">❌ No — hubo un problema</option>
+            </select>
+            <div id="bookinside-detalle-wrap" style="display:none;margin-top:8px;">
+              <label for="f-bookinside-detalle" style="font-size:12px;color:#64748b;">¿Qué pasó? <span style="color:#ef4444;">*</span></label>
+              <textarea class="field-input" id="f-bookinside-detalle" placeholder="Describe qué ocurrió con BookInside..."></textarea>
+              <div class="field-msg" id="err-bookinside-detalle">⚠ Cuando la respuesta no es "Sí", el comentario es obligatorio.</div>
             </div>
           </div>
 
@@ -557,6 +584,7 @@
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <button class="btn btn-sm no-print" id="hdr-btn-usuarios" onclick="setAdminTab('usuarios')" style="display:none;background:#eff6ff;color:#1d4ed8;" title="Usuarios y Reportes">👥 Usuarios</button>
       <button class="btn btn-sm no-print" id="hdr-btn-config" onclick="setAdminTab('config')" style="display:none;background:#f1f5f9;color:#475569;" title="Configuración">⚙️ Config</button>
+      <span id="admin-clock" style="font-size:11px;color:#475569;background:#eff6ff;padding:3px 10px;border-radius:99px;font-weight:600;"></span>
       <span id="admin-user-label" style="font-size:11px;color:#64748b;background:#f1f5f9;padding:3px 10px;border-radius:99px;display:none;"></span>
       <button class="btn btn-sm btn-danger no-print" onclick="doLogout()">Salir</button>
     </div>
@@ -622,6 +650,7 @@
     <div class="tab" id="anav-mant" onclick="setAdminTab('mant')">🔧 Mant.</div>
     <div class="tab" id="anav-equipos" onclick="setAdminTab('equipos')">📱 Equipos</div>
     <div class="tab" id="anav-quejas" onclick="setAdminTab('quejas')">😞 Quejas</div>
+    <div class="tab" id="anav-musica" onclick="setAdminTab('musica')">🎵 Música</div>
   </div>
 
   <!-- PANEL CONFIG -->
@@ -644,7 +673,7 @@
       <div class="card" style="padding:18px;"><div class="section-title">Uso del comandero</div><canvas id="adm-chart-uso" height="200"></canvas></div>
       <div class="card" style="padding:18px;"><div class="section-title">Tipos de fallo reportados</div><div class="hbar" id="adm-hbar-tipos-resumen"></div></div>
     </div>
-    <div class="card" style="padding:18px;margin-bottom:16px;"><div class="section-title">Pax por servicio</div><div class="hbar" id="adm-hbar-pax-servicio"></div></div>
+    <div class="card" style="padding:18px;margin-bottom:16px;"><div class="section-title">Pax por servicio, desglosado por hotel</div><div id="adm-matriz-pax-servicio" style="overflow-x:auto;"></div></div>
     <div class="card" style="padding:18px;margin-bottom:16px;"><div class="section-title">Pax por restaurante (según filtro actual)</div><div class="hbar" id="adm-hbar-pax-restaurante"></div></div>
     <div class="card" style="padding:18px;"><div class="section-title">Registros por hotel</div><div class="hbar" id="adm-hbar-hoteles"></div></div>
   </div>
@@ -684,6 +713,7 @@
   <div id="admin-mant"   style="display:none;"><div id="adm-mant-content"  ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando mantenimiento...</p></div></div>
   <div id="admin-equipos"style="display:none;"><div id="adm-equipos-content"><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando equipos...</p></div></div>
   <div id="admin-quejas" style="display:none;"><div id="adm-quejas-content" ><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando quejas...</p></div></div>
+  <div id="admin-musica" style="display:none;"><div id="adm-musica-content"><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando música...</p></div></div>
   <div id="admin-usuarios" style="display:none;"><div id="adm-usuarios-content"><p style="color:#94a3b8;text-align:center;padding:30px;">Cargando usuarios...</p></div></div>
 
 </div>
@@ -978,6 +1008,26 @@ function doLogout(){
 const ESTRUCTURA_ESPERADA = {"SERPC": {"Bluewater Grill": ["Cena"], "Himitsu": ["Cena"], "Bordeaux": ["Cena"], "El Patio": ["Cena"], "Oceana": ["Desayuno", "Almuerzo", "Cena"]}, "DRRPC": {"Seaside Grill": ["Desayuno", "Almuerzo", "Cena"], "Fusion": ["Cena"], "Mercure": ["Cena"], "Tres Colores": ["Cena"], "Portofino": ["Desayuno", "Almuerzo", "Cena"]}, "DROPC": {"Cin Cin": ["Cena"], "Capers": ["Cena"], "Bluewater Grill": ["Cena"], "Mercure": ["Cena"], "Faire": ["Cena"], "Spice": ["Cena"], "Tamarindo": ["Desayuno", "Almuerzo", "Cena"], "Room Service": ["Desayuno", "Almuerzo", "Menú Nocturno"]}, "BREPC": {"Coquette": ["Cena"], "Spumante": ["Cena"], "Silk City": ["Cena"], "Culinaria": ["Cena"], "The Strip Grill": ["Desayuno", "Almuerzo", "Cena"], "Sofrito": ["Cena"], "Room Service": ["Desayuno", "Almuerzo", "Menú Nocturno"]}, "DRFPC": {"Seaside Grill": ["Desayuno", "Almuerzo", "Cena"], "Portofino": ["Cena"], "Bordeaux": ["Cena"], "Himitsu": ["Cena"], "El Patio": ["Cena"]}, "DRJRC": {"Mercure": ["Desayuno", "Cena"], "Capers": ["Cena"], "Castaway": ["Almuerzo"], "Tamarindo": ["Cena"], "Cin Cin": ["Cena"], "Spice": ["Cena"]}, "SEAUA": {"Oceana": ["Desayuno", "Almuerzo", "Cena"], "Portofino": ["Cena"], "Himitsu": ["Cena"], "Tierra": ["Cena"]}};
 
 function calcularPendientes(hotelCode, recsAyer) {
+
+// FIX: cantidad de días del período admin actualmente filtrado (null si es "Todo el historial" o rango incompleto)
+function contarDiasPeriodo(){
+  const range=getAdminDateRange();
+  if(!range.from||!range.to) return null;
+  const d1=new Date(range.from+'T00:00:00'), d2=new Date(range.to+'T00:00:00');
+  const diff=Math.round((d2-d1)/86400000)+1;
+  return diff>0?diff:null;
+}
+// FIX: cuántos registros se esperan por día para un hotel, respetando filtros de restaurante/servicio activos
+function calcularEsperadoDiarioHotel(hotelCode, restFiltro, servFiltro){
+  const estructura=ESTRUCTURA_ESPERADA[hotelCode]||{};
+  let total=0;
+  Object.entries(estructura).forEach(([rest,servicios])=>{
+    if(restFiltro&&rest!==restFiltro) return;
+    servicios.forEach(s=>{ if(!servFiltro||s===servFiltro) total++; });
+  });
+  return total;
+}
+
   const esperados = ESTRUCTURA_ESPERADA[hotelCode] || {};
   const pendientes = [];
   Object.entries(esperados).forEach(([rest, servicios]) => {
@@ -1019,6 +1069,18 @@ function mostrarPopupPendientes(fecha, pendientes) {
 function cerrarPopupPendientes() {
   document.getElementById('popup-pendientes').style.display = 'none';
 }
+// FIX punto 5 del protocolo (Fase 6): fecha y hora actual siempre visibles en el header
+function actualizarRelojAdmin(){
+  const el=document.getElementById('admin-clock');
+  if(!el) return;
+  const ahora=new Date();
+  const fechaTxt=ahora.toLocaleDateString('es-DO',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  const horaTxt=ahora.toLocaleTimeString('es-DO',{hour:'2-digit',minute:'2-digit'});
+  el.textContent='🕐 '+fechaTxt+' · '+horaTxt;
+}
+setInterval(actualizarRelojAdmin,1000);
+actualizarRelojAdmin();
+
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('screen-login').style.display!=='none') doLogin();
   if(e.key==='Escape') cerrarModal();
@@ -1377,6 +1439,12 @@ function validateForm(){
   // Responsable
   const resp=document.getElementById('f-responsable').value.trim();
   if(!resp){setFieldError('responsable',true);valid=false;}else clearFieldError('responsable');
+  // BookInside — comentario obligatorio si Parcial o No
+  const bi=document.getElementById('f-bookinside')?.value||'';
+  if(bi==='Parcial'||bi==='No'){
+    const biDet=document.getElementById('f-bookinside-detalle')?.value.trim();
+    if(!biDet){setFieldError('bookinside-detalle',true);valid=false;}else clearFieldError('bookinside-detalle');
+  } else { clearFieldError('bookinside-detalle'); }
   return valid;
 }
 
@@ -1536,6 +1604,64 @@ function renderHBar(id,data,color){
   if(!sorted.length){el.innerHTML='<p style="color:#94a3b8;font-size:13px;text-align:center;padding:12px;">Sin datos</p>';return;}
   el.innerHTML=sorted.map(([label,val])=>`<div class="hbar-row"><div class="hbar-label" title="${label}">${label}</div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(val/max*100)}%;background:${color};">${val}</div></div></div>`).join('');
 }
+// FIX: barra con progreso "X de Y" contra lo esperado — usada en Registros por Hotel
+function renderHBarProgreso(id,dataActual,dataEsperado,color){
+  const el=document.getElementById(id);
+  const labels=Object.keys(dataEsperado).length?Object.keys(dataEsperado):Object.keys(dataActual);
+  const sorted=labels.map(l=>[l,dataActual[l]||0,dataEsperado[l]||0]).sort((a,b)=>b[2]-a[2]||b[1]-a[1]);
+  if(!sorted.length){el.innerHTML='<p style="color:#94a3b8;font-size:13px;text-align:center;padding:12px;">Sin datos</p>';return;}
+  el.innerHTML=sorted.map(([label,val,esp])=>{
+    const pct=esp>0?Math.min(100,Math.round(val/esp*100)):(val>0?100:0);
+    const txt=esp>0?`${val} de ${esp}`:`${val}`;
+    const col=esp>0&&val<esp?(val/esp>=0.8?color:'#d97706'):color;
+    return `<div class="hbar-row"><div class="hbar-label" title="${label}">${label}</div><div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${col};">${txt}</div></div></div>`;
+  }).join('');
+}
+// FIX: barra que muestra "Cerrado" en vez de 0 cuando el restaurante/servicio se marcó cerrado ese día
+function renderHBarConEstado(id,data,cerrados,color){
+  const el=document.getElementById(id);
+  const sorted=Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  const max=Math.max(1,...sorted.map(s=>s[1]));
+  if(!sorted.length){el.innerHTML='<p style="color:#94a3b8;font-size:13px;text-align:center;padding:12px;">Sin datos</p>';return;}
+  el.innerHTML=sorted.map(([label,val])=>{
+    const esCerrado=val===0&&cerrados[label];
+    const txt=esCerrado?'Cerrado':val;
+    const pct=esCerrado?100:Math.round(val/max*100);
+    const bg=esCerrado?'#94a3b8':color;
+    return `<div class="hbar-row"><div class="hbar-label" title="${label}">${label}</div><div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${bg};">${txt}</div></div></div>`;
+  }).join('');
+}
+// FIX: matriz Servicio × Hotel para Pax por servicio
+function renderMatrizPaxServicio(id,recs){
+  const el=document.getElementById(id);
+  const hoteles=[...new Set(recs.map(r=>r.hotelCode))].sort();
+  const servicios=['Desayuno','Almuerzo','Cena','Menú Nocturno'];
+  if(!hoteles.length){el.innerHTML='<p style="color:#94a3b8;text-align:center;padding:20px;font-size:13px;">Sin datos para el período seleccionado</p>';return;}
+  const matriz={};
+  servicios.forEach(s=>{matriz[s]={};hoteles.forEach(h=>matriz[s][h]=0);});
+  recs.forEach(r=>{
+    if(matriz[r.servicio]&&matriz[r.servicio][r.hotelCode]!==undefined) matriz[r.servicio][r.hotelCode]+=r.pax;
+  });
+  let h='<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>';
+  h+='<th style="background:#203864;color:#fff;padding:7px 10px;text-align:left;">Servicio</th>';
+  hoteles.forEach(hc=>h+=`<th style="background:#203864;color:#fff;padding:7px 10px;text-align:right;">${hc}</th>`);
+  h+='<th style="background:#1d4ed8;color:#fff;padding:7px 10px;text-align:right;">Total</th></tr></thead><tbody>';
+  servicios.forEach((s,i)=>{
+    const totalServ=hoteles.reduce((sum,hc)=>sum+matriz[s][hc],0);
+    if(totalServ===0) return;
+    h+=`<tr style="background:${i%2===0?'#fff':'#f8fafc'};"><td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;font-weight:600;">${s}</td>`;
+    hoteles.forEach(hc=>h+=`<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;text-align:right;">${matriz[s][hc].toLocaleString()}</td>`);
+    h+=`<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:700;">${totalServ.toLocaleString()}</td></tr>`;
+  });
+  const totalesPorHotel=hoteles.map(hc=>servicios.reduce((s,serv)=>s+matriz[serv][hc],0));
+  const granTotal=totalesPorHotel.reduce((a,b)=>a+b,0);
+  h+='<tr style="background:#eff6ff;font-weight:700;"><td style="padding:6px 10px;">Total</td>';
+  totalesPorHotel.forEach(t=>h+=`<td style="padding:6px 10px;text-align:right;">${t.toLocaleString()}</td>`);
+  h+=`<td style="padding:6px 10px;text-align:right;">${granTotal.toLocaleString()}</td></tr>`;
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+
 function renderDashIncidencias(){
   const recs=getFilteredHotelRecords();
   const byTipo={},byRest={};
@@ -1590,12 +1716,14 @@ function renderDashAdicional(t){
     html=tbl(['Fecha','Restaurante','Servicio','Vinos','Tomahawk','Langosta'],rows);
 
   } else if(t==='falt'){
-    const rows=recs.filter(r=>r.falt_tipo).map(r=>[r.fecha,r.restaurante,r.servicio,r.falt_tipo,r.falt_desc]);
+    const rows=[];
+    recs.forEach(r=>{ (r.faltantes_ab||[]).forEach(f=>rows.push([r.fecha,r.restaurante,r.servicio,f.tipo,f.desc])); });
     html=tbl(['Fecha','Restaurante','Servicio','Tipo','Producto'],rows);
 
   } else if(t==='mant'){
-    const rows=recs.filter(r=>r.mant_tipo).map(r=>[r.fecha,r.restaurante,r.servicio,r.mant_tipo,r.mant_desc]);
-    html=tbl(['Fecha','Restaurante','Servicio','Tipo','Descripción'],rows);
+    const rows=[];
+    recs.forEach(r=>{ (r.incidencias_mtto||[]).forEach(i=>rows.push([r.fecha,r.restaurante,r.servicio,(i.categoria||'Mantenimiento'),i.tipo,i.desc])); });
+    html=tbl(['Fecha','Restaurante','Servicio','Categoría','Tipo','Descripción'],rows);
 
   } else if(t==='equipos'){
     const rows=[];
@@ -1700,8 +1828,8 @@ function renderAybDash(){
     vinos+=Number(r.inp_vinos)||0;
     tomahawk+=Number(r.inp_tomahawk)||0;
     langosta+=Number(r.inp_langosta)||0;
-    if(r.falt_tipo) falt++;
-    if(r.mant_tipo) mant++;
+    if((r.faltantes_ab||[]).length) falt+=r.faltantes_ab.length;
+    if((r.incidencias_mtto||[]).length) mant+=r.incidencias_mtto.length;
     quejas+=Number(r.num_quejas)||0;
   });
   const fmt$=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1799,17 +1927,21 @@ function renderAybTab(t){
 
   } else if(t==='falt'){
     hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h&&r.falt_tipo);
+      const hr=recs.filter(r=>r.hotelCode===h&&(r.faltantes_ab||[]).length);
       if(!hr.length) return;
-      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Tipo','Producto'],hr.map(r=>[r.restaurante,r.servicio,r.falt_tipo,r.falt_desc]))}</div>`;
+      const rows=[];
+      hr.forEach(r=>(r.faltantes_ab||[]).forEach(f=>rows.push([r.restaurante,r.servicio,f.tipo,f.desc])));
+      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Tipo','Producto'],rows)}</div>`;
     });
     if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin faltantes registrados para este período.</p></div>';
 
   } else if(t==='mant'){
     hoteles.forEach(h=>{
-      const hr=recs.filter(r=>r.hotelCode===h&&r.mant_tipo);
+      const hr=recs.filter(r=>r.hotelCode===h&&(r.incidencias_mtto||[]).length);
       if(!hr.length) return;
-      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Tipo','Descripción'],hr.map(r=>[r.restaurante,r.servicio,r.mant_tipo,r.mant_desc]))}</div>`;
+      const rows=[];
+      hr.forEach(r=>(r.incidencias_mtto||[]).forEach(i=>rows.push([r.restaurante,r.servicio,(i.categoria||'Mantenimiento'),i.tipo,i.desc])));
+      html+=`<div class="card" style="margin-bottom:10px;">${hotelTag(h)}${tbl(['Restaurante','Servicio','Categoría','Tipo','Descripción'],rows)}</div>`;
     });
     if(!html) html='<div class="card"><p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px;">Sin incidencias de mantenimiento registradas.</p></div>';
 
@@ -1856,8 +1988,25 @@ function toggleDatosAdicionales(){
   b.style.display=open?'none':'block';
   l.textContent=(open?'▶':'▼')+' Datos adicionales';
 }
-function toggleMantDesc(v){
-  document.getElementById('mant-desc-wrap').style.display=v==='Otro'?'block':'none';
+function addMantAd(){
+  const l=document.getElementById('mant-adic-lista');
+  const d=document.createElement('div');
+  d.className='mant-adic-row';
+  d.style.cssText='border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:8px;background:#fffbeb;';
+  d.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">'+
+    '<div><label style="font-size:11px;color:#64748b;">Categoría</label>'+
+    '<select class="field-input mant-cat" style="font-size:12px;"><option value="Mantenimiento">🔧 Mantenimiento</option><option value="Música">🎵 Música</option></select></div>'+
+    '<div><label style="font-size:11px;color:#64748b;">Tipo</label>'+
+    '<input class="field-input mant-tipo-row" type="text" placeholder="Ej: Aire acondicionado" style="font-size:12px;"></div></div>'+
+    '<label style="font-size:11px;color:#64748b;">Descripción</label>'+
+    '<input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?">'+
+    '<button type="button" onclick="this.parentElement.remove()" style="font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;padding:4px 0 0;">✕ Quitar esta incidencia</button>';
+  l.appendChild(d);
+}
+function toggleBookInside(){
+  const v=document.getElementById('f-bookinside').value;
+  document.getElementById('bookinside-detalle-wrap').style.display = (v==='Parcial'||v==='No') ? 'block' : 'none';
+  if(v==='Si'||v===''){ clearFieldError('bookinside-detalle'); }
 }
 function togEqAd(btn,id,type){
   const row=btn.closest('.adic-inv-row')||btn.parentElement.parentElement;
@@ -1882,10 +2031,19 @@ function getDatosAdicionales(){
   const vinos=document.getElementById('inp-vinos').value||'';
   const tomahawk=document.getElementById('inp-tomahawk').value||'';
   const langosta=document.getElementById('inp-langosta').value||'';
-  const mantTipo=document.getElementById('mant-tipo').value||'';
-  const mantDesc=document.getElementById('mant-desc')?.value||'';
+  // Mantenimiento/Música — FIX: ahora es un array de incidencias
+  const incidencias_mtto=[];
+  document.querySelectorAll('#mant-adic-lista .mant-adic-row').forEach(row=>{
+    const cat=row.querySelector('.mant-cat')?.value||'Mantenimiento';
+    const tipo=row.querySelector('.mant-tipo-row')?.value?.trim()||'';
+    const desc=row.querySelector('.mant-desc-row')?.value?.trim()||'';
+    if(tipo||desc) incidencias_mtto.push({categoria:cat,tipo,desc});
+  });
   const faltTipo=document.getElementById('falt-tipo').value||'';
   const faltDesc=document.getElementById('falt-desc').value||'';
+  // BookInside
+  const bookinsideEstado=document.getElementById('f-bookinside')?.value||'';
+  const bookinsideDetalle=document.getElementById('f-bookinside-detalle')?.value?.trim()||'';
   // Inventario
   const eqs=['ae1','ae2','ae3','ae4'];
   const eqNames=['Comandero 1','Comandero 2','Comandero 3','Hostess Tablet'];
@@ -1905,23 +2063,27 @@ function getDatosAdicionales(){
   });
   return {
     inp_vinos:vinos, inp_tomahawk:tomahawk, inp_langosta:langosta,
-    mant_tipo:mantTipo, mant_desc:mantDesc,
+    incidencias_mtto:incidencias_mtto,
     falt_tipo:faltTipo, falt_desc:faltDesc,
+    bookinside_estado:bookinsideEstado, bookinside_detalle:bookinsideDetalle,
     inventario:JSON.stringify(inventario),
     quejas:JSON.stringify(quejas),
     num_quejas:quejas.length
   };
 }
 function clearDatosAdicionales(){
-  ['inp-vinos','inp-tomahawk','inp-langosta','mant-desc','falt-desc'].forEach(id=>{
+  ['inp-vinos','inp-tomahawk','inp-langosta','falt-desc','f-bookinside-detalle'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
   });
-  const mantTipo=document.getElementById('mant-tipo');
-  if(mantTipo) mantTipo.value='';
   const faltTipo=document.getElementById('falt-tipo');
   if(faltTipo) faltTipo.value='';
-  document.getElementById('mant-desc-wrap').style.display='none';
+  const bi=document.getElementById('f-bookinside');
+  if(bi) bi.value='';
+  document.getElementById('bookinside-detalle-wrap').style.display='none';
+  clearFieldError('bookinside-detalle');
+  // Resetear lista de incidencias de mantenimiento a una sola fila vacía
+  document.getElementById('mant-adic-lista').innerHTML='<div class="mant-adic-row" style="border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:8px;background:#fffbeb;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;"><div><label style="font-size:11px;color:#64748b;">Categoría</label><select class="field-input mant-cat" style="font-size:12px;"><option value="Mantenimiento">🔧 Mantenimiento</option><option value="Música">🎵 Música</option></select></div><div><label style="font-size:11px;color:#64748b;">Tipo</label><input class="field-input mant-tipo-row" type="text" placeholder="Ej: Aire acondicionado" style="font-size:12px;"></div></div><label style="font-size:11px;color:#64748b;">Descripción</label><input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?"></div>';
   ['ae1','ae2','ae3','ae4'].forEach(id=>{
     const ft=document.getElementById('adic-ft-'+id);
     if(ft) ft.style.display='none';
@@ -1975,12 +2137,12 @@ function setAdminTab(t){
     const sec=document.getElementById('admin-'+id);
     if(sec) sec.style.display=id===t?'block':'none';
   });
-  const adminTabs=['resumen','hoteles','problemas','registros','inp','falt','mant','equipos','quejas','usuarios','config'];
+  const adminTabs=['resumen','hoteles','problemas','registros','inp','falt','mant','equipos','quejas','musica','usuarios','config'];
   adminTabs.forEach(id=>{
     const sec=document.getElementById('admin-'+id);
     if(sec) sec.style.display=id===t?'block':'none';
   });
-  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-inp','anav-falt','anav-mant','anav-equipos','anav-quejas'].forEach((id,i)=>{
+  ['anav-resumen','anav-hoteles','anav-problemas','anav-registros','anav-inp','anav-falt','anav-mant','anav-equipos','anav-quejas','anav-musica'].forEach((id,i)=>{
     const el=document.getElementById(id);
     if(el) el.className='tab'+(adminTabs[i]===t?' active':'');
   });
@@ -1989,7 +2151,7 @@ function setAdminTab(t){
   if(hdrC && hdrC.style.display!=='none') hdrC.style.outline = t==='config' ? '2px solid #475569' : 'none';
   if(t==='config') renderAdminConfig();
   else if(t==='usuarios') renderAdminUsuarios();
-  else if(['inp','falt','mant','equipos','quejas'].indexOf(t)>=0) renderAdminAdicional(t);
+  else if(['inp','falt','mant','equipos','quejas','musica'].indexOf(t)>=0) renderAdminAdicional(t);
   else renderAdmin();
 }
 
@@ -2027,11 +2189,18 @@ function renderAdminAdicional(t){
     html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Vinos','Tomahawk','Langosta'],rows)}</div>`;
 
   } else if(t==='falt'){
-    const rows=recs.filter(r=>r.falt_tipo).map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.falt_tipo,r.falt_desc]);
+    const rows=[];
+    recs.forEach(r=>{ (r.faltantes_ab||[]).forEach(f=>rows.push([r.hotelCode,r.fecha,r.restaurante,r.servicio,f.tipo,f.desc])); });
     html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Tipo','Producto'],rows)}</div>`;
 
   } else if(t==='mant'){
-    const rows=recs.filter(r=>r.mant_tipo).map(r=>[r.hotelCode,r.fecha,r.restaurante,r.servicio,r.mant_tipo,r.mant_desc]);
+    const rows=[];
+    recs.forEach(r=>{ (r.incidencias_mtto||[]).filter(i=>(i.categoria||'Mantenimiento')!=='Música').forEach(i=>rows.push([r.hotelCode,r.fecha,r.restaurante,r.servicio,i.tipo,i.desc])); });
+    html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Tipo','Descripción'],rows)}</div>`;
+
+  } else if(t==='musica'){
+    const rows=[];
+    recs.forEach(r=>{ (r.incidencias_mtto||[]).filter(i=>i.categoria==='Música').forEach(i=>rows.push([r.hotelCode,r.fecha,r.restaurante,r.servicio,i.tipo,i.desc])); });
     html=`<div class="card" style="padding:18px;">${tbl(['Hotel','Fecha','Restaurante','Servicio','Tipo','Descripción'],rows)}</div>`;
 
   } else if(t==='equipos'){
@@ -2111,6 +2280,22 @@ const REPORTES_LABEL={
 const HOTELES_CATALOGO=['SERPC','DRRPC','BREPC','DROPC'];
 let usuariosCache=[];
 
+async function sincronizarCatalogoMaestro(){
+  if(!confirm('Esto traerá Nombre/Cargo/Correo actualizados desde el Catálogo Maestro real de Grumasa para los usuarios que coincidan por código. Reportes y Hoteles asignados NO se tocan. ¿Continuar?')) return;
+  try{
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'sincronizar_catalogo',codigoQuienEjecuta:currentUserCode})});
+    const json=await resp.json();
+    if(json.status==='ok'){
+      alert('✅ Sincronización completada. Usuarios actualizados: '+(json.actualizados||0));
+      renderAdminUsuarios();
+    } else {
+      alert('❌ '+(json.message||'No se pudo sincronizar.'));
+    }
+  }catch(e){
+    alert('Error de conexión. Intenta de nuevo.');
+  }
+}
+
 async function renderAdminUsuarios(){
   const cont=document.getElementById('adm-usuarios-content');
   if(!cont) return;
@@ -2133,8 +2318,12 @@ function pintarTablaUsuarios(){
 
   let html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">';
   html+='<div style="font-size:14px;font-weight:700;color:#1e293b;">👥 Usuarios y Reportes ('+usuariosCache.length+')</div>';
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  if(esMaestro){
+    html+='<button class="btn btn-sm" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;" onclick="sincronizarCatalogoMaestro()">🔄 Sincronizar con Catálogo Maestro</button>';
+  }
   html+='<button class="btn btn-sm" style="background:#1d4ed8;color:#fff;" onclick="abrirFormularioUsuario(null)">+ Nuevo Usuario</button>';
-  html+='</div>';
+  html+='</div></div>';
 
   if(usuariosCache.length===0){
     html+='<div style="text-align:center;padding:30px;color:#94a3b8;">No hay usuarios registrados todavía.</div>';
@@ -2332,17 +2521,33 @@ function renderAdminResumen(){
   const pct=tot?Math.round(ok/tot*100):0;
   document.getElementById('adm-kpi').innerHTML=`<div class="kpi-card"><div class="kpi-label">Total registros</div><div class="kpi-value">${tot}</div></div><div class="kpi-card"><div class="kpi-label">Total pax</div><div class="kpi-value">${pax.toLocaleString()}</div></div><div class="kpi-card"><div class="kpi-label">Uso correcto</div><div class="kpi-value ${pct>=80?'green':pct>=60?'amber':'red'}">${pct}%</div></div><div class="kpi-card"><div class="kpi-label">Incidencias</div><div class="kpi-value ${fail>0?'red':''}">${fail}</div></div>`;
   const hotelFiltroActivo = document.getElementById('adm-filter-hotel').value;
-  const byHotel={},paxServ={},byTipoFallo={},paxRest={};
+  const restFiltroActivo = document.getElementById('adm-filter-rest').value;
+  const servFiltroActivo = document.getElementById('adm-filter-serv').value;
+  const byHotel={},byTipoFallo={},paxRest={},cerradosRest={};
   recs.forEach(r=>{
     byHotel[r.hotel]=(byHotel[r.hotel]||0)+1;
-    paxServ[r.servicio]=(paxServ[r.servicio]||0)+r.pax;
     const restKey = hotelFiltroActivo ? r.restaurante : (r.hotelCode+' · '+r.restaurante);
     paxRest[restKey]=(paxRest[restKey]||0)+r.pax;
+    if(r.incidencia && r.incidencia.includes('Cerrado')) cerradosRest[restKey]=true;
     if(r.incidencia && !r.incidencia.includes('Cerrado')) byTipoFallo[r.incidencia]=(byTipoFallo[r.incidencia]||0)+1;
   });
-  renderHBar('adm-hbar-hoteles',byHotel,'#6366f1');
-  renderHBar('adm-hbar-pax-servicio',paxServ,'#0ea5e9');
-  renderHBar('adm-hbar-pax-restaurante',paxRest,'#8b5cf6');
+
+  // FIX punto 1: Registros por hotel con "X de Y" contra lo esperado
+  const diasPeriodo=contarDiasPeriodo();
+  const hotelesEnRecs=[...new Set(recs.map(r=>r.hotel))];
+  const byHotelEsperado={};
+  if(diasPeriodo){
+    // Recorremos por código para calcular esperado, mapeando a nombre visible
+    const codigosVistos=[...new Set(recs.map(r=>r.hotelCode))];
+    codigosVistos.forEach(code=>{
+      const nombre=recs.find(r=>r.hotelCode===code)?.hotel||code;
+      byHotelEsperado[nombre]=calcularEsperadoDiarioHotel(code,restFiltroActivo,servFiltroActivo)*diasPeriodo;
+    });
+  }
+
+  renderHBarProgreso('adm-hbar-hoteles',byHotel,byHotelEsperado,'#6366f1');
+  renderMatrizPaxServicio('adm-matriz-pax-servicio',recs);
+  renderHBarConEstado('adm-hbar-pax-restaurante',paxRest,cerradosRest,'#8b5cf6');
   renderHBar('adm-hbar-tipos-resumen',byTipoFallo,'#ef4444');
   setTimeout(()=>{
     if(admChartUso)admChartUso.destroy();
@@ -2354,17 +2559,41 @@ function renderAdminHoteles(){
   const container=document.getElementById('adm-hotel-cards');
   const codes=[...new Set(recs.map(r=>r.hotelCode))].sort();
   if(!codes.length){container.innerHTML='<div class="card"><p style="color:#94a3b8;text-align:center;padding:20px;">Sin datos para el período seleccionado</p></div>';return;}
+  const SERVICIOS=['Desayuno','Almuerzo','Cena','Menú Nocturno'];
   container.innerHTML=codes.map(code=>{
     const h=recs.filter(r=>r.hotelCode===code);
     const name=h[0]?.hotel||code,tot=h.length,pax=h.reduce((s,r)=>s+r.pax,0);
     const ok=h.filter(r=>r.comandero==='Si').length,fail=h.filter(r=>r.comandero!=='Si').length;
     const pct=tot?Math.round(ok/tot*100):0;
     const color=pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626';
-    const byRest={},byServ={};
-    h.forEach(r=>{byRest[r.restaurante]=(byRest[r.restaurante]||0)+r.pax;byServ[r.servicio]=(byServ[r.servicio]||0)+r.pax;});
-    const restRows=Object.entries(byRest).sort((a,b)=>b[1]-a[1]).map(([rest,p])=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f1f5f9;"><span>${rest}</span><span style="font-weight:700;">${p} pax</span></div>`).join('');
-    const servBadges=Object.entries(byServ).map(([s,p])=>`<span style="background:#eff6ff;color:#1d4ed8;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:700;">${s}: ${p}</span>`).join(' ');
-    return `<div class="hotel-summary-card"><h3>${name} <span style="font-size:13px;font-weight:600;color:${color};">${pct}% uso correcto</span></h3><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;"><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Registros</div><div class="kpi-value" style="font-size:18px;">${tot}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Pax</div><div class="kpi-value" style="font-size:18px;">${pax}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">OK</div><div class="kpi-value" style="font-size:18px;color:#16a34a;">${ok}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Fallos</div><div class="kpi-value" style="font-size:18px;color:#dc2626;">${fail}</div></div></div><div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;margin-bottom:6px;">Por restaurante</div>${restRows}<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">${servBadges}</div></div>`;
+    // FIX punto 3: desglose Por restaurante × Servicio en columnas
+    const byRestServ={};
+    h.forEach(r=>{
+      if(!byRestServ[r.restaurante]) byRestServ[r.restaurante]={Desayuno:0,Almuerzo:0,Cena:0,'Menú Nocturno':0};
+      if(byRestServ[r.restaurante][r.servicio]!==undefined) byRestServ[r.restaurante][r.servicio]+=r.pax;
+    });
+    const restsOrdenados=Object.keys(byRestServ).sort((a,b)=>{
+      const totA=Object.values(byRestServ[a]).reduce((s,v)=>s+v,0);
+      const totB=Object.values(byRestServ[b]).reduce((s,v)=>s+v,0);
+      return totB-totA;
+    });
+    let tablaServ='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>';
+    tablaServ+='<th style="padding:5px 8px;text-align:left;color:#94a3b8;">Restaurante</th>';
+    SERVICIOS.forEach(s=>tablaServ+=`<th style="padding:5px 8px;text-align:right;color:#94a3b8;">${s==='Menú Nocturno'?'Noct.':s}</th>`);
+    tablaServ+='<th style="padding:5px 8px;text-align:right;color:#1d4ed8;">Total</th></tr></thead><tbody>';
+    restsOrdenados.forEach((rest,i)=>{
+      const fila=byRestServ[rest];
+      const totalRest=Object.values(fila).reduce((s,v)=>s+v,0);
+      tablaServ+=`<tr style="background:${i%2===0?'#fff':'#f8fafc'};"><td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;">${rest}</td>`;
+      SERVICIOS.forEach(s=>tablaServ+=`<td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;text-align:right;">${fila[s]||'—'}</td>`);
+      tablaServ+=`<td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:700;">${totalRest}</td></tr>`;
+    });
+    const totalesServ=SERVICIOS.map(s=>restsOrdenados.reduce((sum,r)=>sum+(byRestServ[r][s]||0),0));
+    tablaServ+='<tr style="background:#eff6ff;font-weight:700;"><td style="padding:5px 8px;">Total</td>';
+    totalesServ.forEach(t=>tablaServ+=`<td style="padding:5px 8px;text-align:right;">${t}</td>`);
+    tablaServ+=`<td style="padding:5px 8px;text-align:right;">${totalesServ.reduce((a,b)=>a+b,0)}</td></tr>`;
+    tablaServ+='</tbody></table></div>';
+    return `<div class="hotel-summary-card"><h3>${name} <span style="font-size:13px;font-weight:600;color:${color};">${pct}% uso correcto</span></h3><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;"><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Registros</div><div class="kpi-value" style="font-size:18px;">${tot}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Pax</div><div class="kpi-value" style="font-size:18px;">${pax}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">OK</div><div class="kpi-value" style="font-size:18px;color:#16a34a;">${ok}</div></div><div class="kpi-card" style="padding:10px;"><div class="kpi-label">Fallos</div><div class="kpi-value" style="font-size:18px;color:#dc2626;">${fail}</div></div></div><div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;margin-bottom:6px;">Por restaurante y servicio</div>${tablaServ}</div>`;
   }).join('');
 }
 function renderAdminProblemas(){

@@ -955,35 +955,48 @@ async function doLogin(){
     document.getElementById('admin-role-pill').textContent='🏢 Vista Corporativa';
     await loadAllRecords();renderAdmin();return;
   }
-  // ── Usuarios A&B (solo dashboard) ──
-  if(AYB_USERS[raw]){
-    const ayb=AYB_USERS[raw];
-    window._aybUser=ayb;
+  const hotel=HOTELS[raw];
+  if(hotel){
+    isAdmin=false;currentHotel=hotel;currentHotel._key=raw;
+    loadRecords();
     document.getElementById('screen-login').style.display='none';
-    document.getElementById('screen-ayb').style.display='block';
-    document.getElementById('ayb-rol-label').textContent=ayb.rol;
-    document.getElementById('ayb-hoteles-label').textContent=ayb.hoteles.join(' · ');
-    await loadAllRecords();
-    setAybPeriodo('ayer');
+    document.getElementById('screen-app').style.display='block';
+    document.getElementById('hotel-pill').textContent=hotel.name+' ('+hotel.code+')';
+    const cul=document.getElementById('current-user-label');
+    if(cul){cul.textContent='🏨 '+hotel.code;cul.style.display='inline';}
+    document.getElementById('f-fecha').value=today();
+    populateRestaurantes();renderSessionLog();verificarPendientesHotel();
+    const inputFecha = document.getElementById('f-fecha');
+    inputFecha.min = yesterday();
+    inputFecha.max = today();
+    inputFecha.value = today();
     return;
   }
-  const hotel=HOTELS[raw];
-  if(!hotel){document.getElementById('loginError').style.display='block';return;}
-  isAdmin=false;currentHotel=hotel;currentHotel._key=raw;
-  loadRecords();
-  document.getElementById('screen-login').style.display='none';
-  document.getElementById('screen-app').style.display='block';
-  document.getElementById('hotel-pill').textContent=hotel.name+' ('+hotel.code+')';
-  // Mostrar hotel en label de usuario
-  const cul=document.getElementById('current-user-label');
-  if(cul){cul.textContent='🏨 '+hotel.code;cul.style.display='inline';}
-  document.getElementById('f-fecha').value=today();
-  populateRestaurantes();renderSessionLog();verificarPendientesHotel();
-  // Restringir fecha: solo hoy o ayer
-  const inputFecha = document.getElementById('f-fecha');
-  inputFecha.min = yesterday();
-  inputFecha.max = today();
-  inputFecha.value = today();
+  // ── Usuarios A&B / corporativos — FIX: ahora dinámico desde el Catálogo
+  // (Usuarios_Reportes) en vez de la lista fija AYB_USERS. Cualquier código
+  // activo del Catálogo con hoteles asignados entra aquí automáticamente,
+  // sin tener que tocar código cuando se agrega o cambia alguien. ──
+  try{
+    const res=await fetch(APPS_SCRIPT_URL+'?action=listar_usuarios');
+    const json=await res.json();
+    const usuarios=json.usuarios||[];
+    const match=usuarios.find(u=>u.codigo===raw && u.estado==='Activo');
+    if(match && (match.hoteles||[]).length){
+      const hotelesUsuario=(match.hoteles.indexOf('TODOS')>=0)
+        ? ['SERPC','DRRPC','BREPC','DROPC']
+        : match.hoteles;
+      const ayb={rol:(match.nombre||match.codigo)+(match.cargo?' — '+match.cargo:''), hoteles:hotelesUsuario};
+      window._aybUser=ayb;
+      document.getElementById('screen-login').style.display='none';
+      document.getElementById('screen-ayb').style.display='block';
+      document.getElementById('ayb-rol-label').textContent=ayb.rol;
+      document.getElementById('ayb-hoteles-label').textContent=ayb.hoteles.join(' · ');
+      await loadAllRecords();
+      setAybPeriodo('ayer');
+      return;
+    }
+  }catch(e){ /* si falla la consulta, sigue al mensaje de código incorrecto */ }
+  document.getElementById('loginError').style.display='block';
 }
 function doLogout(){
   currentHotel=null;isAdmin=false;isCorpAdmin=false;records=[];allRecords=[];
@@ -2095,14 +2108,9 @@ function clearDatosAdicionales(){
   document.getElementById('adic-lbl-form').textContent='▶ Datos adicionales';
 }
 
-// ── USUARIOS A&B (solo dashboard, no formulario) ──
-const AYB_USERS = {
-  'EP7341':{rol:'Emilio Punzano — Dir. Corporativo A&B', hoteles:['SERPC','DRRPC','DROPC','BREPC']},
-  'IG5823':{rol:'Israel Gata — Chef Ejecutivo Corporativo', hoteles:['SERPC','DRRPC','DROPC','BREPC']},
-  'JA4196':{rol:'Joaquin Alcaraz — Dir. A&B Varallo', hoteles:['SERPC','DRRPC']},
-  'CT8752':{rol:'Carlos Tejerina — Dir. A&B IOR', hoteles:['BREPC','DROPC']},
-  'JG3047':{rol:'Joel Gomez — Dir. A&B Natura', hoteles:['DRFPC']}
-};
+// FIX: AYB_USERS (lista fija de 5 códigos) se eliminó — el login de
+// usuarios A&B/corporativos ahora es 100% dinámico contra el Catálogo
+// (ver doLogin), así que ya no hace falta mantener esta lista a mano.
 
 function getFilteredAdminRecords(){
   const hotel=document.getElementById('adm-filter-hotel').value;

@@ -1007,8 +1007,6 @@ function doLogout(){
 // ── ESTRUCTURA DE SERVICIOS ESPERADOS ──
 const ESTRUCTURA_ESPERADA = {"SERPC": {"Bluewater Grill": ["Cena"], "Himitsu": ["Cena"], "Bordeaux": ["Cena"], "El Patio": ["Cena"], "Oceana": ["Desayuno", "Almuerzo", "Cena"]}, "DRRPC": {"Seaside Grill": ["Desayuno", "Almuerzo", "Cena"], "Fusion": ["Cena"], "Mercure": ["Cena"], "Tres Colores": ["Cena"], "Portofino": ["Desayuno", "Almuerzo", "Cena"]}, "DROPC": {"Cin Cin": ["Cena"], "Capers": ["Cena"], "Bluewater Grill": ["Cena"], "Mercure": ["Cena"], "Faire": ["Cena"], "Spice": ["Cena"], "Tamarindo": ["Desayuno", "Almuerzo", "Cena"], "Room Service": ["Desayuno", "Almuerzo", "Menú Nocturno"]}, "BREPC": {"Coquette": ["Cena"], "Spumante": ["Cena"], "Silk City": ["Cena"], "Culinaria": ["Cena"], "The Strip Grill": ["Desayuno", "Almuerzo", "Cena"], "Sofrito": ["Cena"], "Room Service": ["Desayuno", "Almuerzo", "Menú Nocturno"]}, "DRFPC": {"Seaside Grill": ["Desayuno", "Almuerzo", "Cena"], "Portofino": ["Cena"], "Bordeaux": ["Cena"], "Himitsu": ["Cena"], "El Patio": ["Cena"]}, "DRJRC": {"Mercure": ["Desayuno", "Cena"], "Capers": ["Cena"], "Castaway": ["Almuerzo"], "Tamarindo": ["Cena"], "Cin Cin": ["Cena"], "Spice": ["Cena"]}, "SEAUA": {"Oceana": ["Desayuno", "Almuerzo", "Cena"], "Portofino": ["Cena"], "Himitsu": ["Cena"], "Tierra": ["Cena"]}};
 
-function calcularPendientes(hotelCode, recsAyer) {
-
 // FIX: cantidad de días del período admin actualmente filtrado (null si es "Todo el historial" o rango incompleto)
 function contarDiasPeriodo(){
   const range=getAdminDateRange();
@@ -1027,6 +1025,8 @@ function calcularEsperadoDiarioHotel(hotelCode, restFiltro, servFiltro){
   });
   return total;
 }
+
+function calcularPendientes(hotelCode, recsAyer) {
 
   const esperados = ESTRUCTURA_ESPERADA[hotelCode] || {};
   const pendientes = [];

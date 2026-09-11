@@ -305,23 +305,23 @@
 
           <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
 
-          <!-- FALTANTES -->
+          <!-- FALTANTES — FIX: ahora acepta varios faltantes, mismo patrón que Mantenimiento -->
           <div style="border-left:3px solid #ef4444;padding-left:12px;margin-bottom:14px;">
             <div style="font-size:10px;font-weight:600;color:#dc2626;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">🍽️ Faltantes de A&amp;B</div>
-            <div style="margin-bottom:8px;">
-              <label style="font-size:12px;color:#64748b;">Tipo de faltante</label>
-              <select class="field-input" id="falt-tipo">
-                <option value="">— Sin faltantes —</option>
-                <option>Se terminó el platillo</option>
-                <option>Se terminó el producto</option>
-                <option>Se acabó el vino</option>
-                <option>No había licor / bebida</option>
-              </select>
+            <div id="falt-adic-lista">
+              <div class="falt-adic-row" style="border:1px solid #fecaca;border-radius:8px;padding:10px;margin-bottom:8px;background:#fef2f2;">
+                <label style="font-size:11px;color:#64748b;">Tipo de faltante</label>
+                <select class="field-input falt-tipo-row" style="font-size:12px;">
+                  <option>Se terminó el platillo</option>
+                  <option>Se terminó el producto</option>
+                  <option>Se acabó el vino</option>
+                  <option>No había licor / bebida</option>
+                </select>
+                <label style="font-size:11px;color:#64748b;">Especificar cuál</label>
+                <input class="field-input falt-desc-row" type="text" placeholder="Ej: Malbec Reserva, Langosta...">
+              </div>
             </div>
-            <div>
-              <label style="font-size:12px;color:#64748b;">Especificar cuál</label>
-              <input class="field-input" id="falt-desc" placeholder="Ej: Malbec Reserva, Langosta...">
-            </div>
+            <button type="button" onclick="addFaltAd()" style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer;padding:2px 0;">+ Agregar otro faltante</button>
           </div>
 
           <hr style="border:none;border-top:1px solid #f1f5f9;margin:12px 0;">
@@ -1736,6 +1736,18 @@ function toggleDatosAdicionales(){
   b.style.display=open?'none':'block';
   l.textContent=(open?'▶':'▼')+' Datos adicionales';
 }
+function addFaltAd(){
+  const l=document.getElementById('falt-adic-lista');
+  const d=document.createElement('div');
+  d.className='falt-adic-row';
+  d.style.cssText='border:1px solid #fecaca;border-radius:8px;padding:10px;margin-bottom:8px;background:#fef2f2;';
+  d.innerHTML='<label style="font-size:11px;color:#64748b;">Tipo de faltante</label>'+
+    '<select class="field-input falt-tipo-row" style="font-size:12px;"><option>Se terminó el platillo</option><option>Se terminó el producto</option><option>Se acabó el vino</option><option>No había licor / bebida</option></select>'+
+    '<label style="font-size:11px;color:#64748b;">Especificar cuál</label>'+
+    '<input class="field-input falt-desc-row" type="text" placeholder="Ej: Malbec Reserva, Langosta...">'+
+    '<button type="button" onclick="this.parentElement.remove()" style="font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;padding:4px 0 0;">✕ Quitar este faltante</button>';
+  l.appendChild(d);
+}
 function addMantAd(){
   const l=document.getElementById('mant-adic-lista');
   const d=document.createElement('div');
@@ -1813,8 +1825,13 @@ function getDatosAdicionales(){
     const desc=row.querySelector('.mant-desc-row')?.value?.trim()||'';
     if(tipo||desc) incidencias_mtto.push({categoria:cat,tipo,desc});
   });
-  const faltTipo=document.getElementById('falt-tipo').value||'';
-  const faltDesc=document.getElementById('falt-desc').value||'';
+  // Faltantes A&B — FIX: ahora es un array de faltantes (mismo patrón que Mantenimiento)
+  const faltantes_ab=[];
+  document.querySelectorAll('#falt-adic-lista .falt-adic-row').forEach(row=>{
+    const tipo=row.querySelector('.falt-tipo-row')?.value||'';
+    const desc=row.querySelector('.falt-desc-row')?.value?.trim()||'';
+    if(desc) faltantes_ab.push({tipo,desc});
+  });
   // BookInside
   const bookinsideEstado=document.getElementById('f-bookinside')?.value||'';
   const bookinsideDetalle=document.getElementById('f-bookinside-detalle')?.value?.trim()||'';
@@ -1838,7 +1855,7 @@ function getDatosAdicionales(){
   return {
     inp_vinos:vinos, inp_tomahawk:tomahawk, inp_langosta:langosta,
     incidencias_mtto:incidencias_mtto,
-    falt_tipo:faltTipo, falt_desc:faltDesc,
+    faltantes_ab:faltantes_ab,
     bookinside_estado:bookinsideEstado, bookinside_detalle:bookinsideDetalle,
     inventario:JSON.stringify(inventario),
     quejas:JSON.stringify(quejas),
@@ -1846,18 +1863,18 @@ function getDatosAdicionales(){
   };
 }
 function clearDatosAdicionales(){
-  ['inp-vinos','inp-tomahawk','inp-langosta','falt-desc','f-bookinside-detalle'].forEach(id=>{
+  ['inp-vinos','inp-tomahawk','inp-langosta','f-bookinside-detalle'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
   });
-  const faltTipo=document.getElementById('falt-tipo');
-  if(faltTipo) faltTipo.value='';
   const bi=document.getElementById('f-bookinside');
   if(bi) bi.value='';
   document.getElementById('bookinside-detalle-wrap').style.display='none';
   clearFieldError('bookinside-detalle');
   // Resetear lista de incidencias de mantenimiento a una sola fila vacía
   document.getElementById('mant-adic-lista').innerHTML='<div class="mant-adic-row" style="border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:8px;background:#fffbeb;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;"><div><label style="font-size:11px;color:#64748b;">Categoría</label><select class="field-input mant-cat" style="font-size:12px;" onchange="actualizarTipoOpciones(this)"><option value="Mantenimiento">🔧 Mantenimiento</option><option value="Música">🎵 Música</option></select></div><div><label style="font-size:11px;color:#64748b;">Tipo</label><select class="field-input mant-tipo-row" style="font-size:12px;" onchange="actualizarDescVisibility(this)"><option>Fallo Aire Acondicionado</option><option>Problemas con la Electricidad</option><option>Problemas con la Puerta Principal</option><option>Luces Fundidas</option><option value="Otro">Otro</option></select></div></div><div class="mant-desc-wrap" style="display:none;"><label style="font-size:11px;color:#64748b;">Descripción <span class="mant-desc-req" style="color:#ef4444;display:none;">*</span></label><input class="field-input mant-desc-row" type="text" placeholder="¿Qué pasó exactamente?"></div></div>';
+  // Resetear lista de faltantes A&B a una sola fila vacía
+  document.getElementById('falt-adic-lista').innerHTML='<div class="falt-adic-row" style="border:1px solid #fecaca;border-radius:8px;padding:10px;margin-bottom:8px;background:#fef2f2;"><label style="font-size:11px;color:#64748b;">Tipo de faltante</label><select class="field-input falt-tipo-row" style="font-size:12px;"><option>Se terminó el platillo</option><option>Se terminó el producto</option><option>Se acabó el vino</option><option>No había licor / bebida</option></select><label style="font-size:11px;color:#64748b;">Especificar cuál</label><input class="field-input falt-desc-row" type="text" placeholder="Ej: Malbec Reserva, Langosta..."></div>';
   ['ae1','ae2','ae3','ae4'].forEach(id=>{
     const ft=document.getElementById('adic-ft-'+id);
     if(ft) ft.style.display='none';
